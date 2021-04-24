@@ -76,7 +76,4 @@ def get_columns(Database, table):
         3. Database is locked.
         4. Don't have enough privilege.""")
 
-
-
-
 #XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX#
