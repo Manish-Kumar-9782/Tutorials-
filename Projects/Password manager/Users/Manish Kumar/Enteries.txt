@@ -1,0 +1,12 @@
+AcName = Gmail
+id = manishkumaraim9782@gmail.com
+password = moni9782
+AcName = Microsoft
+id = manishkumaraim9782@hotmail.com
+password = moni72525
+AcName = Facebook
+id = manish9782
+password = MoniKumar9782
+AcName = MS Word
+id = Daily Activity
+password =  ManishKumarAim9782 
