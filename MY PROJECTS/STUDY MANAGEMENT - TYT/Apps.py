@@ -1,7 +1,7 @@
 
 # in this section we will make the small app ow by using the widgets and app_func modules.
 # In this section we will use the Tkinter module to make the GUI application or the top level or frame level app.
-from tkinter import Frame, Label , Button ,Spinbox , Toplevel, Tk
+from tkinter import Frame, Label , Button ,Spinbox , Toplevel, Tk , Entry, OptionMenu , StringVar, IntVar
 from tkinter import GROOVE, RAISED, SUNKEN, FLAT
 from tkinter import TOP, LEFT, RIGHT, BOTTOM, W,S,SW, SE, E, EW , X, Y , BOTH
 import Apps_func as apps
@@ -24,22 +24,24 @@ class Timer():
         # initiating the constructor
         def __init__(self, master=None, **kw):
 
-            # initiating the super __init__ .
-            super().__init__(master, **kw)
-            self.master = master
-            self.master.geometry("100x100")
-            self.master.title("Countdown Timer")
-            self.bg_color = '#1f2421'
-            self.fg_color = 'white'
-            self.master.update_idletasks()
+            # initiating the super __init__
+            if master != None:
+
+                super().__init__(master, **kw)
+                self.master = master
+                self.master.geometry("100x100")
+                self.master.title("Countdown Timer")
+                self.master.update_idletasks()
 
         # Now first of all we need to make a frame for the count down
         # we need to set the position of the timer for that we will make different method in more flexible way
-            
+            # global attributes
+            self.bg_color = '#1f2421'
+            self.fg_color = 'white'
         # initiating the timer
             #self.Timer_Frame(self.master)
             self.Countdown_Status = False
-            self.Display_Start(self.master)
+            #self.Display_Start(self.master)
             #self.Ask_Countdown_Time(self.master)
             #self.Countdown_timer(self.master)
 
@@ -53,7 +55,7 @@ class Timer():
             self.ad_time = None
 
             # after initiating all the attirbute or properties of the master window we need to use the .updateidle_task() method().
-
+            self.Timer_record_data = None
 
 
         def Timer_Attribute(self , t_frame):
@@ -102,6 +104,7 @@ class Timer():
             self.save_timer = apps.SaveTime()
             data_dict = {
                 "Date":ttime.strftime("%d-%b-%Y"),
+                "Time":ttime.strftime("%I:%M:%S %p"),
                 "Countdown time":time,
                 "Countdown completion time": None,
             }
@@ -131,6 +134,8 @@ class Timer():
             master.overrideredirect(True)
             master.geometry("200x60")
             master.update_idletasks()
+            master.attributes("-topmost",True)
+            master.update()
             
             # setting the position of the Contdown timer.
             ww, wh, x, y = Pos.Position_Timer(master, "BottomRight")
@@ -270,10 +275,6 @@ class Timer():
                     # now at the end we need to make self.Stopwatch as NOne.
                     self.Stopwatch = None
 
-                    # Now here we need to save the data by using the SaveTime class from Apps_func.
-                    self.save_timer.save_countdown_time("./data/temp.csv", data_dict)
-
-
 
                 elif button.cget('text') == "Restart":
                     # if we pressed the restart then it should restart the time.
@@ -287,20 +288,33 @@ class Timer():
                     print("Wrong status..", button.cget('text'))
                     time_label.after_cancel(self.timer_id)
 
+            def save_data():
+                # Now here we need to save the data by using the SaveTime class from Apps_func.
+                if self.Timer_record_data:
+                    self.Timer_record_data.update(data_dict)
+                else:
+                    self.Timer_record_data = data_dict
+                self.save_timer.save_countdown_time("./data/temp.csv", self.Timer_record_data)
+                master.destroy()
+
+
             start_button.config(command=lambda x=start_button: set_status(x))
             pause_button.config(command=lambda x=pause_button: set_status(x))
             stop_button.config(command=lambda x=stop_button: set_status(x))
-
+            close_button.config(command = save_data)
 
 
 
 ##----------------------------------------------------------------------------------------------------------------------
-        def Ask_Countdown_Time(self , master):   # Top level app
+        def Ask_Countdown_Time(self , master, data = None):   # Top level app
             """
             This Function will create another top level window to ask the time for countdown.
             :param Master: This is the root window for the For this frame on which we are asking the time.
             :return: -----> str this will return the time in form of string.
             """
+            if data:
+                self.Timer_record_data = data
+                print("got record data: ", self.Timer_record_data)
             # first of all we need to make a frame for the entries.
             Pos = apps.widget()
 
@@ -381,7 +395,7 @@ class Timer():
             def set_timer():
                 # in this we need to get the value from the Spinbox and and set the timer.
                 time = f"{hour_entry.get()}:{min_entry.get()}:{sec_entry.get()}"
-                print(time)
+                print("Timer set to:", time)
                 root = Tk()
                 # Now after getting the time we need to pass this time into Countdown timer method.
                 master.destroy()
@@ -485,6 +499,130 @@ class Timer():
 
             Start_countdown_timer_button.config(command = set_timer)
 
+        def Display_Idle_Timer(self ,master):
+            """
+            This function will be used to display the idle timer on the Dashboard about section.
+            :param master: this is the master window where we will display our idle timer.
+            :return: None
+            """
+            '''
+            This will contain the idle time and it will be paused while the countdown timer is running.
+            '''
+            pass
 
-#-----------------------------------------------------------------------------------------------------------------------
+##---------------------------------------------------------------------------------------------------------------------##
+##---------------------------------------------------------------------------------------------------------------------##
+##---------------------------------------------------------------------------------------------------------------------##
+
+class Keeps:
+    """
+    This class will hold all of the Keeps objects.
+    """
+
+class Tracks(Frame):
+
+    """
+    This class will be used to operates the tracks and their data.
+    """
+    def __init__(self, master = None):
+
+        super().__init__(master=master)
+        self.TimerApp = Timer.Countdown()
+
+        if master:
+            if master.winfo_class() == 'Tk' or master.winfo_class() == 'Toplevel' :
+                self.master.title("Tracks")
+                # for now we will set this master geometry.
+                self.master.geometry("700x600")
+
+        self.Add_Time_Record_master = None
+        self.BottomSection_master = None
+
+    def BottomSection(self, master):
+        """
+        This bottom section of the some input button and information.
+        :return:
+        """
+        Track_Bottom_Section = Frame(master, bg = 'gray', height = 50)
+        Track_Bottom_Section.pack(side = BOTTOM, fill = X, expand = True, anchor = 's')
+        Track_Bottom_Section.pack_propagate(False)
+
+        # here in this section we will put the button for adding the new time record.
+        self.add_time_record_button = Button(Track_Bottom_Section, text = 'ADD')
+        self.add_time_record_button.pack(side = RIGHT, anchor = 'se')
+        # now this button will be linked to the new toplevel application which will be used to add new time record.
+
+
+    def Add_Time_Record(self, master):
+        """
+        This will be used to add a new time record for the day.
+        :param master: this is the master window in which it will be placed, for simplicity make it a toplevel window.
+        :return: Nothing.
+        """
+        options  = ['Subject','Project','Activity']
+        option_menu_var = StringVar()
+        option_menu_var.set('Select Record Section')
+
+        record_name_var = StringVar()
+        record_topic_var = StringVar()
+        record_subtopic_var = StringVar()
+
+
+        # since it will be placed in a new top level window so now we need to set some property for the new top level window.
+        if master.winfo_class() == 'Tk' or master.winfo_class() == 'Toplevel':
+            master.title("Add Time Record")
+            master.geometry("400x400")
+            master.update_idletasks()
+            #master.config(bg = 'white')
+
+        # now we need to make some label and some entry
+        l_cfg = {'bg':'white', 'fg':'blue'}
+        e_efg = {'bg':"white", 'fg':'blue', 'highlightbackground':'black', 'highlightcolor':'black', 'highlightthickness':2 , 'relief':FLAT}
+
+
+
+        options_menu = OptionMenu(master, option_menu_var, *options)
+        options_menu.grid(row = 0, column = 1, pady= (10,5))
+
+        time_record_name_label = Label(master, text = 'Record Name',cnf = l_cfg)
+        time_record_name_label.grid(row = 1, column = 0, pady = 10)
+
+        time_record_name_entry = Entry(master, cnf = e_efg , textvariable = record_name_var)
+        time_record_name_entry.grid(row = 1, column = 1, pady = 10)
+
+        time_topic_label = Label(master,text = 'Topic' ,cnf = l_cfg)
+        time_topic_label.grid(row = 2, column = 0)
+
+        time_topic_entry = Entry(master, cnf = e_efg , textvariable = record_topic_var)
+        time_topic_entry.grid(row = 2, column = 1, pady = 10)
+
+        time_record_subtopic_label = Label(master,text = 'Sub Topic',  cnf = l_cfg)
+        time_record_subtopic_label.grid(row = 3, column = 0, pady = 10)
+
+        time_record_subtopic_entry = Entry(master, cnf= e_efg , textvariable = record_subtopic_var)
+        time_record_subtopic_entry.grid(row = 3, column = 1, pady = 10)
+
+        start_time_record_button = Button(master, text = 'Start')
+        start_time_record_button.grid(row = 4, column = 1,pady = (20,0 ))
+
+        # now we need to set all the record data in a dict to send the data for ask_countdown method.
+
+        # here we need to initiate the Ask_Countdown_Timer
+
+        def init_countdown_timer():
+            # here we need to make a new toplevel window.
+            # this will start the ask countdown application to ask the time for the countdown.
+            # and here also we will set the data for the record when the time is asked.
+            record_data = {"Record Type": option_menu_var.get(),
+                           "Record Name": record_name_var.get(),
+                           "Record Topic": record_topic_var.get(),
+                           "Record SubTopic": record_subtopic_var.get()}
+            root =  Tk()
+            self.Add_Time_Record_master.destroy()
+            self.TimerApp.Ask_Countdown_Time(root , record_data)
+            root.mainloop()
+
+        start_time_record_button.config(command = init_countdown_timer)
+
+
 

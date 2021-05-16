@@ -156,19 +156,19 @@ class SaveTime:
         if data != None:
             columns = data.keys()
         time_data = list()
+        isdata = False
         if os.path.isfile(fp):
             # if there is already a time_data then first we need to read it.
             with open(fp,'r' , newline='') as tfile:
                 reader = csv.reader(tfile , delimiter = ',')
                 # now after reading the file we need to put the new data in the file.
-      
                 for value in reader:
                     time_data.append(value)
             print(time_data)
 
 
         # now we have the old time data , if there was.
-        if time_data == None :
+        if len(time_data) == 0 :
             # if data is none then we have some data in the file.
             # so now we need to add new data.
             # fisrt of all we need to separate the columns.
