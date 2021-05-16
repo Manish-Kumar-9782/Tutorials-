@@ -11,7 +11,9 @@ import time, os , csv
 class Time:
 
     def __init__(self):
-        pass
+        self.Idle_Time = 0
+        self.Idle_init_time = time.mktime(time.localtime())
+        self.Idle_Timer_status = None # it can be Running or Stopped.
 
     def time_to_seconds(self, time):
         # first separate the hour , minute and second.
@@ -42,6 +44,29 @@ class Time:
             return f"{Hr:02d}:{Min:02d}:{Sec:02d}"
         else:
             return Hr,Min ,Sec
+
+    def idle_timer(self):
+        """
+        This function will be used to track the idle time of the
+        :return: This will return the time in seconds.
+        """
+        # here we need to use the global instance to start and stop the idle time.
+        if self.Idle_Timer_status == "Running":
+
+            self.Idle_Time += time.mktime(time.localtime()) - self.Idle_init_time
+
+        elif self.Idle_Timer_status == "Run":
+
+            self.Idle_Time += time.mktime(time.localtime()) - self.Idle_init_time
+            self.Idle_init_time = time.mktime(time.localtime())
+
+        elif self.Idle_Timer_status == "Pause":
+            self.Idle_init_time = time.mktime(time.localtime())
+
+        elif self.Idle_Timer_status == 'Pause_Idle':
+            self.Idle_Time += self.Idle_Time
+            self.Idle_init_time = time.mktime(time.localtime())
+
 
 
     class StopWatch:
@@ -110,6 +135,7 @@ class Time:
             self.Hour , self.Min = self._hour_()
             return self.Hour, self.Min , self.Sec
 
+
 class SaveTime:
 
     """
@@ -118,7 +144,7 @@ class SaveTime:
     def __init__(self):
         pass
 
-    def save_countdown_time(self,fp, data):
+    def save_countdown_time(self,fp, data=None):
         """
         This function is used to save the time. This function will take single day data at once. if we are getting the
         data multiple times then it will store the data in same row but it will use different columns.
@@ -127,28 +153,44 @@ class SaveTime:
         :param fp: file path at which the time need to be stored.
         :return: Nothing.
         """
-        columns = data.keys()
-
-        time_data = None
+        if data != None:
+            columns = data.keys()
+        time_data = list()
         if os.path.isfile(fp):
             # if there is already a time_data then first we need to read it.
             with open(fp,'r' , newline='') as tfile:
-                time_data = csv.reader(tfile , delimiter = ',')
+                reader = csv.reader(tfile , delimiter = ',')
                 # now after reading the file we need to put the new data in the file.
-                print(time_data)
+      
+                for value in reader:
+                    time_data.append(value)
+            print(time_data)
+
 
         # now we have the old time data , if there was.
-        if time_data != None:
+        if time_data == None :
             # if data is none then we have some data in the file.
             # so now we need to add new data.
             # fisrt of all we need to separate the columns.
-            with open(fp,'w') as tfile:
-                pass
+            with open(fp, 'w', newline='') as tfile:
+                write = csv.writer(tfile, delimiter=',')
+                write.writerow(columns)  # writing the columns
+                write.writerow(data.values())  # writing the first line data.
         else:
-            with open(fp,'w' ,newline='') as tfile:
-                write = csv.writer(tfile , delimiter = ',')
-                write.writerow(columns)   # writing the columns
-                write.writerow(data.values()) # writing the first line data.
+            print("old data: ",time_data[0])
+            print("new data: ",data.keys())
+            if len(time_data[0] ) < len(data.keys()):
+                # if new data has more column then we need add them in our existing data.
+                time_data[0] = data.keys()
+                time_data.append(data.values())
+            else:
+                time_data.append(data.values())
+                
+            with open(fp, 'w', newline='') as file:
+                write = csv.writer(file, delimiter =',')
+                for row in time_data:
+                    write.writerow(row)
+
 
 
 
