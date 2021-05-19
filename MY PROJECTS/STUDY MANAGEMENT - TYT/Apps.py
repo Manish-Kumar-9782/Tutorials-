@@ -6,6 +6,7 @@ from tkinter import GROOVE, RAISED, SUNKEN, FLAT
 from tkinter import TOP, LEFT, RIGHT, BOTTOM, W,S,SW, SE, E, EW , X, Y , BOTH
 import Apps_func as apps
 import time as ttime
+from tkinter import messagebox
 
 
 
@@ -528,6 +529,8 @@ class Tracks(Frame):
 
         super().__init__(master=master)
         self.TimerApp = Timer.Countdown()
+        self.target_id = None
+        self.target_datadict = None
 
         if master:
             if master.winfo_class() == 'Tk' or master.winfo_class() == 'Toplevel' :
@@ -538,22 +541,96 @@ class Tracks(Frame):
         self.Add_Time_Record_master = None
         self.BottomSection_master = None
 
-    def BottomSection(self, master):
+    def Set_Today_target(self,master = None):
         """
-        This bottom section of the some input button and information.
-        :return:
+        This will create a top level window which will allow us to make the today working hour target.
+        :param master: This will be the
+        :return: this will return tuple of three value, these values contains the range of hour.
+                The range of hour will be defined in the level entries.
         """
-        Track_Bottom_Section = Frame(master, bg = 'gray', height = 50)
-        Track_Bottom_Section.pack(side = BOTTOM, fill = X, expand = True, anchor = 's')
-        Track_Bottom_Section.pack_propagate(False)
 
-        # here in this section we will put the button for adding the new time record.
-        self.add_time_record_button = Button(Track_Bottom_Section, text = 'ADD')
-        self.add_time_record_button.pack(side = RIGHT, anchor = 'se')
-        # now this button will be linked to the new toplevel application which will be used to add new time record.
+        spin_config = {'width':2, 'font': ('sarif', 15, 'bold')  }
+
+        target_frame = Frame(master, height = 200, width = 100)
+        target_frame.pack(fill = BOTH, expand = 1)
+        master.geometry('250x250')
+
+        # now we need to add some level in this target_frame
+        level1_lvar , level1_hvar= IntVar() , IntVar()
+        level2_lvar , level2_hvar= IntVar() , IntVar()
+        level3_lvar , level3_hvar= IntVar() , IntVar()
 
 
-    def Add_Time_Record(self, master):
+        # now we will create three row for each level
+        level1_label = Label(target_frame, text = 'Level 1 Hours')
+        level2_label = Label(target_frame, text = 'Level 2 Hours')
+        level3_label = Label(target_frame, text = 'Level 3 Hours')
+
+        # Now we need to create spin box for lower and upper values.
+        level_1_low = Spinbox(target_frame , cnf = spin_config , textvariable = level1_lvar , from_ = 0 , to= 24)
+        level_1_high = Spinbox(target_frame, cnf=spin_config , textvariable = level1_hvar, from_ = 0 , to= 24)
+
+        level_2_low = Spinbox(target_frame, cnf=spin_config , textvariable = level2_lvar, from_ = 0 , to= 24)
+        level_2_high = Spinbox(target_frame, cnf=spin_config , textvariable= level2_hvar, from_ = 0 , to= 24)
+
+        level_3_low = Spinbox(target_frame, cnf=spin_config , textvariable = level3_lvar, from_ = 0 , to= 24)
+        level_3_high = Spinbox(target_frame, cnf=spin_config , textvariable = level3_hvar, from_ = 0 , to= 24)
+
+        # now we need to put all the thing using a grid layout.
+        padding_x = 15
+        padding_y = 20
+        # first row
+        level1_label.grid(row = 0 , column = 0 ,pady = padding_y+10 , padx = padding_x)
+        level_1_low.grid(row = 0 , column = 1, pady = padding_y ,padx = padding_x)
+        level_1_high.grid(row = 0 , column = 2, pady = padding_y , padx = padding_x)
+
+        # second row
+        level2_label.grid(row = 1 , column = 0, pady = padding_y, padx = padding_x)
+        level_2_low.grid(row = 1, column = 1, pady = padding_y ,padx = padding_x)
+        level_2_high.grid(row = 1 , column = 2, pady = padding_y, padx = padding_x)
+
+        # Third row
+        level3_label.grid(row = 2 , column = 0, pady = padding_y, padx = padding_x)
+        level_3_low.grid(row = 2 , column = 1, pady = padding_y, padx = padding_x)
+        level_3_high.grid(row = 2 , column = 2, pady = padding_y, padx = padding_x)
+
+
+        def check_values():
+            # this function will check the level values if they are not in order then we will show an error.
+
+            l1l, l1h = int(level_1_low.get()) , int(level_1_high.get())
+            l2l, l2h = int(level_2_low.get()) , int(level_2_high.get())
+            l3l, l3h = int(level_3_low.get()) ,int( level_3_high.get())
+
+            errormessage = """Time Bound Error, Please set the time in continuous order,
+            like: 1-4, 4-6, 6-8"""
+
+            if l1l >= 0 and l1l < l1h:
+                if l2l == l1h and l2h > l2l:
+                    if l2h == l3l and l3h > l3l:
+                        # Now all the level are inserted correctly then we will save our data.
+                        self.target_datadict = {"Date":ttime.strftime("%d-%b-%Y"),
+                                    "Time":ttime.strftime("%I:%M:%S %p"),
+                                    "l1l":l1l, "l1h":l1h,
+                                    "l2l":l2l, "l2h":l2h,
+                                    "l3l":l3l, "l3h":l3h}
+
+                        save = apps.SaveTime()
+                        save.save_today_target_time(self.target_datadict)
+
+                    else:
+                        messagebox.showerror(title = "Time Error", message = errormessage)
+                else:
+                    messagebox.showerror(title = "Time Error", message = errormessage)
+            else:
+                messagebox.showerror(title = "Time Error", message = errormessage)
+
+        set_button = Button(target_frame, text = 'set', command = check_values , width = 5)
+        set_button.place(x = 100, y = 215)
+
+        # Now if we dont have any root for this then we will make a new toplevel window.
+
+    def Add_Time_Record(self, master = None):
         """
         This will be used to add a new time record for the day.
         :param master: this is the master window in which it will be placed, for simplicity make it a toplevel window.
@@ -566,7 +643,6 @@ class Tracks(Frame):
         record_name_var = StringVar()
         record_topic_var = StringVar()
         record_subtopic_var = StringVar()
-
 
         # since it will be placed in a new top level window so now we need to set some property for the new top level window.
         if master.winfo_class() == 'Tk' or master.winfo_class() == 'Toplevel':
@@ -626,3 +702,62 @@ class Tracks(Frame):
 
 
 
+    def Add_Record(self,master):
+        """
+        This will be small top level application which will be used to add a new record which will be displayed on the Track Section.
+        :param master: This will be the master/root window on which this application will be placed.
+        :return: None
+        """
+        ts = apps.Time()
+        Date = ts.get_current_data()
+        Time = ts.get_current_time()
+        l_cfg = {'bg': 'white', 'fg': 'blue'}
+        e_cfg = {'bg': "white", 'fg': 'blue', 'highlightbackground': 'black', 'highlightcolor': 'black',
+                 'highlightthickness': 2, 'relief': FLAT , 'width': 30}
+
+        # Now we need to make the applicaton layout.
+        Main_Frame = Frame(master, width = 400 , height = 400)
+        Main_Frame.pack()
+        Main_Frame.pack_propagate(False)
+
+        # Now we need to make the Entries and labels.
+        Type_option_List = ["Project","Subject","Activity"]
+        Type_option_var = StringVar()
+        Type_option_var.set("Select Type")
+
+        Type_Label = Label(Main_Frame, text = "Name of Type")
+        Type_Option = OptionMenu(Main_Frame,Type_option_var, *Type_option_List )
+        Type_Option.config(width = 24 , relief = 'flat', bg='white', highlightbackground ='black', highlightcolor = 'black',highlightthickness = 2)
+
+        # Now we need to do put other things.
+        # Name of selected type
+        Name_label = Label(Main_Frame, text = 'Name', cnf = l_cfg)
+        Name_entry = Entry(Main_Frame , cnf = e_cfg)
+
+        # Topic
+        Topic_label = Label(Main_Frame, text = 'Topic Name', cnf = l_cfg)
+        Topic_entry = Entry(Main_Frame, cnf = e_cfg)
+
+        # SubTopic
+        SubTopic_label = Label(Main_Frame, text = 'Sub Topic Name', cnf = l_cfg)
+        SubTopic_entry = Entry(Main_Frame, cnf = e_cfg)
+
+        TargetHour_label = Label(Main_Frame, text='Target Hour', cnf=l_cfg)
+        TargetHour_entry = Entry(Main_Frame, cnf=e_cfg)
+
+
+        # Now we need to put all thing using the grid system layout.
+        Type_Label.grid(row=0, column=0  , pady= (20,0))
+        Type_Option.grid(row=0, column=1, pady = (20,0))
+
+        Name_label.grid(row=1, column=0)
+        Name_entry.grid(row=1, column=1)
+
+        Topic_label.grid(row=2, column=0)
+        Topic_entry.grid(row=2, column=1)
+
+        SubTopic_label.grid(row=3, column=0)
+        SubTopic_entry.grid(row=3, column=1)
+
+        TargetHour_label.grid(row=4, column=0)
+        TargetHour_entry.grid(row=4, column=1)

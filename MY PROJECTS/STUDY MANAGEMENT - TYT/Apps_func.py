@@ -1,5 +1,6 @@
 
 import time, os , csv
+from tkinter import messagebox
 
 
 # This module will cover all the small application functionallity which will be used together in the dashboard and the main appication.
@@ -44,6 +45,14 @@ class Time:
             return f"{Hr:02d}:{Min:02d}:{Sec:02d}"
         else:
             return Hr,Min ,Sec
+
+    @staticmethod
+    def get_current_data():
+        return time.strftime("%d-%b-%Y")
+
+    @staticmethod
+    def get_current_time():
+        return time.strftime("%I:%M:%S %p")
 
     def idle_timer(self):
         """
@@ -191,12 +200,31 @@ class SaveTime:
                 for row in time_data:
                     write.writerow(row)
 
+    def save_today_target_time(self , data = None):
+        
+        """
+        This function will be used to set the working time target on and it will be monitored by a progress bar.
+        :param data: this will be dictionary in which all the values will be passed to csv writer.
+        :return: None
+        """
 
+        if data != None:
+            cols = data.keys()
+            if os.path.isfile("./data/daily_target.csv"):
+                with open("./data/daily_target.csv", 'a', newline='') as file:
+                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer.writerow(data)
+            else:
+                with open("./data/daily_target.csv", 'a', newline='') as file:
+                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer.writeheader()
+                    writer.writerow(data)
 
-
-
-
-
+        else:
+            messagebox.showerror(title="Save Error", message="Can't save the target time.\nwe got a None value to save the data.")
+            
+            
+        
 
 class widget:
 

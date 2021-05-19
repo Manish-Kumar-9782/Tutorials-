@@ -2,19 +2,20 @@
 # This Section of the project will be used to display all the application on a dashboard window.
 from tkinter import Frame,Label, Button
 from tkinter import TOP, BOTTOM,LEFT,RIGHT,BOTH,X,Y
-from Widgets import widgets
+from Frame_Section import Sections, Frames
+import Widgets
 
 class Dashboard:
     
     def __init__(self):
+
         pass
-    
     class Keeps(Frame):
         """
         This class will be used to manage the keeps notes on the Application.
         """
         def __init__(self, master = None):
-            # 
+            #
             super().__init__(master)
             pass
             
@@ -61,10 +62,10 @@ class Dashboard:
             self.master.title("TM-TYT") # title: Time Management Track Your Time.
             self.master.geometry("900x700")
             self.master.update_idletasks()
-            self.widgets = widgets()
+            self.setup = Sections()
 
             self.Applications() # In this function we puts all of our section.
-        
+
         def MenuSection(self, master=None):
             """
             This section will be used to put all the menu button and functions. this will packed at the top of the 
@@ -87,20 +88,23 @@ class Dashboard:
             :param master: master at which we will put this about section.
             :return: this will not return anything.
             """
-            app_menu_section = Frame(master, bg = 'blue', width = 200, height = 600)
-            app_menu_section.pack(side = LEFT, fill = Y)
+            self.wid = Widgets.Widgets()
+            app_menu_section = Frame(master, bg = 'blue')
+            app_menu_section.pack(side = LEFT, fill = BOTH, expand = True)
             app_menu_section.pack_propagate(False)
 
-            label = Label(app_menu_section, text="App Menu Section")
-            label.pack()
+            # Now here we need to make a Note book which will hold the Some frames.
+            # here will use the Widgets class Create_Notebook to create a notebook and this will need a master.
+            notebook = self.wid.Create_Notebook()
+            nb = notebook.Notebook(app_menu_section, 400, 400 , tabposition='wn')
+            # Now we need to add some frames into this
+            frames = Frames()
+            tracks_frame = frames.Tracks_Frame(nb)
+            keeps_frame = frames.Keeps_Frame(nb)
+            notebook.Add_Tab(tracks_frame , tabName="Tracks" )
+            notebook.Add_Tab(keeps_frame,tabName="Keeps")
 
-            # Keeps button will be used to initiate the Keeps application on the AppContentSection
-            self.Keeps_Button = Button(app_menu_section, text='Keeps')
-            self.Keeps_Button.pack(pady = 20)
 
-            # Tracks button will be used to initiate the Tracks of subject, project , activity,
-            self.Track_Button = Button(app_menu_section, text = 'Tracks')
-            self.Track_Button.pack(pady = 20)
 
 
 
@@ -109,8 +113,6 @@ class Dashboard:
             app_content_section = Frame(master , bg = 'yellow', width = 600, height = 600)
             app_content_section.pack(side = LEFT, fill = BOTH, expand=True )
             app_content_section.pack_propagate(False)
-
-            self.Track_Button.config(command=lambda: self.widgets.Tracks_Section(master=app_content_section))
 
             label = Label(app_content_section, text="App Content Section")
             label.pack()
@@ -144,7 +146,7 @@ class Dashboard:
             AppMidSection.pack_propagate(False)
 
             self.AppMenuSeciton(AppMidSection)
-            self.AppContentSection(AppMidSection)
+            #self.AppContentSection(AppMidSection)
             self.AboutSection(root)
             
             
