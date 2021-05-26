@@ -1,13 +1,15 @@
 
 # in this section we will make the small app ow by using the widgets and app_func modules.
 # In this section we will use the Tkinter module to make the GUI application or the top level or frame level app.
+
 from tkinter import Frame, Label , Button ,Spinbox , Toplevel, Tk , Entry, OptionMenu , StringVar, IntVar
 from tkinter import GROOVE, RAISED, SUNKEN, FLAT
 from tkinter import TOP, LEFT, RIGHT, BOTTOM, W,S,SW, SE, E, EW , X, Y , BOTH
+from tkinter import ttk
 import Apps_func as apps
 import time as ttime
 from tkinter import messagebox
-
+import Widgets
 
 
 class Timer():
@@ -531,7 +533,9 @@ class Tracks(Frame):
         self.TimerApp = Timer.Countdown()
         self.target_id = None
         self.target_datadict = None
-
+        self.Add_Record_Data = None  # This is the New Root Card Data in Which we can add more subcard
+        self.Add_Record_Card_Name = None  # This will be the Name of the RootCard.
+        self.App_Cards = apps
         if master:
             if master.winfo_class() == 'Tk' or master.winfo_class() == 'Toplevel' :
                 self.master.title("Tracks")
@@ -632,7 +636,8 @@ class Tracks(Frame):
 
     def Add_Time_Record(self, master = None):
         """
-        This will be used to add a new time record for the day.
+        This will be used to add a new time record for the day. We will use this application to set a new time record for an existing
+            or new Time_Record.
         :param master: this is the master window in which it will be placed, for simplicity make it a toplevel window.
         :return: Nothing.
         """
@@ -709,25 +714,45 @@ class Tracks(Frame):
         :return: None
         """
         ts = apps.Time()
-        Date = ts.get_current_data()
-        Time = ts.get_current_time()
-        l_cfg = {'bg': 'white', 'fg': 'blue'}
+        wid = Widgets.Widgets()
+
+        DateFrame = wid.Date_Frame()
+        Style = ttk.Style() # this style is for combobox
+
+
+
+        Date = ts.get_current_data()  # This wiil be use to set the current date on which the card is created.
+        Time = ts.get_current_time()  # This will be use to set the current time at which the card is created.
+        l_cfg = {'bg': 'green', 'fg': 'white', 'font':('sarif',10,'bold')}
         e_cfg = {'bg': "white", 'fg': 'blue', 'highlightbackground': 'black', 'highlightcolor': 'black',
                  'highlightthickness': 2, 'relief': FLAT , 'width': 30}
 
         # Now we need to make the applicaton layout.
-        Main_Frame = Frame(master, width = 400 , height = 400)
+        Main_Frame = Frame(master, width = 350 , height = 300, bg = 'green')
         Main_Frame.pack()
         Main_Frame.pack_propagate(False)
+        Main_Frame.grid_propagate(False)
+        Main_Frame.update_idletasks()
+        l_cfg['bg'] = Main_Frame.cget('bg')
+        if master.winfo_class() == 'Tk' or master.winfo_class == 'Toplevel':
+            # here if we get master as a toplevel or root window then we will set the size of the window.
+            h= Main_Frame.cget('height')
+            w =Main_Frame.cget('width')
+            print(h,w)
+            master.geometry(f"{w}x{h}")
+            master.update_idletasks()
+
+        Style.configure("Add_Record.TCombobox", background= 'white')
 
         # Now we need to make the Entries and labels.
         Type_option_List = ["Project","Subject","Activity"]
         Type_option_var = StringVar()
         Type_option_var.set("Select Type")
 
-        Type_Label = Label(Main_Frame, text = "Name of Type")
+        Type_Label = Label(Main_Frame, text = "Name of Type", cnf =l_cfg)
         Type_Option = OptionMenu(Main_Frame,Type_option_var, *Type_option_List )
-        Type_Option.config(width = 24 , relief = 'flat', bg='white', highlightbackground ='black', highlightcolor = 'black',highlightthickness = 2)
+        Type_Option.config(width = 24 , relief = 'flat', bg='white',
+                           highlightbackground ='black', highlightcolor = 'black',highlightthickness = 2)
 
         # Now we need to do put other things.
         # Name of selected type
@@ -735,29 +760,201 @@ class Tracks(Frame):
         Name_entry = Entry(Main_Frame , cnf = e_cfg)
 
         # Topic
-        Topic_label = Label(Main_Frame, text = 'Topic Name', cnf = l_cfg)
-        Topic_entry = Entry(Main_Frame, cnf = e_cfg)
+        # Topic_label = Label(Main_Frame, text = 'Topic Name', cnf = l_cfg)
+        # Topic_entry = Entry(Main_Frame, cnf = e_cfg)
 
         # SubTopic
-        SubTopic_label = Label(Main_Frame, text = 'Sub Topic Name', cnf = l_cfg)
-        SubTopic_entry = Entry(Main_Frame, cnf = e_cfg)
+        # SubTopic_label = Label(Main_Frame, text = 'Sub Topic Name', cnf = l_cfg)
+        # SubTopic_entry = Entry(Main_Frame, cnf = e_cfg)
 
-        TargetHour_label = Label(Main_Frame, text='Target Hour', cnf=l_cfg)
-        TargetHour_entry = Entry(Main_Frame, cnf=e_cfg)
+        # Target houre
+        # Now we need a frame to put three spinbox for time
+        s_cfg = {'font':('sarif',15,'bold')
+                 }
+        sp_cfg = {'padx':6}
+        f_cfg = {'bg':Main_Frame.cget('bg')}
+
+        TargetHour_Frame_entry = wid.Time_Frame(Main_Frame , s_cfg=s_cfg , sp_cfg=sp_cfg , f_cfg=f_cfg)
+        TargetHour_Frame_label = Label(Main_Frame, text ='Target Hour', cnf=l_cfg)
 
 
+        EndDate_Frame_Label = Label(Main_Frame, text = 'EndDate', cnf=l_cfg)
+        EndDate_Frame_Entry = DateFrame.Date_Frame(Main_Frame , Style="Add_Record.TCombobox")
+        EndDate_Frame_Entry.config(bg = Main_Frame.cget('bg'))
+
+
+
+        c_pady = 10
+        c_padx = 10
         # Now we need to put all thing using the grid system layout.
-        Type_Label.grid(row=0, column=0  , pady= (20,0))
+        Type_Label.grid(row=0, column=0  , pady= (20,0) , sticky = 'e')
         Type_Option.grid(row=0, column=1, pady = (20,0))
 
-        Name_label.grid(row=1, column=0)
-        Name_entry.grid(row=1, column=1)
+        Name_label.grid(row=1, column=0 , pady = c_pady, padx =c_padx, sticky = 'e')
+        Name_entry.grid(row=1, column=1, pady = c_pady, padx =c_padx)
 
-        Topic_label.grid(row=2, column=0)
-        Topic_entry.grid(row=2, column=1)
+        # Topic_label.grid(row=2, column=0, pady = c_pady, padx =c_padx, sticky = 'e')
+        # Topic_entry.grid(row=2, column=1, pady = c_pady, padx =c_padx)
 
-        SubTopic_label.grid(row=3, column=0)
-        SubTopic_entry.grid(row=3, column=1)
+        # SubTopic_label.grid(row=3, column=0, pady = c_pady, padx =c_padx, sticky = 'e')
+        # SubTopic_entry.grid(row=3, column=1, pady = c_pady, padx =c_padx)
 
-        TargetHour_label.grid(row=4, column=0)
-        TargetHour_entry.grid(row=4, column=1)
+
+        TargetHour_Frame_label.grid(row=4, column=0, pady = c_pady, padx =c_padx, sticky = 'e')
+        TargetHour_Frame_entry.grid(row=4, column=1, pady = c_pady, padx =c_padx)
+
+        EndDate_Frame_Label.grid(row=5, column=0, pady = c_pady, padx =c_padx, sticky = 'e')
+        EndDate_Frame_Entry.grid(row=5, column=1, pady = c_pady, padx =c_padx)
+        # Now finally we need to make a button ti submit the and save the data.
+        Set_button = Button(Main_Frame, text ='Set', width = 10)
+        Set_button.place(x=130, y = 250 )
+
+        # Now we will set a function for this set_button in this we will save our data in a file.
+        def save_data():
+            # Note that subtopic can be manipulated by a Subtopic_frame object.
+            # subtopic_frame object will contain the subtopics
+            Hr_var, Min_var, Sec_var = wid.Hr_var.get(), wid.Min_var.get(), wid.Sec_var.get()
+            endDate = DateFrame.Date
+            EndDate_Frame_Entry.after_cancel(DateFrame.Date_update_id)
+            # Now here we need to use the Tracks_Cards class from Apps_func module, class will help us to save all the cards
+            # with their parents in nested way.
+            # For this card we need the CardName
+            Root = {"Root":{}}
+            RootCard = {Name_entry.get(): {'Type':Type_option_var.get(),
+                                   'Name': Name_entry.get(),
+                                   'Date': ttime.strftime("%d-%b-%Y"),
+                                   'Time': ttime.strftime("%I:%M:%S %p"),
+                                   'Topic': {},
+                                   'Target Hour':f"{Hr_var}:{Min_var}:{Sec_var}",
+                                   'EndDate':endDate, # here we need to pass a end date of the
+                                   'Progress': 0,
+                                   'Parent': "Root",
+                                   'FullPath':f"Root.{Name_entry.get()}",
+                                   'Childs': 0}}
+
+
+            self.Add_Record_Card_Name = Name_entry.get()
+            card = wid.Track_Card()
+
+            #Root['Root'].update(RootCard)# updating the Root section of the card database
+            card.Tracks_Cards_Database['Root'].update(RootCard) # updating our old database.
+            print('Database after updating: ',card.Tracks_Cards_Database)
+            #print("Tracks_Cards_Database", card.Tracks_Cards_Database)
+            self.Add_Record_Data = card.Tracks_Cards_Database
+            # Now after Successfully save and create a new NTR Card we need to close this root window
+            # Now after saving the data we need to retrieve the data
+            save = apps.Tracks_Cards()
+            save.SaveCard(CardName=Name_entry.get(), Parent="Root", Database=card.Tracks_Cards_Database)
+            master.destroy()
+            print("self.Add_Record_Data: ",self.Add_Record_Data)
+
+        Set_button.config(command = save_data)
+
+
+    def Add_SubRecord(self, master):
+
+        """
+        This will be small top level application which will be used to add a new sub record which will be displayed on the Track Section.
+        :param master: This will be the master/root window on which this application will be placed.
+        :return: None
+        """
+        ts = apps.Time()
+        wid = Widgets.Widgets()
+        Date = ts.get_current_data()
+        Time = ts.get_current_time()
+        l_cfg = {'bg': 'green', 'fg': 'white', 'font': ('sarif', 10, 'bold')}
+        e_cfg = {'bg': "white", 'fg': 'blue', 'highlightbackground': 'black', 'highlightcolor': 'black',
+                 'highlightthickness': 2, 'relief': FLAT, 'width': 30}
+
+        # Now we need to make the applicaton layout.
+        Main_Frame = Frame(master, width=350, height=300, bg='green')
+        Main_Frame.pack()
+        Main_Frame.pack_propagate(False)
+        Main_Frame.grid_propagate(False)
+        Main_Frame.update_idletasks()
+        l_cfg['bg'] = Main_Frame.cget('bg')
+        if master.winfo_class() == 'Tk' or master.winfo_class == 'Toplevel':
+            # here if we get master as a toplevel or root window then we will set the size of the window.
+            h = Main_Frame.cget('height')
+            w = Main_Frame.cget('width')
+            print(h, w)
+            master.geometry(f"{w}x{h}")
+            master.update_idletasks()
+
+        # Now we need to make the Entries and labels.
+        Type_option_List = ["Project", "Subject", "Activity"]
+        Type_option_var = StringVar()
+        Type_option_var.set("Select Type")
+
+        Type_Label = Label(Main_Frame, text="Name of Type", cnf=l_cfg)
+        Type_Option = OptionMenu(Main_Frame, Type_option_var, *Type_option_List)
+        Type_Option.config(width=24, relief='flat', bg='white',
+                           highlightbackground='black', highlightcolor='black', highlightthickness=2)
+
+        # Now we need to do put other things.
+        # Name of selected type
+        Name_label = Label(Main_Frame, text='Name', cnf=l_cfg)
+        Name_entry = Entry(Main_Frame, cnf=e_cfg)
+
+        # Topic
+        Topic_label = Label(Main_Frame, text='Topic Name', cnf=l_cfg)
+        Topic_entry = Entry(Main_Frame, cnf=e_cfg)
+
+        # SubTopic
+        SubTopic_label = Label(Main_Frame, text='Sub Topic Name', cnf=l_cfg)
+        SubTopic_entry = Entry(Main_Frame, cnf=e_cfg)
+
+        # Target houre
+        # Now we need a frame to put three spinbox for time
+        s_cfg = {'font': ('sarif', 15, 'bold')
+                 }
+        sp_cfg = {'padx': 6}
+        f_cfg = {'bg': Main_Frame.cget('bg')}
+
+        TargetHour_Frame_entry = wid.Time_Frame(Main_Frame, s_cfg=s_cfg, sp_cfg=sp_cfg, f_cfg=f_cfg)
+        TargetHour_Frame_label = Label(Main_Frame, text='Target Hour', cnf=l_cfg)
+
+        c_pady = 10
+        c_padx = 10
+        # Now we need to put all thing using the grid system layout.
+        Type_Label.grid(row=0, column=0, pady=(20, 0), sticky='e')
+        Type_Option.grid(row=0, column=1, pady=(20, 0))
+
+        Name_label.grid(row=1, column=0, pady=c_pady, padx=c_padx, sticky='e')
+        Name_entry.grid(row=1, column=1, pady=c_pady, padx=c_padx)
+
+        Topic_label.grid(row=2, column=0, pady=c_pady, padx=c_padx, sticky='e')
+        Topic_entry.grid(row=2, column=1, pady=c_pady, padx=c_padx)
+
+        SubTopic_label.grid(row=3, column=0, pady=c_pady, padx=c_padx, sticky='e')
+        SubTopic_entry.grid(row=3, column=1, pady=c_pady, padx=c_padx)
+
+        TargetHour_Frame_label.grid(row=4, column=0, pady=c_pady, padx=c_padx, sticky='e')
+        TargetHour_Frame_entry.grid(row=4, column=1, pady=c_pady, padx=c_padx)
+
+        # Now finally we need to make a button ti submit the and save the data.
+        Set_button = Button(Main_Frame, text='Set', width=10)
+        Set_button.place(x=130, y=250)
+
+        # Now we will set a function for this set_button in this we will save our data in a file.
+        def save_data():
+            # Note that subtopic can be manipulated by a Subtopic_frame object.
+            # subtopic_frame object will contain the subtopics
+            Hr_var, Min_var, Sec_var = wid.Hr_var.get(), wid.Min_var.get(), wid.Sec_var.get()
+
+            data_dict = {'Date': Date, 'Time': Time,
+                         'Type': Type_option_var.get(),
+                         'Name': Name_entry.get(),
+                         'Topic': Topic_entry.get(),
+                         'SubTopic': SubTopic_entry.get(),
+                         # This should be subtopic id , since we will create subtopic and
+                         # we will save them it in differrent file.
+                         'Completed': None,  # This completed will be set in another CompletionBar section.
+                         'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}"}
+
+            # Now after Sucessfully save and create a new NTR Card we need to close this root window
+            # Now after saving the data we need to retrieve the data
+            master.destroy()
+            print(data_dict)
+
+        Set_button.config(command=save_data)

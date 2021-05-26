@@ -1,6 +1,10 @@
 
 import time, os , csv
 from tkinter import messagebox
+import calendar
+import json
+from collections.abc import Mapping
+from calendar import Calendar
 
 
 # This module will cover all the small application functionallity which will be used together in the dashboard and the main appication.
@@ -56,8 +60,12 @@ class Time:
 
     def idle_timer(self):
         """
-        This function will be used to track the idle time of the
+        This function will be used to track the idle time of the of the Tracks this will be in running mode always but
+            it will paused during the stopwatch and the countdown of the Tracks
         :return: This will return the time in seconds.
+
+        Note: The motive of the idle_timer is to moniter the idle time of the user during a day. This will be useful to monitor
+            the idle time through out the day, week, month, year.
         """
         # here we need to use the global instance to start and stop the idle time.
         if self.Idle_Timer_status == "Running":
@@ -75,6 +83,26 @@ class Time:
         elif self.Idle_Timer_status == 'Pause_Idle':
             self.Idle_Time += self.Idle_Time
             self.Idle_init_time = time.mktime(time.localtime())
+
+    def  get_month_number(self,month, abbr= False):
+        """
+        This will return the number of the month, in this we will provide the month name and it will give as the number
+            of the month.
+        :param month: str, This will be the full or short name of the month.
+        :param abbr: bool, if this option is True it means we are give an abbreviated name of the name  of the month.
+        :return: int, this will return the number of the month.
+        """
+        Months_Names = None
+        if abbr:
+            Months_Names = calendar.month_abbr
+        else:
+            Months_Names = calendar.month_name
+
+        for month_number , month_name in enumerate(Months_Names):
+
+            if month_name == month:
+                return month_number
+
 
 
 
@@ -223,7 +251,27 @@ class SaveTime:
         else:
             messagebox.showerror(title="Save Error", message="Can't save the target time.\nwe got a None value to save the data.")
             
-            
+    def Save_data(self, file, data):
+        """
+        This function will be used to save the data in a file. this function will use the csv.dictwriter to save the data in a file.
+        :param file: file in which we want to save the data. Please provide full path of the file.
+        :param data: This is the data which will be passed in the csv.dictwriter to write the data. it must be a dictionary.
+        :return:
+        """
+        if data != None:
+            cols = data.keys()
+            if os.path.isfile(file):
+                with open(file, 'a', newline='') as file:
+                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer.writerow(data)
+            else:
+                with open(file, 'a', newline='') as file:
+                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer.writeheader()
+                    writer.writerow(data)
+
+        else:
+            messagebox.showerror(title="Save Error", message="Can't save the target time.\nwe got a None value to save the data.")
         
 
 class widget:
@@ -297,3 +345,184 @@ class widget:
     def Label_config(self, label ):
         pass
 
+
+class Tracks_Cards:
+
+    """
+    This class will contain all the functionality to manipulate cards and their information.
+    like it will have add_card, del_card, get_card, get_card_info, get_card_address etc.
+    """
+    def __init__(self, Card_key ="Topic" ):
+
+        self.card_key = Card_key # This is the key for the parent database in which we will put the new SubCard Data.
+
+    def SaveCard(self, CardName,Parent, Database, Subcard=None, FullName=None):
+         # we need to import the json to work on the json files
+        """
+        This function will be used to save the card detail in json format. if the card is root then will save a with typname and id.
+            but if the card is subcard then it will be saved inside the existing card.
+        :param Database: This is the data which will saved in json format.
+        :param Subcard: If it is true then we will save the card in the existing card.
+        :param FullName: This is the full path of the Subcard, this will help us tho save the sub card.
+        :return: None.
+        """
+
+        if Subcard:
+            # if are saving the sub-cards then this section will be followed.
+            filename = './Data/temp'
+            Database = self.Add_SubCard(Parent = Parent, Child=CardName,Data = Subcard, Database=Database)
+            with open(filename, 'w') as file:
+                json.dump(Database,file, indent=2)
+
+        else:
+         # if we are saving the root-card then we will follow this section.
+            # To save a root card what we will need
+                # first the location and the name of the file on which we want to save the data
+                # Second, In which format we need to save the data.
+            filename = './Data/temp'
+            with open(filename, 'w') as file:
+                json.dump(Database,file, indent=2)
+
+    def Read_Cards_Database(self, fileName = './Data/temp'):
+
+        if os.path.isfile(fileName):
+            if os.path.getsize(fileName) != 0:
+
+                with open(fileName, 'r') as file:
+                    Database = json.load(file)
+                return Database
+            else:
+                print("File is empty")
+                return {'Root':{}}
+        else:
+            print("File Not found")
+            file = open('./Data/temp','w')
+            file.close()
+            return None
+
+    def Add_Root_Card(self,CardName, **Cardinfo):
+
+        # These are some standard card information there can be more info keys in future
+        RootCard = {"Root":{CardName:{'Type':'Project',
+                              'Name':CardName,
+                              'Date': time.strftime("%d-%b-%Y"),
+                              'Time':time.strftime("%I:%M:%S %p"),
+                              'Topic':{}, #
+                              'Target Hour':0,
+                              'Progress':0,
+                              'Parent':CardName,
+                              'FullPath':'RootCard',
+                              'Childs':0}}}
+
+        for InfoKey in Cardinfo:
+            # Now we will update our default card information as it given.
+            RootCard["Root"][CardName][InfoKey] = Cardinfo[InfoKey]
+
+        return RootCard
+
+    def Add_SubCard(self, Parent, Child, Data, Database):
+        """
+        This function will be used to add a new sub card in the inside an existing card, the existing card will
+            be a parent card and a Child card will be placed inside this parent card.
+        :param Parent: Parent Card can be a root card in which all the other cards are placed or it can be a Child card which is also used
+            a parent of another child cards.
+        :param Child: This is the Child which will be put inside the parent card.
+        :param Data: This is the Data of the Child card.
+        :param Database: This must be the Database of whole tracks not of an individual card database.
+        :return : None
+        """
+        ParentList = Parent.split('.')
+
+        def deep_update(parentlist, child,data,database):
+            self.database = database
+            self.key = None
+            if len(parentlist) == 0:
+                # if we are end of the parent list then we need to update the Databse
+                #print("Adding new card in databse:- ",list(self.database.keys())[0],self.database)
+                self.database[self.card_key].update(data)
+                return self.database
+
+            else:
+                self.key = parentlist[0]
+            if isinstance(self.database.get(self.key, None), Mapping):
+                # Now if we are in Card dir then we need to remove used parent and return to the method again.
+                parentlist.pop(0)
+                self.database = deep_update(parentlist, child,data,self.database.get(self.key,None))
+
+            else:
+
+                if isinstance(self.database.get(self.card_key, None), Mapping):
+                    self.database = deep_update(parentlist, child, data, self.database.get(self.card_key, None))
+
+
+                return self.database
+            #print("Database:",self.database)
+            #print(f"{'_'*100}\n{'_'*100}\n{'_'*100}")
+            return database
+        return deep_update(ParentList, Child, Data, Database)
+
+    def Get_Card(self,Parent, Child,Database):
+        """
+        This function will be used to get the details associated with a card.
+        :param Parent: This will be the name/fullpath of the parent of the Child.
+        :param Child: This is the child name for which we are looking for.
+        :param Database: This is the Database more like nested dictionaries.
+        :return: it will return the Child data information in the form of dictionary.
+        """
+        Parents = Parent.split('.')
+
+        for parent in Parents:
+            Database = Database[parent][self.card_key]
+            # This loop will help us to reach final or direct parent of the child.
+            # Now after reaching at the direct parent of the child we need to return the Child Database.
+        return Database[Child]
+        # by this line we will update our existing Database with a new Child/subcard.
+
+    def Get_Card_Address(self,Parent, Child,Database):
+        """
+                This function will be used to get the details associated with a card.
+                :param Parent: This will be the name/fullpath of the parent of the Child.
+                :param Child: This is the child name for which we are looking for.
+                :param Database: This is the Database more like nested dictionaries.
+                :return: it will return the Child data information in the form of dictionary.
+                """
+
+        # This function will be define later.
+
+        # Now
+        # by this line we will update our existing Database with a new Child/subcard.
+
+
+    def Delete_SubCard(self,Parent,Child,Database):
+        """
+        This function will be used to delete a subcard which is placed inside a root card or in subcards, This function
+            will only delete the SubCard which is passed in the child argument.
+        :param Parent: This is the parent address of the child which is need to delete.
+        :param Child: This is the child Name which is to be deleted.
+        :param Database: This is the database in which we want to look for the child.
+        :return: None
+        """
+        Parents = Parent.split('.')
+
+        for parent in Parents:
+            Database = Database[parent][self.card_key]
+            # This loop will help us to reach final or direct parent of the child.
+            # Now after reaching at the direct parent of the child we need to return the Child Database.
+        del Database[Child]
+
+    def Retrieve_Cards(self,Database):
+        """
+        This method will be used to retrieve all the card information in a database and it will be use to make cards.
+        :param Database: dict object, Database which contains all the card information.
+        :return: This will return a generator---> yield.
+        """
+        for key, value in Database.items():
+            # Now we need to check that an item with associated key is a dict or not
+            # for that we will use Mapping class from collections.abc
+            if isinstance(Database.get(key, None), Mapping):
+                # this condition will check that an incoming object is a dict or not.
+                # Now we need to yield the key and values
+                yield (key, value) # This will return every sub dictionary in a dict.
+
+                yield from self.Retrieve_Cards(Database.get(key, None))
+                # after yielding and object we need to recall the our method again so it can yield more values.

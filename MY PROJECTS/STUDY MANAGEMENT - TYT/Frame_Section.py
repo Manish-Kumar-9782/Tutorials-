@@ -35,13 +35,11 @@ class Frames(Frame):
 
         super().__init__(master)
         self.Tracks = Tracks()
-
+        self.Wid = Widgets()
 
     def Tracks_Frame(self ,master, height=100,width=100, cfg = None):
 
         # We need a Create_ProgressBar() object from a widges module
-        self.Wid = Widgets.Create_ProgressBar()
-
         tracks = Frame(master,height=height,width=width , bg = 'red')
         tracks.pack_propagate(False)
 
@@ -60,18 +58,27 @@ class Frames(Frame):
             self.Tracks.Set_Today_target(root)
 
         set_target_button.config(command = Set_Target)
-        self.Wid.progressbar(top_section)
+        progressbar= self.Wid.Create_ProgressBar()
+        progressbar.progressbar(top_section)
         # Now we need to put the progress bar
-
-
-
 
 #----------------------------------------------------------------------------------------------------------------------##
 #----------------------------------------------------------------------------------------------------------------------##
         # Mid Secion
         mid_section = Frame(tracks , bg = 'blue')
-        mid_section.pack( fill = BOTH, expand = True)
 
+
+        # here we need to retrieve the data and need to make the Cards.
+        self.Tcards = Widgets.Track_Card(mid_section)
+        print("Databse",self.Tcards.Tracks_Cards_Database)
+        self.Tcards.Retrieve_Cards(mid_section,self.Tcards.Tracks_Cards_Database)
+        # wid.Create_Track_Record_Card(mid_section)
+
+        mid_section.pack(fill=BOTH, expand=True)
+        # Now here we need to
+
+#----------------------------------------------------------------------------------------------------------------------##
+#----------------------------------------------------------------------------------------------------------------------##
         # Bottom Section
         bottom_section = Frame(tracks , height = 20, bg = 'white')
         bottom_section.pack(side=BOTTOM, fill = 'x', expand = 0 , anchor = 's')
@@ -90,7 +97,37 @@ class Frames(Frame):
 
         add_time_record_button.config(command = create_add_timer_record_toplevel)
 
+        # Adding a new button For Add New Track Record, This will create a new card.
+        ANTR_Button = Button(bottom_section, text = 'ANTR')
+        ANTR_Button.pack(side=RIGHT, anchor='se')
+        # Now we need to configure this button
 
+        def add_new_track_record():
+            root = Toplevel()
+            self.Tracks.Add_Record(root)
+            root.wait_window(root)
+            print("Data Track Record: ",self.Tracks.Add_Record_Data)
+            # This self record will give us some data. and this data will be used to create a new Track Record..
+            # now we need to use a Track_Card class from widgets module and we need to add a new card.
+            # In this method we will create only a root card.
+
+            # Now this  track record information should be stored in local storage
+            # Every Root card will have its own new database file.
+
+            RootCard = self.Wid.Track_Card()
+            # Now to create a root card on the notebook we need to give it Frame,CardName, data
+            # Frame: In this we will put our Root Card
+            # CardName: The Name of the Card.
+            # data: Additional information about the Card.
+            card_name = self.Tracks.Add_Record_Card_Name
+            RootCard.Create_Track_Record_Card(mid_section,card_name, data = self.Tracks.Add_Record_Data )
+
+            # Now from here we need to define the Add_SubRecord topics.
+
+        # Now we need to configure this button.
+        ANTR_Button.config(command = add_new_track_record)
+
+        # Need to define that why we are returning the tracks object.
         return tracks
 
 
