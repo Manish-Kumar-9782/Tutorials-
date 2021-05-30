@@ -96,11 +96,13 @@ class Dashboard:
             # Now here we need to make a Note book which will hold the Some frames.
             # here will use the Widgets class Create_Notebook to create a notebook and this will need a master.
             notebook = self.wid.Create_Notebook()
+            print(notebook)
             nb = notebook.Notebook(app_menu_section, 400, 400 , tabposition='wn')
             # Now we need to add some frames into this
             frames = Frames()
             tracks_frame = frames.Tracks_Frame(nb)
             keeps_frame = frames.Keeps_Frame(nb)
+
             notebook.Add_Tab(tracks_frame , tabName="Tracks" )
             notebook.Add_Tab(keeps_frame,tabName="Keeps")
 
@@ -144,8 +146,9 @@ class Dashboard:
             AppMidSection = Frame(root, width = 900, height = 700)
             AppMidSection.pack(fill = BOTH, expand = True, side = TOP)
             AppMidSection.pack_propagate(False)
-
             self.AppMenuSeciton(AppMidSection)
+            # for wid in root.winfo_children():
+            #     print('AppMidSection child: ',wid )
             #self.AppContentSection(AppMidSection)
             self.AboutSection(root)
             

@@ -2,7 +2,7 @@
 from tkinter import Tk, Toplevel ,Frame, BOTTOM,LEFT,RIGHT,TOP , BOTH , Button
 from Apps import Tracks
 from Widgets import Widgets
-
+from Apps_func import Keep_Cards
 
 class Sections:
 
@@ -141,11 +141,58 @@ class Frames(Frame):
         :param cfg: config dict for the frame.
         :return: This will return a Keeps Frame/tab for a toplevel/Notebook object.
         """
-        _Keeps_Frame = Frame(master = master, height=height, width=width, bg = 'white')
-        _Keeps_Frame.pack(fill = 'both', expand = True)
+        keep = Keep_Cards()
+        Widgets.Keeps_Card.Keep_Card_Data, Widgets.Keeps_Card.Keep_Card_Ids =  keep.load_keep_card_data()
+
+        print("Keep_Card_Data: ",Widgets.Keeps_Card.Keep_Card_Data)
+        print("Keep_Card_Ids: ",Widgets.Keeps_Card.Keep_Card_Ids)
+
+        self.Main_Keeps_Frame = Frame(master = master, height=height, width=width, bg = 'white')
+        self.Main_Keeps_Frame.pack(fill = 'both', expand = True)
         if cfg:
-            _Keeps_Frame.config(cnf=cfg)
+            self.Main_Keeps_Frame.config(cnf=cfg)
+
+        self.Keep_Bar_Frame = Frame(self.Main_Keeps_Frame, height = 100)
+        self.Keep_Bar_Frame.pack(fill='x')
+        #self.Keep_Bar_Frame.pack_propagate(False)
+        # Now we will put the Keep bar in this frame
+        # Now we will make another frame in which we will put the created Keep Card,
+        self.Keep_Card_Container = Frame(self.Main_Keeps_Frame, bg='white', relief='groove', bd=5)
+        self.keepbar = Widgets.Keeps_Card.KeepCardBar(self.Keep_Bar_Frame,container_frame=self.Keep_Card_Container,
+                                                      height = 200, width =50, relief = 'groove', bd=5)
 
 
+#-----------------------------------------------------------------------------------------------------------------------#
+        #   RETRIEVING THE SAVED DATA
+#-----------------------------------------------------------------------------------------------------------------------#
+        # Now we will store the keep_card_container in the class variable
+        Widgets.Keeps_Card.Keep_Card_Container = self.Keep_Card_Container
+        # Now after storing the container frame we need to add existed keeps.
+        if bool(Widgets.Keeps_Card.Keep_Card_Data):
+            # Now we have something in data dict , in this we have stored card data
 
-        return _Keeps_Frame
+            List = [i for i in range(len(Widgets.Keeps_Card.Keep_Card_Data))]
+            keepbar = Widgets.Keeps_Card.KeepCardBar(self.Keep_Bar_Frame)
+            # get_keep_card_position will return two things
+            # all card position and the recent card position.
+            # we need all card position not the recent one.
+            Pos, _ = keepbar.get_keep_card_position(List)
+
+            for card, pos in zip(Widgets.Keeps_Card.Keep_Card_Data.items(), Pos):
+                _, card_detail = card
+                Widgets.Keeps_Card.Keep_Cards_List.append(card)
+
+                # Now after getting the card detail and position we need to create object for each individual card.
+                # This card will be need to put in the Keep_Card_Container frame.
+                add_keep = Widgets.Keeps_Card.CreateKeepsCard(self.Keep_Card_Container)
+                add_keep.Create_Keep_Card2(self.Keep_Card_Container,pos,card_detail)
+                # Now we will append the card in Widgets.Keep_Card.Keep_Card_Objects list
+                Widgets.Keeps_Card.Keep_Card_Object.append(add_keep)
+#-----------------------------------------------------------------------------------------------------------------------#
+#-----------------------------------------------------------------------------------------------------------------------#
+        self.keepbar.pack()
+        self.Keep_Card_Container.pack(fill = 'both', expand=1, ipadx = 50)
+
+        # Now we need data to create the Keeps.
+
+        return self.Main_Keeps_Frame
