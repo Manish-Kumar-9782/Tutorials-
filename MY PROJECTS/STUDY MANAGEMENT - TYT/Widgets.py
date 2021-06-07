@@ -1,5 +1,9 @@
 # in this section we will make a small widget object which will be used in our application.
-from tkinter import Tk, Frame, Label, Button, StringVar, IntVar, Spinbox, Toplevel, Entry, Text
+import csv
+import os
+from tkinter import  (Tk,Frame, Label, Button, StringVar,
+                      IntVar, Spinbox, Toplevel, Entry, Text,
+                      Menu,Menubutton)
 from tkinter import ttk
 from random import randint
 import time, json
@@ -23,7 +27,7 @@ class Misc:
         row = 0
         col = 0
         poslist = []
-        print("length of KCL: ", len(KCL))
+        # print("length of KCL: ", len(KCL))
         newest = None
         if len(KCL) > 0:
             for cp in range(len(KCL)):
@@ -39,6 +43,17 @@ class Misc:
 
             newest = poslist[-1]
         return poslist, newest
+
+    def get_children(self, parent=None):
+        """
+        This method will help us to retrieve all children present in a parent window. it will yield all child including nested child also.
+        :param parent: window/Widget/Frame , it is the very first parent for which we want ot get children.
+        :return: generator...
+        """
+        # this method will help us to get all the child present in the parent window
+        for child in parent.winfo_children():
+            yield child
+            yield from self.get_children(child)
 
 
 misc = Misc()
@@ -171,20 +186,44 @@ class Widgets:
 
             return Main_Frame
 
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Create_ProgressBar(Frame):
 
         def __init__(self, master=None):
 
             super().__init__(master)
             self.style = ttk.Style()
+            self.Time = apps.Time()
+            self.App_Track = apps.Tracks_Cards()
             # Now here we need to define the master window property if needed.
             # and also here we will initiate some progressbar property.
             self.progress_after_id = None
+            self.Progress = None
+            self.Progress_Update_delay = 60000*30 # update delay for 30 minutes.
+            self.Progress_bar_name = None
+            self.Progress_Current_Countdown_Time = 0
+            self.Progress_Timer_Status = False
+            self.Progress_Target_Hour = None
+            self.Progress_Completed_Hour = None
 
-        def progressbar(self, master, suffix='Progress', prefix='Completed', increment=1, length=150, theme=None):
+        def progressbar(self, master,bar_progress,progress_func=None,suffix='Progress', prefix='Completed', length=150, theme=None):
+            """
+            This method will be used to create a progress bar for a task .
+            :param master: master parent window/frame/toplevel window in which we will put the progressbar.
+            :param bar_progress: int, range(0,100) it the progress bar value which will be used to set the progress bar value during the
+                                initiation of the progressbar.
+            :param progress_func: func, This is the progress bar function which should contain the data/logic statements which is need to
+                                    update in a time interval.
+            :param suffix: str, string to show before the progress bar.
+            :param prefix: str, string to show after the progress bar.
+            :param length:
+            :param theme:
+            :return:
+            """
 
             # now here we need to define the Frame , Label and a Progressbar.
-
+            self.Progress = bar_progress
             self.Progress_Frame = Frame(master, height=5, width=250)
             # Progress_Frame.pack(side = 'right', anchor='e', padx = 10)
 
@@ -203,27 +242,426 @@ class Widgets:
                 # this function will be run by a .after function.
                 # Now here we need to add some increment value in the Progress_Bar['value']
 
-                Progress_Bar['value'] += increment
+                if self.Progress_Timer_Status: # if timer status is True
+                    # print(f"Progressbar timer is on {self.Progress_bar_name}")
+                    self.Progress_Update_delay = 1000
+                    self.update_progress_time()
+
+                else:
+                    # print(f"Progressbar timer is off {self.Progress_bar_name}\t",end='')
+                    self.Progress = progress_func()
+                    self.Progress_Update_delay = 1000  # if Progress_Timer is False then we will update the timer from local storage
+                    # print("Progress bar delay: ",self.Progress_Update_delay)
+                    # in a time interval.
+
+
+                # print("Progress value for: ",self.Progress_bar_name,"\t",self.Progress)
+                Progress_Bar['value'] = self.Progress
                 a = Progress_Bar['value']
 
                 # Now we need to show this increment in the prefix label
                 prefix_label.config(
                     text=f"{a:.2f} " + prefix)  # this formatting is to show two digits after decimal point.
-                # now we need to make a .after() loop
+                # now we need to make a .after() loop to update the progress bar in a time interval
 
                 if a >= 100:
                     # then it means we have reached to 100% Now we need to stop the .after() loop
-                    prefix_label.after_cancel(self.progress_after_id)
+                    if self.progress_after_id:
+                        prefix_label.after_cancel(self.progress_after_id)
 
                 else:
                     # Note: to track the .after() id we need to make a class instace.
-                    self.progress_after_id = prefix_label.after(1000, update_progress)
+                    self.progress_after_id = prefix_label.after(self.Progress_Update_delay, update_progress)
                     # Now this will update the progress bar in every seconds.
 
             update_progress()
 
             return self.Progress_Frame
 
+        def update_progress_time(self):
+            # to update the progress bar time first we need to convert the time in seconds
+            completed_seconds = self.Time.time_to_seconds(self.Progress_Completed_Hour)
+            total_targeted_seconds = self.Time.time_to_seconds(self.Progress_Target_Hour)
+            updated_seconds = completed_seconds + self.Progress_Current_Countdown_Time
+
+            # Now we need to get the total percent of completed bar.
+            if total_targeted_seconds != 0:
+                self.Progress = (100/total_targeted_seconds) * updated_seconds
+            else:
+                self.Progress = 0
+
+        def save_bar_progress(self):
+            """
+            This method will be used to save the bar progress in local storage.
+            :return:
+            """
+            file = './data/temp'
+            temp = self.Progress_bar_name.split('.')
+            cardName = temp[-1]
+            cardParent = '.'.join(temp[:-1])
+            card = self.App_Track.Get_Card(cardParent, cardName, Widgets.Track_Card.Tracks_Cards_Database)
+            updated_time = self.Progress_Current_Countdown_Time + self.Time.time_to_seconds(self.Progress_Completed_Hour)
+            card["Completed Hour"] = self.Time.sec_to_time(updated_time,rt_str=True)
+
+            card["Progress"] = (100/self.Time.time_to_seconds(self.Progress_Target_Hour)) * updated_time
+
+            updated_Database = self.App_Track.update_card(cardName, cardParent,card,Widgets.Track_Card.Tracks_Cards_Database)
+
+            with open(file, 'w') as write:
+                json.dump(updated_Database,write,indent=2)
+
+
+
+    # ======================================================================================================================#
+    # ======================================================================================================================#
+    class TTH_ProgressBar(Frame):
+        """
+        This frame will be used to create a three level progressbar to show the completion of working hour of the day.
+        these progressbar will run in order, third after second, second after first one.
+        """
+        COUNTDOWN_STATUS = None # To check that any timer is running or not.
+        COUNTDOWN_TIME = 0 #This is the time which will be retrieved from the local storage.
+        CURRENT_COUNTDOWN_TIME_ELAPSED = 0 # current countdown timer
+        WATCH_TYPE = None
+        TODAY_COUNTDOWN_TIME = None
+        SAVE_UPDATES = False
+
+        def __init__(self, master=None, time=None):
+            """
+            This is init method of the TTH_Progressbar widget.
+            :param master: master frame in which we will put the all progressbar.
+            :param time: tuple, t1,t2,t3 time in tuple format.
+            """
+            super().__init__(master)
+            # to initiate the main frame will hold the other three progress bars.
+            self.db_file = "./data/daily_target.csv"
+            self.Time = apps.Time()
+            self.style = ttk.Style()
+            self.Today_Total_Elapsed_Time = None
+            if not time:
+                # self.today_target = [(1,3),(3,6),(6,8)]
+                self.retrieve_today_target()
+            else:
+                self.today_target = time
+            self.WatchList = apps.Activity_Classes.retrieve_Watch_Activities(apps.Activity_Classes)
+            self.Today_after_id = None
+            self.Delay_Minutes = 0.5  # minute in whihc we will update the TTH_Progressbar.
+            self.Today_Time_Update_Delay = int(1000 * 60 * self.Delay_Minutes)  # in miliseconds 1000ms = 1sec.
+            self.t1 = self.today_target[0]  # level one time (l1l, l1h)
+            self.t2 = self.today_target[1]  # level two time (l2l, l2h)
+            self.t3 = self.today_target[2]  # level three time (l3l, l3h)
+            self.db_update = apps.CheckFileStats(self.db_file)
+
+            # creating the TTH_Progress bar.
+            self.Create_TTH_Progress_bar()
+            self.update_tth_progressbar()
+
+        def Create_TTH_Progress_bar(self):
+            """
+            This method will be used to create all three level progress bars, and all progress bars will be put in
+            self master frame. width of the
+            :return:
+            """
+            # We need style configuration for every level bar
+            # Horizontal.TProgressbar
+            self.style.configure("level1.Horizontal.TProgressbar", background='#30b043', troughcolor='white')
+            self.style.configure("level2.Horizontal.TProgressbar", background='#acb030', troughcolor='white')
+            self.style.configure("level3.Horizontal.TProgressbar", background='#b07030', troughcolor='white')
+
+            # Now we will make to container frame.
+            # one will contain time_range labels and other frame will contain progress bar.
+            self.Label_Container = Frame(self, height=22)
+            self.Label_Container.pack()
+
+            self.Bar_Container = Frame(self)
+            self.Bar_Container.pack()
+
+            level1_width = self.t1[1] - self.t1[0]  #
+            level2_width = self.t2[1] - self.t2[0]  # They are also used as the time hour for each level tth bar.
+            level3_width = self.t3[1] - self.t3[0]  #
+            fac = 0.4
+            width1 = int(level1_width * 100 * fac)
+            width2 = int(level2_width * 100 * fac)
+            width3 = int(level3_width * 100 * fac)
+
+            twidth = width1 + width2 + width3
+            self.Label_Container.config(width=int(twidth))
+            # print("level width:", level1_width, level2_width, level3_width)
+            # control variable for to control the values of the progress bar.
+
+            self.level1_seconds = 3600 * level1_width
+            self.level2_seconds = 3600 * level2_width
+            self.level3_seconds = 3600 * level3_width
+
+            # print(f"level 1 seconds: {self.level1_seconds}")
+            # print(f"level 2 seconds: {self.level2_seconds}")
+            # print(f"level 3 seconds: {self.level3_seconds}")
+
+            self.t1_var = IntVar()
+            self.t2_var = IntVar()
+            self.t3_var = IntVar()
+
+            self.level1_ProgressBar = ttk.Progressbar(self.Bar_Container, length=width1, variable=self.t1_var,
+                                                      style='level1.Horizontal.TProgressbar')
+            self.level2_ProgressBar = ttk.Progressbar(self.Bar_Container, length=width2, variable=self.t2_var,
+                                                      style='level2.Horizontal.TProgressbar'
+                                                      )
+            self.level3_ProgressBar = ttk.Progressbar(self.Bar_Container, length=width3, variable=self.t3_var,
+                                                      style='level3.Horizontal.TProgressbar'
+                                                      )
+            # Now before packing all the Progressbar we will put some time range Label on the self Frame.
+            self.t1_range_label = Label(self.Label_Container, text=f'{self.t1[0]} - {self.t1[1]}',
+                                        font=('sarif', 8, 'bold'))
+            self.t2_range_label = Label(self.Label_Container, text=f'{self.t2[0]} - {self.t2[1]}',
+                                        font=('sarif', 8, 'bold'))
+            self.t3_range_label = Label(self.Label_Container, text=f'{self.t3[0]} - {self.t3[1]}',
+                                        font=('sarif', 8, 'bold'))
+
+            # Now we need to get every label position to put them on the frame.
+            l1_posx = width1 // 2 - 10
+            l2_posx = int(width1 + width2 // 2) - 10
+            l3_posx = int(width1 + width2 + width3 // 2) - 10
+            self.t1_range_label.place(x=l1_posx)
+            self.t2_range_label.place(x=l2_posx)
+            self.t3_range_label.place(x=l3_posx)
+
+            # print("Labels Positions: ", l1_posx, l2_posx, l3_posx)
+
+            self.level1_ProgressBar.pack(side='left', anchor='e', )
+            self.level2_ProgressBar.pack(side='left', anchor='e', )
+            self.level3_ProgressBar.pack(side='left', anchor='e', )
+
+        def tth_theme_configure(self, head_bg_color=None, head_text_color=None, bar1='#30b043', bar2='#acb030',
+                                bar3='#b07030'):
+            """
+            This method will set the color of the labels which is placed inside the Label container.
+            :param head_bg_color: background of the head container.
+            :param head_text_color: text color of text placed in head container child widgets.
+            :return: None
+            """
+            # Setting Label container
+            self.Label_Container.config(bg=head_bg_color)
+
+            # Setting time_range_label
+            for child in self.Label_Container.winfo_children():
+                child.config(bg=head_bg_color, fg=head_text_color)
+
+            # setting Bar confgure
+            self.style.configure("level1.Horizontal.TProgressbar", background=bar1, troughcolor='white')
+            self.style.configure("level2.Horizontal.TProgressbar", background=bar2, troughcolor='white')
+            self.style.configure("level3.Horizontal.TProgressbar", background=bar3, troughcolor='white')
+
+            self.level1_ProgressBar.configure(style="level1.Horizontal.TProgressbar")
+            self.level2_ProgressBar.configure(style="level2.Horizontal.TProgressbar")
+            self.level3_ProgressBar.configure(style="level3.Horizontal.TProgressbar")
+
+        def update_tth_progressbar(self):
+            """
+            This method will update the tth progress bar according to the given date and time range. by this method we
+                will retrieve the saved time from the Countdown timer data and we will
+            :return:
+            """
+
+            if Widgets.TTH_ProgressBar.COUNTDOWN_STATUS == True:
+                # if this condition is true then it means that countdown is running
+                # if we are running the timer then we will update the timer in every 5 minutes.
+                # self.Delay_Minutes = 1
+                # Now we will Countdown timer class variable in TTH_Progress class variable.
+
+                if self.WATCH_TYPE in self.WatchList:
+                    self.TODAY_COUNTDOWN_TIME = self.CURRENT_COUNTDOWN_TIME_ELAPSED + self.COUNTDOWN_TIME
+
+                    self.set_bar_values(self.TODAY_COUNTDOWN_TIME)
+                    print("TTH Timer Running, Total Elapsed Time", self.Today_Total_Elapsed_Time)
+                    print("TTH Timer Running, TODAY_COUNTDOWN_TIME",self.TODAY_COUNTDOWN_TIME)
+                    print("TTH Timer Running, COUNTDOWN_TIME", self.COUNTDOWN_TIME)
+                    # print("Watch Type: ",self.WATCH_TYPE)
+                    print()
+                else:
+                    print("Record Type not in WatchList: ",self.WATCH_TYPE)
+                    pass
+
+            else:
+                # if this condition is true then it means that we need to retrieve data from local storage.
+                # self.Delay_Minutes = 30 # if are not running any timer then we will update the progress bar in every 30 min
+                if self.WATCH_TYPE in self.WatchList: # if our running time activity is in the watchlist then we will update the data
+                    if Widgets.TTH_ProgressBar.SAVE_UPDATES:
+                        self.Today_Total_Elapsed_Time = self.TODAY_COUNTDOWN_TIME
+                        print("tth database is updated.")
+                        self.save_today_target(self.today_target,self.Today_Total_Elapsed_Time)
+                        Widgets.TTH_ProgressBar.SAVE_UPDATES = False
+
+                update_result = self.db_update.checkupdate()
+                if update_result:
+                    self.COUNTDOWN_TIME = self.get_today_working_time2()
+                    self.set_bar_values(self.COUNTDOWN_TIME)
+                    self.db_update.file_modify_time = self.db_update.modifytime()
+                    print("tth database is modified.")
+                else:
+                    self.set_bar_values(self.Today_Total_Elapsed_Time)
+                print("TTH Timer Not Running getting data from local: ",update_result)
+
+            # Now we will make an after loop and we will store its id in a self object's attribute.
+            self.Today_after_id = self.after(self.Today_Time_Update_Delay, self.update_tth_progressbar)
+            print(f"COUNTDOWN STATUS {Widgets.TTH_ProgressBar.COUNTDOWN_STATUS}: \t\t COUNTDOWN_TIME: {self.COUNTDOWN_TIME} ")
+            print(f"Today_Elepsed_Time: ",self.Today_Total_Elapsed_Time)
+            # print(f"Today countdown time: ")
+
+        def retrieve_today_target(self, file="./data/daily_target.csv"):
+            """
+            This method will be used to retrieve today target value to put in the tth progressbar. in this we will read the
+            today target file. if there is any entry of today then we will set tth_progress by using retrieving data else we
+            will use a default set to time.
+            :return:
+            """
+            print(f"today date: {apps.Time.get_current_date()} ")
+
+            with open(file, 'r', newline='') as read:
+
+                reader = csv.DictReader(read)
+                # fields = reader.fieldnames
+                today_present = False
+                for row in reader:
+                    if row['Date'] == self.Time.get_current_date():
+                        print(row)
+                        self.today_target = [(int(row['l1l']), int(row['l1h'])),
+                                             (int(row['l2l']), int(row['l2h'])),
+                                             (int(row['l3l']), int(row['l3h']))]
+                        self.Today_Total_Elapsed_Time = int(row["Total Time"])
+                        self.COUNTDOWN_TIME = self.Today_Total_Elapsed_Time
+                        today_present = True
+                        break
+
+                if not today_present:
+                    # if there is no target present for today then we will write a default target.
+                    self.today_target = [(0, 2), (2, 4), (4, 6)]
+                    # and also we will save our default target on local storage.
+                    self.save_today_target(self.today_target, total_time=0)
+
+        def get_today_working_time(self, file="./data/Timer_Data.csv"):
+            """
+            This method will retrieve the total time which is saved locally. by this method we will only retrieve today data.
+            :param file:str, this is the file from which we will retrieve the tth data.
+            :return:
+            """
+            print("Getting today working time:======================>", apps.Time.get_current_date())
+            today_time = []
+            with open(file, 'r', newline='') as read:
+                reader = csv.DictReader(read)
+                for row in reader:
+                    if row['Date'] == apps.Time.get_current_date():
+                        # if we get any data of current day then we need to calculate the total time of the day.
+                        # print("Total Time values: ", row["Total Time"], type(row['Total Time']))
+                        if row['Record Type'] in self.WatchList: # our row belongs to in watch list then we will count it.
+                            today_time.append(int(row["Total Time"]))
+            # and at last we need to sum all the times.
+            # [int(i) for i in today_time]
+            return sum(today_time)
+
+        def get_today_working_time2(self,file="./data/daily_target.csv"):
+            """
+            This method will be used to get the total_today_working_time from daily_target.csv file.
+            :param file:str, filepath
+            :return:int, return seconds.
+            """
+
+            with open(file, 'r',newline='') as read:
+                reader = csv.DictReader(read)
+                for row in reader:
+                    if row["Date"]== self.Time.get_current_date():
+                        return int(row["Total Time"])
+
+
+        def save_today_target(self, target, total_time=None):
+            """
+            This method will be used to save  today_target time
+            :param target: list, target will be a list of tuples.
+            :return:
+            """
+            temp = []
+            today_present = False
+            with open(self.db_file, 'r', newline='') as read:
+
+                Data = csv.DictReader(read)
+                self.data_fileds = Data.fieldnames
+
+                for row in Data:
+                    # checking for today date.
+                    if row["Date"] == self.Time.get_current_date():
+                        row["l1l"] = target[0][0]
+                        row['l1h'] = target[0][1]
+                        row['l2l'] = target[1][0]
+                        row['l2h'] = target[1][1]
+                        row['l3l'] = target[2][0]
+                        row['l3h'] = target[2][1]
+                        row['Total Time'] = total_time
+                        today_present = True
+
+                    temp.append(row)
+
+                if not today_present:
+                    self.today_data = {"Date":self.Time.get_current_date(),
+                                       "Time": self.Time.get_current_time(),
+                                       "l1l": target[0][0],
+                                       'l1h': target[0][1],
+                                       'l2l': target[1][0],
+                                       'l2h': target[1][1],
+                                       'l3l': target[2][0],
+                                       'l3h': target[2][1],
+                                       'Total Time': total_time
+                                       }
+
+            with open(self.db_file, 'w', newline="") as write:
+
+                writer = csv.DictWriter(write, fieldnames=self.data_fileds)
+                writer.writeheader()
+                for row in temp:
+                    writer.writerow(row)
+
+                if not today_present:
+                    # Now we need to save today data.
+                    writer.writerow(self.today_data)
+
+                del temp # deleting the temporary data from memory.
+
+        def set_bar_values(self, seconds):
+            """
+            This method will be used to set the bar values according to the time , this will set every bar after one by one.
+            :return:
+            """
+            level1 = self.level1_seconds
+            level2 = self.level1_seconds + self.level2_seconds
+            level3 = self.level1_seconds + self.level2_seconds + self.level3_seconds
+
+            # print("bar seconds levels:")
+            # print("level1: \t", level1)
+            # print("level2: \t", level2)
+            # print("level3: \t", level3)
+
+            if seconds <= self.level1_seconds:
+                # if this happens then we need to update only level1 progress bar.
+                # self.level1_seconds = Widgets.TTH_ProgressBar.COUNTDOWN_TIME
+                # print("bar 1 set value: ", (100 / self.level1_seconds) * seconds)
+                self.t1_var.set((100 / self.level1_seconds) * seconds)
+
+            elif seconds > level1 and seconds <= level2:
+                # if this happens then we need to set level 1 bar full and level2 bar with self.level2_seconds.
+                # self.level2_seconds = level1 - Widgets.TTH_ProgressBar.COUNTDOWN_TIME
+                self.t1_var.set((100 / self.level1_seconds) * level1)
+                self.t2_var.set((100 / self.level2_seconds) * (seconds - level1))
+
+            elif seconds > level2 and seconds <= level3:
+                # if this happens then we need to se the level1, and level2 bar as full
+                # and set level3 bar with self.level3_seconds
+                # self.level3_seconds = level2 - Widgets.TTH_ProgressBar.COUNTDOWN_TIME
+                self.t1_var.set((100 / self.level1_seconds) * level1)
+                self.t2_var.set((100 / self.level2_seconds) * level2)
+                self.t3_var.set((100 / self.level3_seconds) * (seconds - level2))
+            else:
+                print("Target completed")
+
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Create_Notebook(Frame):
 
         def __init__(self, master=None):
@@ -252,7 +690,7 @@ class Widgets:
                 "TCheckbutton": {
                     "configure": {'background': '#bbc9c5', 'indicatorbackground': '#5f8278',
                                   'indicatorcolor': '#7a3ca6',
-                                  "indicatormargin": 5, 'padding': 3, 'indicatorrelief': 'flat'},
+                                  "indicatormargin": 0, 'padding': 6, 'indicatorrelief': 'flat'},
                     "map": {"background": [("selected", '#7a3ca6')]}},
 
                 "TProgressbar": {
@@ -269,7 +707,7 @@ class Widgets:
             # style.configure('Tracks.TNotebook', tabposition = tabposition, background='#3e4c63', tabmargins = (20,20,20,0))
             self.notebook = ttk.Notebook(master, height=height, width=width, takefocus=False)
             self.notebook.pack(fill='both', expand=True)
-            print("Note book before returning. ", self.notebook)
+            # print("Note book before returning. ", self.notebook)
             return self.notebook
 
         def Add_Tab(self, addInstance=None, tabName='tab'):
@@ -280,6 +718,8 @@ class Widgets:
             """
             self.notebook.add(child=addInstance, text=tabName)
 
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Create_Track_Record_Database(Frame):
 
         def __init__(self):
@@ -314,17 +754,27 @@ class Widgets:
                 # if we don't have data then we don't need to do any thing.
                 print("No data Found.")
 
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Track_Card(Frame):
 
         """
         This class will be used to Root Track Card and SubTrack Cards widgets/Frames and those widgets/Frames can be put
             in any application.
         """
-        Tracks_Cards_Mapping = {}
+        Tracks_Cards_DbUpdate = apps.CheckFileStats(file="./Data/temp")
+        Tracks_Cards_Reload_after_id = None
+        Tracks_Cards_Database = None
+        Tracks_Cards_AddButton_Mapping = {}
+        Tracks_Cards_DelButton_Mapping = {}
+        Tracks_Cards_Progress_Bars = {}
+        Set_Countdown_Timer = None # this is a class varibable which will be linked to the Ask_Countdown_Timer method from Apps module.
+
+        TCD = apps.Tracks_Cards()
+        Database_File =  "./Data/temp"
 
         def __init__(self, master=None):
-            self.TCD = apps.Tracks_Cards()
-            self.Tracks_Cards_Database = self.TCD.Read_Cards_Database(fileName="./Data/temp")
+            Widgets.Track_Card.Tracks_Cards_Database = Widgets.Track_Card.TCD.Read_Cards_Database(Widgets.Track_Card.Database_File)
             self.Tracks_Cards_Frames = {}
             super().__init__(master)
             self.TypeName = None
@@ -336,6 +786,7 @@ class Widgets:
             self.Selected_Root = None  # Not using , This can be useful to Handle the currently selected Root Card
             self.SubDictData = None  # This will be used during adding a new data and this will store the sub card data information.
             self.App_Cards = apps.Tracks_Cards()
+            self.Time = apps.Time()
 
             # Sub card Details
             self.SubCard_Parent = None
@@ -355,7 +806,7 @@ class Widgets:
             :return: None
             """
             # parent_topic = "TM-TYT"
-            print("Inside the Create Track Record.")
+            # print("Inside the Create Track Record.")
             # here we will get the data and we will retrieve some important information for next cards.
             # so what will it contain
             # id, TypeName, cardName,Subcard,completed, Thour, EndDate.
@@ -374,7 +825,7 @@ class Widgets:
                 print("unknown key error")
 
             self.Root_Card_Frame = Frame(master, width=800, height=30, bg='#7d7f82')
-            self.Root_Card_Frame.pack(fill='x', expand=1, anchor='n', padx=50)
+            self.Root_Card_Frame.pack(fill='x', expand=1, anchor='n', padx=50, pady=10)
             self.Root_Card_Frame.pack_propagate(True)
 
             self.head_frame = Frame(self.Root_Card_Frame, width=800, height=30, bg='#f06d22')
@@ -394,19 +845,34 @@ class Widgets:
             # Now need to make completed, Thour, EndDate and AddButton
             # Note in completed we need a progress bar also
             bar = Widgets.Create_ProgressBar(self.head_frame)
-            CompletedBar = bar.progressbar(self.head_frame, suffix="", prefix="")
+            bar.Progress_bar_name = Data['FullPath']
+            bar.Progress_Target_Hour = Data['Target Hour']
+            bar.Progress_Completed_Hour = Data['Completed Hour']
+            self.Tracks_Cards_Progress_Bars[Data['FullPath']] = bar
+            CompletedBar = bar.progressbar(self.head_frame,bar_progress=Data["Progress"],
+                                           progress_func=lambda x=Data["Name"], y=Data["Parent"]:self.Card_Progress_Bar(x,y),
+                                           suffix="", prefix="")
+
             Thour_label = Label(self.head_frame, text=Data['Target Hour'])
             EndDate_label = Label(self.head_frame, text=Data['EndDate'])
             AddButton = Button(self.head_frame, text='+', font=('sarif', 10, 'bold'))
+            DeleteButton = Button(self.head_frame,text='x',font=('sarif', 10, 'bold'))
+
 
             # Now its time to pack all the widgets.
-            AddButton.pack(side='right', anchor='ne', padx=(50, 0))
+
+            DeleteButton.pack(side='right', anchor='ne', padx=(50, 0))
             EndDate_label.pack(side='right', anchor='ne', padx=(50, 0))
             Thour_label.pack(side='right', anchor='ne', padx=(50, 0))
-            CompletedBar.pack(side='right', anchor='ne', padx=(50, 0))
-
+            CompletedBar.pack(side='right', anchor='ne', padx=(5, 0))
+            AddButton.pack(side='right', anchor='ne', padx=(50, 0))
+            # Now here we will add a timer button which will start timer for that card.
+            self.Insert_Timer(self.head_frame,Data,Track_card_bar=bar,
+                              pack={'side':'right', 'anchor':'ne', 'padx':(5, 0)})
             # Now here we need to map the Parent name with the button Tracks_Card_Mapping
-            self.Tracks_Cards_Mapping[AddButton] = "Root." + CardName
+            self.Tracks_Cards_AddButton_Mapping[AddButton] = "Root." + CardName
+            Widgets.Track_Card.Tracks_Cards_DelButton_Mapping = self.Root_Card_Frame # mapping Card Frame container
+
             self.Tracks_Cards_Frames.update({Data['FullPath']: self.content_frame})
 
             # Now we need to configure the AddButton
@@ -418,12 +884,12 @@ class Widgets:
 
                 # When we press the Add SubCard button then it wil make a top level window
                 # and it will call the self.Add_SubRecord
-                self.Add_SubRecord(root, Parent=self.Tracks_Cards_Mapping[button])
+                self.Add_SubRecord(root, Parent=self.Tracks_Cards_AddButton_Mapping[button])
                 self.Root_Card_Frame.wait_window(root)
-                print(button)
+                # print(button)
 
                 # Data.update(self.SubDictData) # This self.SubDictData Contains the SubCard information.
-                print("Subcard Detail using self.SubDictData: ", self.SubDictData, )
+                # print("Subcard Detail using self.SubDictData: ", self.SubDictData, )
                 self.Cards = Data
                 one_card_height = 70
 
@@ -440,7 +906,16 @@ class Widgets:
                 # print(Data)
 
             AddButton.config(command=lambda x=AddButton: add_subcard(x))
+            DeleteButton.config(command=lambda x=Data["Name"],
+                                               y=Data['Parent'],
+                                               z=Widgets.Track_Card.Tracks_Cards_Database,
+                                               card=self.Root_Card_Frame : self.delete_card(x,y,z,card))
+            # setting the theme for root card.
+            self.root_card_theme_configure(mainbody='#daffb5', head_bg_color='#3b4352', head_text_color='#73fffd',
+                                           content_bg_color='#4b73c9', content_text_color='white')
 
+
+            # Now we need to add the bar object in the Tracks_Cards_Progress_Bars dict
         def Create_Track_Record_Sub_Card(self, master, Parent=None, CardName=None, FullName=None, Data=None,
                                          use='create',
                                          height=None, width=None, f_cfg=None):
@@ -482,24 +957,36 @@ class Widgets:
             # We also need to define all the Labels with their Associted data from the incoming Data
             # which coming from the Add_SubCard method.
             bar = Widgets.Create_ProgressBar(SubHead)
-            CompletedBar = bar.progressbar(SubHead, suffix="", prefix="")
+            bar.Progress_bar_name = Data['FullPath'] # setting the name of the progress bar.
+            bar.Progress_Target_Hour = Data['Target Hour']
+            bar.Progress_Completed_Hour = Data['Completed Hour']
+            self.Tracks_Cards_Progress_Bars[Data['FullPath']] = bar
+            CompletedBar = bar.progressbar(SubHead,bar_progress=Data["Progress"],
+                                           progress_func=lambda x=Data["Name"], y=Data["Parent"]:self.Card_Progress_Bar(x,y),
+                                           suffix="", prefix="")
+
             Thour_label = Label(SubHead, text=Data['Target Hour'])
             EndDate_label = Label(SubHead, text=Data['EndDate'])
             AddButton = Button(SubHead, text='+', font=('sarif', 10, 'bold'))
+            DeleteButton = Button(SubHead, text = 'x',font=('sarif', 10, 'bold'))
 
             # Now its time to pack all the widgets.
-            AddButton.pack(side='right', anchor='ne', padx=(50, 0))
+            DeleteButton.pack(side='right', anchor='ne', padx=(50, 0))
             EndDate_label.pack(side='right', anchor='ne', padx=(50, 0))
             Thour_label.pack(side='right', anchor='ne', padx=(50, 0))
-            CompletedBar.pack(side='right', anchor='ne', padx=(50, 0))
+            CompletedBar.pack(side='right', anchor='ne', padx=(5, 0))
+            AddButton.pack(side='right', anchor='ne', padx=(50, 0))
 
+
+            self.Insert_Timer(SubHead,Data,Track_card_bar=bar,
+                              pack={'side': 'right', 'anchor': 'ne', 'padx': (5, 0)})
             # Now here we need to add the SubCard Full Name in the global Tracks_Card_Mapping dictionary
-            self.Tracks_Cards_Mapping[AddButton] = FullName
+            self.Tracks_Cards_AddButton_Mapping[AddButton] = FullName
             self.Tracks_Cards_Frames.update({Data['FullPath']: SubContent})
 
             def add_subcard(button):
                 # This method will be called from a subcard button
-                print("add record button pressed")
+                # print("add record button pressed")
                 one_card_height = 80
                 sub_current_height = Subcard.cget('height')  # height of the sub card
                 root_current_height = self.Root_Card_Frame.cget('height')  # height of Root card
@@ -511,9 +998,9 @@ class Widgets:
                 # Now here after increasing the height of the subcard we need to call Add_SubCard function
                 # This Add_SubCard metod need a top level window
                 root = Toplevel()
-                self.Add_SubRecord(root, self.Tracks_Cards_Mapping[button])
-                # Parent = self.Tracks_Cards_Mapping[button]
-                # Tracks_Cards_Mapping stores all the Card full name and map them to the button id.
+                self.Add_SubRecord(root, self.Tracks_Cards_AddButton_Mapping[button])
+                # Parent = self.Tracks_Cards_AddButton_Mapping[button]
+                # Tracks_Cards_AddButton_Mapping stores all the Card full name and map them to the button id.
                 # Now when we will press the button then it will pick the full name of the selected Subcard Full name.
                 Subcard.wait_window(root)  # this will wait window until end of the Add_SubCard process
 
@@ -529,12 +1016,60 @@ class Widgets:
 
                 # Now we need to save the Data
                 self.Tcards.SaveCard(CardName=self.SubCard_Name, Parent=self.SubCard_Parent,
-                                     Database=self.Tracks_Cards_Database, Subcard=self.SubDictData,
+                                     Database=Widgets.Track_Card.Tracks_Cards_Database, Subcard=self.SubDictData,
                                      FullName=self.SubCard_FullName)
 
             # Now we need to track every new sub card with the help of the button.
             AddButton.config(command=lambda x=AddButton: add_subcard(x))
+            DeleteButton.config(command=lambda x=Data["Name"],
+                                               y=Data['Parent'],
+                                               z=Widgets.Track_Card.Tracks_Cards_Database,
+                                               card=Subcard: self.delete_card(x, y, z, card))
+
             # This button will be placed on the Subcard.
+            def sub_card_theme_configure(mainbody='#8cb4fa', head_bg_color=None, head_text_color=None,
+                                         content_bg_color=None, content_text_color=None, **theme_keys):
+                """
+               This is the theme configuration method which will config the basic color property and effect of the tk and ttk widgets.
+               :param mainbody: The Main container of the other widget.
+               :param head_bg_color: head of the content inside the mainbody container.
+               :param head_text_color: text color of content inside the head container.
+               :param content_bg_color: content body background color.
+               :param content_text_color: content text color.
+               :param theme_keys:
+               :return:
+                """
+                style = ttk.Style()  # a separate style for progressbar
+                style.configure("SubCard.Horizontal.TProgressbar", background='black', bordercolor='black',
+                                troughcolor='green')
+
+                # subcard main frame:
+                Subcard.config(bg=head_bg_color)
+
+                # Now we will set the head color
+                SubHead.config(bg=head_bg_color)
+                # Now we need to set all the child widget color config.
+                for child in misc.get_children(SubHead):
+                    # print(f"theme setting for: ", child)
+                    if isinstance(child, Frame):
+                        # if child is a frame then set only background
+                        child.config(bg=head_bg_color)
+                    elif isinstance(child, Button):
+                        # if button then set fg, bg, relief , active-bg and active-fg
+                        child.config(bg=head_bg_color, fg=head_text_color, activebackground=head_bg_color,
+                                     activeforeground=head_text_color, relief='flat', overrelief='flat')
+                    elif isinstance(child, Label):
+                        # if it is a label then we will set fg, bg
+                        child.config(bg=head_bg_color, fg=head_text_color)
+
+                    elif isinstance(child, ttk.Progressbar):
+                        child.configure(style='SubCard.Horizontal.TProgressbar')
+
+                # NOw we need to set the Content section config.
+                SubContent.config(bg=content_bg_color)
+
+            sub_card_theme_configure(mainbody='#2f3861', head_bg_color='#2f3861', head_text_color='white',
+                                     content_bg_color='#8a9fff', content_text_color='black')
 
         def Retrieve_Cards(self, master, Database):
             """
@@ -558,7 +1093,7 @@ class Widgets:
                             # if this condition satisfy then it means this is a Root card
                             name = card['Name']
                             parent = card['FullPath']
-                            print('Root card parent name:', parent)
+                            # print('Root card parent name:', parent)
                             self.Create_Track_Record_Card(master, name, data=card, use='retrieve')
 
                         else:
@@ -608,7 +1143,7 @@ class Widgets:
                 # here if we get master as a toplevel or root window then we will set the size of the window.
                 h = Main_Frame.cget('height')
                 w = Main_Frame.cget('width')
-                print(h, w)
+                # print(h, w)
                 master.geometry(f"{w}x{h}")
                 master.update_idletasks()
 
@@ -662,7 +1197,7 @@ class Widgets:
             data_dict = dict()
 
             def save_data(button):
-                print(f"{'_' * 30}")
+                # print(f"{'_' * 30}")
                 # print("Save data Button:",button)
                 # Note that subtopic can be manipulated by a Subtopic_frame object.
                 # subtopic_frame object will contain the subtopics
@@ -674,6 +1209,7 @@ class Widgets:
                                                      'Time': Current_Time,
                                                      'Topic': {},
                                                      'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
+                                                     'Completed Hour':0,
                                                      'EndDate': wid2.Date,  # here we need to pass a end date of the
                                                      'Progress': 0,
                                                      'Parent': Parent,
@@ -683,24 +1219,359 @@ class Widgets:
                 # data_dict['FullName'] = ".".join([Parent,data_dict['Topic']])
                 # defining the Subcard detail
                 self.SubCard_Parent = Parent
-                print("Sub card Parent in widgets.Create_Tracks.Add_SubCard: ", self.SubCard_Parent)
+                # print("Sub card Parent in widgets.Create_Tracks.Add_SubCard: ", self.SubCard_Parent)
                 self.SubCard_Name = SubCard_entry.get()
                 self.SubCard_FullName = '.'.join([Parent, SubCard_entry.get()])
 
                 self.NextParentTopic = SubCardData[self.SubCard_Name]
                 self.SubDictData = SubCardData
-                print("self.SubDictData =>", self.SubDictData)
+                # print("self.SubDictData =>", self.SubDictData)
                 # Now after Sucessfully save and create a new NTR Card we need to close this root window
                 # Now after saving the data we need to retrieve the data
                 save = apps.Tracks_Cards()
-                save.SaveCard(CardName=self.SubCard_Name, Parent=Parent, Database=self.Tracks_Cards_Database,
+                save.SaveCard(CardName=self.SubCard_Name, Parent=Parent, Database=Widgets.Track_Card.Tracks_Cards_Database,
                               Subcard=SubCardData, FullName=self.SubCard_FullName)
                 master.destroy()
                 # print(".".join([parent_topic,data_dict['Topic']]))
-                print(f"{'_' * 30}")
+                # print(f"{'_' * 30}")
 
             Set_button.config(command=lambda x=Set_button: save_data(x))
 
+        def root_card_theme_configure(self, mainbody='#8cb4fa', head_bg_color=None, head_text_color=None,
+                                      content_bg_color=None, content_text_color=None, **theme_keys):
+            """
+            This is the theme configuration method which will config the basic color property and effect of the tk and ttk widgets.
+            :param mainbody: The Main container of the other widget.
+            :param head_bg_color: head of the content inside the mainbody container.
+            :param head_text_color: text color of content inside the head container.
+            :param content_bg_color: content body background color.
+            :param content_text_color: content text color.
+            :param theme_keys:
+            :return:
+            """
+            style = ttk.Style()  # a separate style for progressbar
+            style.configure("Root.Horizontal.TProgressbar", background='black', bordercolor='black',
+                            troughcolor='green')
+
+            ##Main body
+            self.Root_Card_Frame.config(bg=mainbody)
+
+            ### Head section
+            # head section is placed inside the mainbody on top side.
+            self.head_frame.config(bg=head_bg_color)
+            # now we need to set the child widgets colors.
+            for child in misc.get_children(self.head_frame):
+                # print(f"theme setting for: ",child)
+                if isinstance(child, Frame):
+                    # if child is a frame then set only background
+                    child.config(bg=head_bg_color)
+                elif isinstance(child, Button):
+                    # if button then set fg, bg, relief , active-bg and active-fg
+                    child.config(bg=head_bg_color, fg=head_text_color, activebackground=head_bg_color,
+                                 activeforeground=head_text_color, relief='flat', overrelief='flat')
+                elif isinstance(child, Label):
+                    # if it is a label then we will set fg, bg
+                    child.config(bg=head_bg_color, fg=head_text_color)
+
+                elif isinstance(child, ttk.Progressbar):
+                    child.configure(style='Root.Horizontal.TProgressbar')
+
+            # Now here is the last part of the Root card is content Frame in which other subcards are placed.
+            self.content_frame.config(bg='#daffb5')
+
+        def Insert_Timer(self, master,carddata=None,Track_card_bar=None,pack = None):
+            """
+            This method will be used to run a timer which will be linked to a Countdown timer and tth_Progress and also its own bar.
+            :param master: This is the master window/container in which we will contain/put this Timer.
+            :param carddata: dict, contain card type and name details.
+            :param Track_card_bar: !create_progressbar object, this is the card bar which contain the progress details
+            :param pack: pack layout management argument (optional)
+            :return:
+            """
+
+            def start_timer():
+                card_type = self.App_Cards.Get_Card_Type(Widgets.Track_Card.Tracks_Cards_Database,carddata['Parent'],carddata['Name'])
+                print("Print Card", card_type)
+                # for key,value in carddata.items():
+                #     print(f"{key}:\t{value}")
+
+                data = {'Record Type':card_type,
+                        'Record Name':carddata["Parent"],
+                        'Record Topic':carddata['Name'],
+                        'Record SubTopic':None}
+
+
+                root = Toplevel()
+                countdown = self.Set_Countdown_Timer.Countdown(root)
+                countdown.Ask_Countdown_Time(root,data, Track_card_bar=Track_card_bar)
+                root.mainloop()
+
+            Timer_Button = Button(master, text='Timer', command = start_timer)
+
+            if pack:
+                Timer_Button.pack(**pack)
+            else:
+                Timer_Button.pack()
+
+        @classmethod
+        def update_database(cls,Database):
+            """
+            This is a class method which we will be used to update the Tracks_Card_Database
+            :param Database:dict or json object,  updated database.
+            :return:
+            """
+            cls.Tracks_Cards_Database = Database
+
+        def Card_Progress_Bar(self,cardName, cardParent):
+            """
+            This method will be used update the progress bar, this will use the self.Tracks_Cards_Database to get the progress
+                of all cards.
+            :param cardName: This is the name if the card.
+            :param cardParent: card parent to which will be used to get the right card.
+            :return:
+            """
+            # we are using the self.Tracks_Cards_Database.
+            data = Widgets.Track_Card.Tracks_Cards_Database
+            parents = cardParent.split('.')
+
+            for parent in parents:
+                if cardParent != 'Root' and parent != 'Root':
+                    data = data[parent]['Topic']
+                else:data = data[parent]
+
+            return data[cardName]["Progress"]
+
+        def save_card_progress(self,cardName,cardParent): # this is done in Progressbar classs
+            """
+            This method will be used to save card progress while running the timer and after timer.
+            :param cardName: str, Card name for which we want ot save the card progress
+            :param cardParent: str,Card parent name.
+            :return: None.
+            """
+            # first of all we need to get the card local data
+            card = self.App_Cards.Get_Card(cardParent,cardName,Widgets.Track_Card.Tracks_Cards_Database)
+            # Now we need to get two things, first we need to get the total target hour values
+            # and second we need to get existing progress values.
+            card_target_hour = card['Target Hour']
+            card_progress = card['Progress']
+            card_completed_hour = card['Completed Hour']
+
+            # Now we have got the total target seconds and we need to get current total elapsed seconds for this card.
+            # Now we need to convert the time into seconds.
+            target_seconds = self.Time.time_to_seconds(card_target_hour)
+            completed_seconds = self.Time.time_to_seconds(card_completed_hour)
+
+            # total completed percent value for card progress bar.
+            percent_completed = (100 / target_seconds) * completed_seconds
+            # until now we have get the saved data now we need to update the completed_seconds.
+            # to update this we need to call this method inside the insert_Timer method
+            # Now we need to update the card progress
+
+        def delete_card(self, cardName, cardParent, Database, cardwidget):
+            """
+            This method will be used to delete a card from a Track Card database.
+            :param cardName: str, This is the name of the card which is to be deleted.
+            :param cardParent: str, card parent to which will be used to get the right card.
+            :param Database: dict or json object, Database in from which we need to delete the card.
+            :param cardwidget: frame, card fram object.
+            :return:
+            """
+            file = './data/temp'
+            data = Database
+            parents = cardParent.split('.')
+
+            # Now first we need to delete the card widget
+            cardwidget.destroy()
+
+            for parent in parents:
+                if cardParent != 'Root' and parent != 'Root':
+                    data = data[parent]['Topic']
+                else:
+                    data = data[parent]
+
+            del data[cardName] # deleting the card from the database.
+
+            # Now after deleting the deleting the card we need to update the cls.Tracks_Cards_Database
+            Widgets.Track_Card.update_database(Database)
+
+            # Now after updating the database we need to save it.
+            with open(file, 'w') as write:
+                json.dump(Widgets.Track_Card.Tracks_Cards_Database, write, indent=2)
+
+            self.update_idletasks()
+
+        @classmethod
+        def reload_Database(cls):
+            """
+            This is a class method and it will be used to update the Tracks Card database if there is any modification in
+                the database.
+            :param database_file:filepath,  this is the database file or path of the file.
+            :return: None
+            """
+            result = cls.Tracks_Cards_DbUpdate.checkupdate()
+
+            if result:
+                # if result is True then file is update so we need update the database.
+                cls.Tracks_Cards_Database = cls.TCD.Read_Cards_Database(cls.Database_File)
+                # Now we need to update the modify time also of the object.
+                cls.Tracks_Cards_DbUpdate.file_modify_time = cls.Tracks_Cards_DbUpdate.modifytime()
+                # Now database is update
+
+    class Activities(Frame):
+        """
+        This class will be used to manage activities and their functions, it will be also used to manage all the activities
+        ActivityClasses :{}
+        TracksActivity:{}
+        WatchActivity :{}
+        NoWatchActivity :{}
+        """
+        ACTIVITY_DATABASE = None # this class method will be used to hold activity database.
+        def __init__(self,master = None, cnf=None, **kw):
+            """
+            This will initiate the Activities class object which will be used to manage all the activities related functionality.
+            :param master:tk.widget, a master window/widget/toplevel window to hold the Activities Frame.
+            :param cnf:options, Frame configuration options.
+            :param kw: keyword arguments.
+
+            Database keys:
+                ActivityClasses :{}
+                TracksActivity:{}
+                WatchActivity :{}
+                NoWatchActivity :{}
+
+            """
+            super().__init__(master,cfg=cnf, **kw) # initiating the activities bar.
+            self.activity_func = apps.Activity_Classes()  # initiating the activity record and loading into memory.
+            self.tracks_func = apps.Tracks_Cards()
+
+            self.Activity_Database = self.activity_func.Activity_Database
+            self.WatchList = None # activities to watch for countdown timer.
+            self.TracksActivities = None # activity list for Tracks Activities.
+            self.DailyActivities = None # Daily activity
+            self.OtherActivities = None # Other Activities.
+            self.ActivityClasses =  self.Activity_Database["ActivityClasses"] # To hold all the activity classes in which we can hold all the activities.
+
+            self.ActivityClasses_MenuMap = {}
+            self.TracksActivities_MenuMap = {}
+            # initiating the activity bar .
+            self.activity_bar()
+            self.tracks_activities()
+
+        @classmethod
+        def Get_Database(cls):
+            act = apps.Activity_Classes()
+            cls.ACTIVITY_DATABASE = act.Activity_Database
+
+        def activity_bar(self):
+            """
+            This method will be used to set activity bar on its parent widget/window.
+            :return:
+
+            pack: ActivityMainMenuButton
+            """
+            # first of all we will make a menu to hold all the activity except Tracks card activities.
+            # we will make separate menu for the TracksActivities.
+
+            self.ActivityMainMenuButton = Menubutton(self, text='Activities')
+
+            # Now in this activity menu we need to make a
+            self.ActivityMainMenu = Menu(self.ActivityMainMenuButton, tearoff = 0)
+            # Now need to config the Menubutton for this menu.
+            self.ActivityMainMenuButton.config(menu = self.ActivityMainMenu)
+            # Now in this we need to get all the activity classes and put them in their own separate menu.
+             # getting the Activity database form local storage.
+            for key , activities in self.ActivityClasses.items():
+                # Now here we need to make cascade menus for each key
+                class_menu = Menu(self.ActivityMainMenuButton, tearoff = 0)
+                class_menu.add_command(label = key,
+                                       command = lambda x=key, y=key: self.activity_command(x,y))
+                # This command section is for the Class key.
+                class_menu.add_separator() # separator to separate the child activities.
+
+                self.ActivityClasses_MenuMap[key] = class_menu
+
+                if isinstance(activities, list):
+                    # Now we have list of activity for each one class
+                    for activity in activities:
+                        class_menu.add_command(label = activity ,
+                                               command = lambda x=key,y=activity: self.activity_command(x,y))
+                        # In this we will set the activity command will initiate the Ask_Countdown_Timer and also it will
+                        # set the attributes of the activity.
+
+                self.ActivityMainMenu.add_cascade(label=key,menu = class_menu)
+
+            self.ActivityMainMenuButton.pack()
+
+        def tracks_activities(self):
+            """
+            This method will be used to put all the Track Cards on the activity card bar.
+            :return:
+
+            pack: TracksActivities_MbButton
+            """
+            ## Now very first we need to make a root Menu and its holding button.
+            self.TracksActivities_MbButton = Menubutton(self, text='TrackCards')
+            self.TracksActivities_MbButton.pack()
+
+            # Now create a root menu for it
+            self.TracksActivities_RootMenu = Menu(self.TracksActivities_MbButton, tearoff=0)
+            self.TracksActivities_MbButton.config(menu = self.TracksActivities_RootMenu) # configuring the root menu in the menu button.
+
+            # 1. In this first we will retrieve all card recursively.
+            # 2. Each card will have its Parent and FullPath we will use it to map each card
+            db_file = './data/temp'
+
+            with open(db_file, 'r') as read:
+                database = json.load(read)
+
+                # Now we need to use this database to retrieve all cards/
+                for key , card in self.tracks_func.Retrieve_Cards(database):
+                    if key != "Root":
+                        if key != "Topic":
+                            # Now we can access each card individually
+                            # Now we need to get card Parent and FullPath.
+                            # for FullPath we need to make its own menu and put its menu in its parent menu.
+                            # To map the ParnetMenu and CardMenu we will use self.TracksActivities_MenuMap dictionay.
+                            cardMenu = Menu(self.TracksActivities_MbButton, tearoff=0)
+                            cardMenu.add_command(label=key,
+                                                 command = lambda x="Tracks",
+                                                                  y = card["Parent"],
+                                                                  other = {"Record Topic": card["FullPath"]}
+                                                                : self.activity_command(x,y,other))
+                            #Now we need to add a separator to separate child keys.
+                            cardMenu.add_separator()
+                            self.TracksActivities_MenuMap[card['FullPath']] = cardMenu
+                # Now we have created Menus for each card we need to map each card with its parent cardMenu.
+                for key , card in self.tracks_func.Retrieve_Cards(database):
+                    if key != "Root":
+                        if key !='Topic':
+                            if card["Parent"] == "Root":
+                                cardMenu = self.TracksActivities_MenuMap[card["FullPath"]] # retrieving the cardMenu
+                                self.TracksActivities_RootMenu.add_cascade(label=card["Name"] , menu = cardMenu)
+                                # if card is Root then we need to put this card into RootMenu
+                            else:
+                                # if card is not Rott then it is a child os we need to its Menu into its card.
+                                parentMenu = self.TracksActivities_MenuMap[card["Parent"]]
+                                cardMenu = self.TracksActivities_MenuMap[card["FullPath"]]
+                                # Now need to put cardMenu in its Parent Menu.
+                                parentMenu.add_cascade(label = card["Name"] , menu = cardMenu)
+
+
+
+                # at the final we need to make cascade menu by using the very top menus.
+        def activity_command(self,type=None, name=None ,other=None):
+            # Record Type,Record Name,Record Topic,Record SubTopic
+            data = {"Record Type": type,
+                    "Record Name":name,
+                    "Record Topic":None,
+                    "Record SubTopic":None}
+            if other:
+                data["Record Topic"] = other.get('Record Topic',None)
+                data["Record SubTopic"] = other.get("Record SubTopic",None)
+
+            print("Activity Data: ",data)
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Keeps_Card:
         """
         This class will be used to create a new keep card in a Keeps Notebook section.
@@ -712,7 +1583,6 @@ class Widgets:
         Keep_Card_Ids = None  # this will hold the all cards ids.
         Keep_Card_Container = None  # this is the common container in which all the card will be placed.
         Keep_Card_Object = []  # This will hold all card objects.
-
 
         # SOME GLOABLE ATTRIBUTE FOR THEME AND COLOR
         KEEP_CARD_HEAD_COLOR = None
@@ -836,7 +1706,7 @@ class Widgets:
                     Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame2)
                     Textbox.text.insert(1.0, check_text)
                     Textbox.check_var.set(check_mark)
-
+                    Textbox.set_check_status(check_text)
                     # after creating the checkbox inside the Keep Card we need to store the Textbox in the self.CheckList
                     # and also we need to store the text content and check mark in the self.CheckContent list.
                     self.CheckList.append(Textbox)
@@ -853,7 +1723,7 @@ class Widgets:
                     self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
                     self.Next_AddButton_Postion = (self.Next_AddButton_Postion[0] + 1, 1)
                 r, c = position
-                print("Keep Card position: ", position)
+                # print("Keep Card position: ", position)
                 self.AddCheckbutton2.config(command=lambda x=self.CardContentFrame2,
                                                            y=self.AddCheckbutton2:
                 self.Add_Keep_Check(master=x, bt=y))
@@ -872,6 +1742,7 @@ class Widgets:
 
                 # at last we will reconfigure the theme of the Card
                 self.theme_configure()
+
             def Retrieve_Keep_Cards(self, master, keepcarddata):  # @ This method is not used yet.
                 """
                 This method will initiate the keep card from saved data. this method will be called during the initializing/opening
@@ -891,13 +1762,13 @@ class Widgets:
                 Pos, _ = keepbar.get_keep_card_position(List)
                 for card, pos in zip(keepcarddata.items(), Pos):
                     _, card_detail = card
-                    print("retrieved card detail: ", card_detail)
+                    # print("retrieved card detail: ", card_detail)
                     Widgets.Keeps_Card.Keep_Cards_List.append(card)
                     self.Create_Keep_Card2(master, pos, card_detail)
                 # Now we need to iterate through all the cards.
 
             def Delete_Keep_Card(self, card_id):
-                print("delete keep card called.")
+                # print("delete keep card called.")
                 """
                 This method will be used to delete a card from a database, and it will reconfigure all the cards.
                 :param card_id: This is the card which is need to be deleted after pressing the delete button.
@@ -950,8 +1821,8 @@ class Widgets:
                 else:
                     print("No card found...")
 
-            def theme_configure(self, head_bg_color='#4f485e',content_bg_color = '#488231' ,
-                                head_text_color='white', content_text_color= 'white'):
+            def theme_configure(self, head_bg_color='#4f485e', content_bg_color='#488231',
+                                head_text_color='white', content_text_color='white'):
                 """
                 This method will be used to configure the look of the Keep_Card object, in this we will change background,
                 foreground, text size, font style, colors, active and disabled state.
@@ -962,34 +1833,34 @@ class Widgets:
                 Widgets.Keeps_Card.KEEP_CARD_HEAD_TEXT_COLOR = head_text_color
                 Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR = content_text_color
                 # first of all removing the default border
-                self.CardMainFrame2.config(highlightbackground=None, highlightcolor=None, highlightthickness = 0)
+                self.CardMainFrame2.config(highlightbackground=None, highlightcolor=None, highlightthickness=0)
 
                 # common
-                hc_cfg = {'bg':head_bg_color, 'font':('snas-sarif',15,'bold'),'fg':head_text_color,'relief':'flat', 'takefocus':0}
+                hc_cfg = {'bg': head_bg_color, 'font': ('snas-sarif', 15, 'bold'), 'fg': head_text_color,
+                          'relief': 'flat', 'takefocus': 0}
                 hb_cfg = {}
 
                 # first of all we will configure the HeadFrame of the Keep_Card.
                 self.HeadFrame2.config(bg=head_bg_color)
                 for child in self.HeadFrame2.winfo_children():
-                    child.config(cnf = hc_cfg)
+                    child.config(cnf=hc_cfg)
 
                 # Now we will work on the CardContentFrame
                 self.CardContentFrame2.config(bg=content_bg_color)
                 for child in self.CardContentFrame2.winfo_children():
                     if isinstance(child, Button):
                         child.config(bg=content_bg_color, takefocus=0, relief='flat', fg=content_text_color,
-                                     font = ('sarif',11,'bold'))
+                                     font=('sarif', 11, 'bold'))
                     else:
                         child.config(bg=content_bg_color, takefocus=0, relief='flat')
 
-
                 # Now we need to config every checkbox, for that we need to config Textbox.
                 style = ttk.Style()
-                style.configure('TCheckbutton', background=content_bg_color, indicatorbackground = content_bg_color,
-                                indicatorcolor = content_bg_color)
+                style.configure('TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
+                                indicatorcolor=content_bg_color)
                 for Textbox in self.CheckList:
                     Textbox.text.config(bg=content_bg_color, fg=content_text_color, takefocus=0, relief='flat',
-                                        state='disabled', font = ('sarif', 12), pady=5)
+                                        state='disabled', font=('MS Sans Serif', 12), pady=5)
                     Textbox.check.config(style='TCheckbutton', takefocus=0)
 
             def pack(self, cfg={}, **kw):
@@ -1007,7 +1878,7 @@ class Widgets:
                 self.CardMainFrame.grid(cfg, **kw)
 
             def Add_Keep_Check(self, master, bt=None, row=None, column=None):
-                print("Add keep check called")
+                # print("Add keep check called")
                 """
                 This method will be used to create a new Text box inside the Keep card.
                 :return:
@@ -1145,7 +2016,7 @@ class Widgets:
                 self.text = Text(self.MainFrame, height=1, width=40, wrap='word', insertontime=700, insertofftime=500)
                 self.text.pack(side='left', anchor='nw')
                 self.event_binding()
-                print("keep initiated")
+                # print("keep initiated")
 
             def pack(self, cnf={}, **packvalues):
                 """
@@ -1225,16 +2096,63 @@ class Widgets:
                         self.Check_UnCompleted()
                         self.OverStrike = False
 
+            def set_check_status(self, check_status):
+                """
+                This method will set the status of the check, if the check is marked then it will make overstrike on the text,
+                if the check is not marked then it will leave the text.
+                :param check_status: bool, it is a boolean value, set it 0 or False for False, or 1 or True for True.
+                :return:
+                """
+                if check_status:
+                    # if check_status is true it means we have to make overstrike on the text.
+                    self.update_checkbutton_states()
+
             def bind_Return(self, event):
                 # print(event)
                 """
                 This method will be execute when the Return button is pressed.
                 :return:
                 """
-                self.text.config(state='disabled', relief='flat', bg=self.MainFrame.cget('bg'))
+                self.text.config(state='disabled', relief='flat', bg=self.MainFrame.cget('bg'), takefocus=0)
                 self.keep_data = (self.text.get(1.0, 'end'), self.check_var.get())
+                self.MainFrame.focus_set()
 
-                print("keep data: ", self.keep_data)
+            def InFocus(self, event):
+                """
+                This is a event method which will be invoked when focus is set to the widget.
+                :return:
+                """
+                self.text.config(state='normal', relief='sunken', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
+                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
+
+            def OutFocus(self, event):
+                """
+                This is an event method which will be invoked when focus out from the widget.
+                :return:
+                """
+                self.text.config(state='disabled', relief='flat', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
+                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
+
+            def MouseEnter(self, event):
+                """
+                This is a event method which will be invoked when a mouse is Enters over the widget.
+                :param event:
+                :return:
+                """
+                # default state color:  Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+                # Mouse enter background color: #d8dbe8
+                # Mouse enter foreground color: #1b2e85
+                self.text.config(state='disabled', relief='ridge', bg='#d8dbe8',
+                                 fg='#1b2e85', takefocus=0)
+
+            def MouseLeave(self, event):
+                """
+                This is a event method when the mouse leave the widget.
+                :param event:
+                :return:
+                """
+                self.text.config(state='disabled', relief='flat', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
+                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
 
             def bind_bt_1(self, event):
                 """
@@ -1253,6 +2171,44 @@ class Widgets:
                 self.text.bind("<Return>", self.bind_Return)
                 self.text.bind("<Button-1>", self.bind_bt_1)
                 self.text.bind("<KeyPress>", self.update_textheight)
+                self.text.bind("<FocusIn>", self.InFocus)
+                self.text.bind("<FocusOut>", self.OutFocus)
+                self.text.bind("<Enter>", self.MouseEnter)
+                self.text.bind("<Leave>", self.MouseLeave)
+
+            def theme_configure(self, content_bg_color='#a267c7',
+                                content_text_color='#a28cff', **colors):
+                """
+                This method will be used to set the theme color for the Textbox class widgets.
+                :param head_bg_color: Heading widgets color.
+                :param head_text_color:  Heading widgets text color
+                :param content_bg_color:  content widgets background color.
+                :param content_text_color: content widgets text color.
+                :return:
+
+                colors: this is wid keyword argument which will give us some more color keys:
+
+                        check_hover_effect  = 'defalut'
+
+                """
+                self.check_bg_color = None
+                self.text_bg_color = content_bg_color
+                self.text_fg_color = content_text_color
+
+                if colors:
+                    self.check_hover_effect = colors['check_hover_effect']
+
+                # Textbox container frame
+                self.MainFrame.config(bg=content_bg_color)
+
+                # Textbox text color
+                self.text.config(bg=content_bg_color, fg=content_text_color)
+
+                # Textbox check color
+                style = ttk.Style()
+                style.configure('title.TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
+                                indicatorcolor=content_bg_color)
+                self.check.configure(style='title.TCheckbutton')
 
         class KeepCardBar(Frame):
             """
@@ -1273,7 +2229,7 @@ class Widgets:
                 self.Content = None
                 self.KeepCardContainer = container_frame  # In this we will place over created Cards.
                 self.BarActive = False
-                print("Focused widget: ", self.MainFrame.focus_get())
+                # print("Focused widget: ", self.MainFrame.focus_get())
 
             def Create_Frame(self, master, cfg, **kw):
                 """
@@ -1291,7 +2247,7 @@ class Widgets:
                 self.Title_var.set("Title")
                 self.Entry = Entry(self.MainFrame, textvariable=self.Title_var, font=("sarif", 15, 'bold'),
                                    relief='flat',
-                                   fg="#8c8c8c", takefocus=0)
+                                   fg="#e08e46", takefocus=0, )
                 self.Entry.pack(fill='y', anchor='nw')
 
                 self.ChecksFrame = Frame(self.MainFrame, bg='red')
@@ -1299,6 +2255,10 @@ class Widgets:
 
                 self.BottomFrame = Frame(self.MainFrame, bg='green')
                 self.BottomFrame.pack(fill='y', anchor='se', side='bottom')
+
+                self.theme_configure(Mainbody_color="#6b3dd1", head_bg_color='#926ce6',
+                                     head_text_color='#827c91', content_bg_color='#a267c7',
+                                     content_text_color='#a28cff')
 
             def pack(self, cnf={}, **packvalues):
                 """
@@ -1320,8 +2280,8 @@ class Widgets:
                 Keep card.
                 :return:
                 """
-                print("Entry event responded")
-                print("Focused widget: ", self.MainFrame.focus_get())
+                # print("Entry event responded")
+                # print("Focused widget: ", self.MainFrame.focus_get())
                 if self.Entry.focus_get() != self.Entry and self.BarActive == False:
                     # Now since Bar has been activated so we need to make self.BarActive == True
                     self.BarActive = True
@@ -1329,12 +2289,13 @@ class Widgets:
 
                     self.Title_var.set("")
                     self.Entry.config(fg='black')
-                    self.Entry.pack_configure(fill='x', pady=5, padx=5)
+                    self.Entry.pack_configure(fill='x', pady=10, padx=10)
+                    self.MainFrame.pack_configure(pady=10)
                     # Now we need to initiate a Keep check
                     self.Content = Widgets.Keeps_Card.CreateKeepsCard(self.ChecksFrame, title=None)
                     self.Content.CardMainFrame.config(highlightbackground=None, highlightcolor=None,
                                                       highlightthickness=0)
-                    self.Content.pack()
+                    self.Content.pack(pady=10)
                     self.Content.CheckList.append(self.Content.Textbox)
                     # Now we need to put two button one for save the card and another for cancel the save of card
                     # delete all the card data.
@@ -1347,6 +2308,14 @@ class Widgets:
 
                     self.cancel_button.config(command=self.reset_card_bar)
                     self.save_button.config(command=self.save_card)
+
+                    # Here after all packing we need to configure theme of the title bar.
+
+                    self.theme_configure(Mainbody_color="#a267c7", head_bg_color='#926ce6', head_text_color='#e08e46',
+                                         content_bg_color='#a267c7', content_text_color='#a28cff')
+                    self.Content.Textbox.theme_configure()
+                    self.Content.AddCheckbutton.config(bg='#a267c7', fg='white', relief='flat',
+                                                       activebackground='#a267c7', activeforeground='white')
 
             def bind_envents(self):
                 self.Entry.bind("<Button-1>", self.bt1_active_state)
@@ -1390,8 +2359,8 @@ class Widgets:
                 Widgets.Keeps_Card.Keep_Cards_List.append(CKC2)
                 Widgets.Keeps_Card.Keep_Card_Object.append(CKC2)
                 # Now we will get position for our new keep card
-                print("In KeepCardBar: ")
-                print("\t\t ", Widgets.Keeps_Card.Keep_Cards_List)
+                # print("In KeepCardBar: ")
+                # print("\t\t ", Widgets.Keeps_Card.Keep_Cards_List)
 
                 # Now we will put the newly created card on the container frame, for this we need to get the position for
                 # new card this will be done with get_keep_card_position() method.
@@ -1444,7 +2413,7 @@ class Widgets:
                 row = 0
                 col = 0
                 poslist = []
-                print("length of KCL: ", len(KCL))
+                # print("length of KCL: ", len(KCL))
                 if len(KCL) > 0:
                     for cp in range(len(KCL)):
                         # print("length of cp: ",cp)
@@ -1459,3 +2428,49 @@ class Widgets:
 
                 newest = poslist[-1]
                 return poslist, newest
+
+            def theme_configure(self, Mainbody_color=None, head_bg_color=None, head_text_color=None,
+                                content_bg_color=None, content_text_color=None):
+                """
+                This is a color configuration of the Creating new card title bar, in which title bar section will act as a
+                    head of the Frame and below part will act as a content section of the Frame.
+                :param head_bg_color: background color of the title bar.
+                :param head_text_color: text color of the title bar.
+                :param content_bg_color: background color of the content section.
+                :param content_text_color: text color of the content section.
+                :return:
+                """
+
+                # NOw first we need configure Main body which is also a container of the title bar.
+                self.MainFrame.config(bg=Mainbody_color)
+
+                # Now we will configure the title bar.
+                self.Entry.config(bg=head_bg_color, fg=head_text_color)
+
+                # Now we need to configure the Text box color
+                self.ChecksFrame.config(bg=content_bg_color)
+                # Now we will configure the CheckFrame child color (text, checkbutton)
+                style = ttk.Style()
+                style.configure('TCheckbutton.check', background=content_bg_color, indicatorbackground=content_bg_color,
+                                indicatorcolor=content_bg_color)
+                for child in self.ChecksFrame.winfo_children():
+
+                    if isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
+                                     activebackground=content_bg_color, activeforeground=content_text_color)
+                    elif isinstance(child, ttk.Checkbutton):
+                        child.configure(style='TCheckbutton.check')
+                    elif isinstance(child, Text):
+                        child.config(bg=content_bg_color, fg=content_text_color)
+
+                    elif isinstance(child, Frame):
+                        child.config(bg=content_bg_color)
+
+                # Now we will config the bottom section in which buttons are placed.
+                self.BottomFrame.config(bg=content_bg_color)
+
+                # Now we will set buttons config.
+                for child in self.BottomFrame.winfo_children():
+                    if isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
+                                     activebackground=content_bg_color, activeforeground=content_text_color)

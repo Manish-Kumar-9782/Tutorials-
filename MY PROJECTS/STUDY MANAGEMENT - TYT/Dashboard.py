@@ -60,7 +60,7 @@ class Dashboard:
             
             self.master = master
             self.master.title("TM-TYT") # title: Time Management Track Your Time.
-            self.master.geometry("900x700")
+            self.master.geometry("1400x700")
             self.master.update_idletasks()
             self.setup = Sections()
 
@@ -96,7 +96,7 @@ class Dashboard:
             # Now here we need to make a Note book which will hold the Some frames.
             # here will use the Widgets class Create_Notebook to create a notebook and this will need a master.
             notebook = self.wid.Create_Notebook()
-            print(notebook)
+
             nb = notebook.Notebook(app_menu_section, 400, 400 , tabposition='wn')
             # Now we need to add some frames into this
             frames = Frames()

@@ -50,23 +50,35 @@ class Frames(Frame):
         # Here in this top section we will put progress bar and set_today_target button
         # first we will set the set_target-button
         set_target_button = Button(top_section,text='Set')
-        set_target_button.pack(side=RIGHT, anchor='e')
+        set_target_button.pack(side=RIGHT, anchor='se')
+
+        # Now in top section we need to put the tth_progressbar
+        tth = self.Wid.TTH_ProgressBar(top_section)
+        tth.pack(side=RIGHT, anchor='ne')
+        top_section.update_idletasks()
+
 
         # now here we will make a top level window when the button is pressed
         def Set_Target():
             root = Toplevel()
             self.Tracks.Set_Today_target(root)
+            self.Tracks.wait_window(root)
+
+            for child in  top_section.winfo_children():
+                if isinstance(child, self.Wid.TTH_ProgressBar):
+                    child.destroy()
+
+            tth = self.Wid.TTH_ProgressBar(top_section,self.Tracks.set_today_target_hour)
+            tth.pack(side=RIGHT, anchor='ne')
+            top_section.update_idletasks()
+            # print("Target HOur",self.Tracks.set_today_target_hour)
 
         set_target_button.config(command = Set_Target)
-        progressbar= self.Wid.Create_ProgressBar()
-        progressbar.progressbar(top_section)
-        # Now we need to put the progress bar
 
 #----------------------------------------------------------------------------------------------------------------------##
 #----------------------------------------------------------------------------------------------------------------------##
         # Mid Secion
         mid_section = Frame(tracks , bg = 'blue')
-
 
         # here we need to retrieve the data and need to make the Cards.
         self.Tcards = Widgets.Track_Card(mid_section)
@@ -76,6 +88,15 @@ class Frames(Frame):
 
         mid_section.pack(fill=BOTH, expand=True)
         # Now here we need to
+
+        #------------------------------------------------------------|
+        # creating a after loop to check the update in the Database. |
+        def update_database():
+            Widgets.Track_Card.reload_Database()
+            mid_section.after(1000,update_database)
+        update_database()
+        #-------------------------------------------------------------
+
 
 #----------------------------------------------------------------------------------------------------------------------##
 #----------------------------------------------------------------------------------------------------------------------##
