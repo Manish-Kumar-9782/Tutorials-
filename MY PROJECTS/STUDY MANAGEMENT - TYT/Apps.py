@@ -465,14 +465,18 @@ class Timer():
             :param Master: This is the master window/Frame/Container in which we will place our timer Frame.
             :return:
             """
+
+
             Outer_Container_Frame = Frame(Master, highlightbackground = 'green',
                                                     highlightcolor = 'green',
                                                     highlightthickness = 2)
             Outer_Container_Frame.pack()
 
-            Activities = Widgets.Widgets.Activities(Outer_Container_Frame, width = 500, bg=self.bg_color)
-            Activities.ActivityMainMenuButton.pack_configure(side='left', anchor = 'w', padx= 10)
-            Activities.TracksActivities_MbButton.pack_configure(side = 'left', anchor = 'w', padx=10)
+            Activities = Widgets.Widgets.Activities(Outer_Container_Frame,timer_class=Timer ,width = 500, bg=self.bg_color)
+            Activities.ActivityMainMenuButton.pack_configure(side='left', anchor = 'w', padx= (0,2))
+            Activities.TracksActivities_MbButton.pack_configure(side = 'left', anchor = 'w', padx=(0,2))
+            Activities.new_activity(Tracks)
+            Activities.NewActivityButton.pack_configure(side = 'left', anchor = 'w', padx=(0,2))
             # Activities.pack_propagate(False)
             Activities.pack(fill= 'x')
 
@@ -597,7 +601,6 @@ class Tracks(Frame):
     This class will be used to operates the tracks and their data.
     """
     def __init__(self, master = None):
-
         super().__init__(master=master)
         self.TimerApp = Timer.Countdown()
         self.target_id = None

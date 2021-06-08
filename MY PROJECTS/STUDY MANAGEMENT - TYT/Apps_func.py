@@ -894,7 +894,7 @@ class Activity_Classes:
 
         ActivityClasses :{}
         TracksActivity:{}
-        WatchActivity :{}
+        WatchActivity :[]
         NoWatchActivity :{}
     """
     def __init__(self):
@@ -946,11 +946,60 @@ class Activity_Classes:
 
         # at last we will save our data.
         self.save_activities()
-    def delete_activity(self):
+
+    def delete_activity(self,_from_ = None , activity = None):
         """
         This method will be used to delete an activity form the database.
+        :param _from_: str, type of the activity from which we want to delete the activity.
+        :param activity: activity which need to be deleted.
         :return:
+
+        _from_ keys:
+            ActivityClasses :{}
+            TracksActivity:{}
+            WatchActivity :[]
+            NoWatchActivity :{}
+
+        if an activity has parent or parents in nested way then pass the full name of the activity.
+
         """
+
+    def add_to_activityclasses(self,Database,Name,Parent=None):
+        """
+        This method will be used to add an activity in a activityclasses section.
+        :param Database: Database of the activities.
+        :param Name: str, Name of the activity.
+        :param Parent: str, Name of the Parent of the activity. if Parent also has parents classes then pass the string using the .child method.
+        :return: None
+        """
+        # A common information for any activity.
+        Activity = {Name:{"Name":Name,
+                    "Parent":Parent,
+                    'Activities':{}}}
+
+        # every activity will have this information in a Nested way.
+        # So now we need to add new activity at their place.
+        # if an activity has no parent then this will be added in Root address = ActivityClasses
+        data = Database # making another reference to add new activity.
+        if Parent:
+            # if there is any parent then we need to split the parent and dive into them one by one.
+            parents = Parent.split(".")
+            for parent in parents:
+                if parent == "ActivityClasses":
+                    data = data[parent]
+                else:
+                    data = data[parent]
+                    if isinstance(data,dict) and data.get("Activities",None) !=None:
+                        data = data['Activities']
+
+            data.update(Activity)
+
+        else:
+            Database["ActivityClasses"].update(Activity) # just update the activity.
+
+        # Now we need to save the save database.
+        self.Activity_Database = Database
+        self.save_activities()
 
     def save_activities(self, filepath = './data/activities.json'):
         """
@@ -960,8 +1009,7 @@ class Activity_Classes:
         :return:
         """
         with open(filepath,'w') as write:
-            json.dump(self.Activity_Database,write, indent=1)
-
+            json.dump(self.Activity_Database,write, indent=2)
 
     def retrieve_activities(self, filepath = './data/activities.json'):
         """
@@ -977,11 +1025,35 @@ class Activity_Classes:
 
         return self.Activity_Database
 
-    def retrieve_Tracks_Actvity(self):
+    def add_to_watchlist(self,Database, activity, filepath = './data/activities.json'):
         """
-        This method will be used to retrieve tracks data and add them in the TracksActivity list.
+        This method will be used to config watchlist activities.
+        :param Database:dict, Database of the activities in which all the kind of activities are placed.
+        :param activity: str, Activity To watch during the countdown timer.
+        :param filepath: str, filepath at which the database is stored.
+        :return: None
+        """
+        if activity not in Database['WatchActivity']:
+            Database['WatchActivity'].append(activity)
+
+        # after appending the activity in the WatchList  we need to update the database.
+        with open(filepath, 'w') as write:
+            json.dump(Database,write)
+
+    def add_activity_class(self,Database,activity_class, filepath = './data/activities.json' ):
+        """
+        This method will be used to add a new activity class in the activities.
         :return:
         """
+        if activity_class not in Database["ActivityClasses"].keys():
+            Activity = {activity_class: {"Name": activity_class,
+                               "Parent": "ActivityClasses",
+                               'Activities': {}}}
+
+            Database["ActivityClasses"].update(Activity)
+            with open(filepath, 'w') as write:
+                json.dump(Database, write, indent=2)
+
 
     def retrieve_Watch_Activities(self):
         """
@@ -996,6 +1068,18 @@ class Activity_Classes:
                     data = json.load(read)
         return data['WatchActivity']
 
+    def retrieve_ActivityClasses(self,Database):
+        """
+        This method will be used to get all the activities from teh ActivityClasses.
+        :param Database: Database in which all the activities are stored.
+        :return: yield
+        """
+         # Now we need to yield the data.
+        for key, activity in Database.items():
+            if isinstance(activity, dict):
+
+                yield key, activity
+                yield from self.retrieve_ActivityClasses(activity)
 
     def init_activity_record(self):
         """
@@ -1009,7 +1093,7 @@ class Activity_Classes:
         file = './data/activities.json'
         Database = {"ActivityClasses":{},
                     "TracksActivity":{},
-                    "WatchActivity":{"Project",'Subject'},
+                    "WatchActivity":["Project",'Subject','Tracks'],
                     "NoWatchActivity":{}}
 
         if not os.path.isfile(file):  # if file is not present

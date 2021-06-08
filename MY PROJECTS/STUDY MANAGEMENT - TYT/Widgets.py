@@ -1,9 +1,9 @@
 # in this section we will make a small widget object which will be used in our application.
 import csv
 import os
-from tkinter import  (Tk,Frame, Label, Button, StringVar,
-                      IntVar, Spinbox, Toplevel, Entry, Text,
-                      Menu,Menubutton)
+from tkinter import (Tk, Frame, Label, Button, StringVar,
+                     IntVar, Spinbox, Toplevel, Entry, Text,
+                     Menu, Menubutton, messagebox)
 from tkinter import ttk
 from random import randint
 import time, json
@@ -60,6 +60,7 @@ misc = Misc()
 
 
 class Widgets:
+    APP_TRACKS = None
 
     def __init__(self, master=None):
 
@@ -200,14 +201,15 @@ class Widgets:
             # and also here we will initiate some progressbar property.
             self.progress_after_id = None
             self.Progress = None
-            self.Progress_Update_delay = 60000*30 # update delay for 30 minutes.
+            self.Progress_Update_delay = 60000 * 30  # update delay for 30 minutes.
             self.Progress_bar_name = None
             self.Progress_Current_Countdown_Time = 0
             self.Progress_Timer_Status = False
             self.Progress_Target_Hour = None
             self.Progress_Completed_Hour = None
 
-        def progressbar(self, master,bar_progress,progress_func=None,suffix='Progress', prefix='Completed', length=150, theme=None):
+        def progressbar(self, master, bar_progress, progress_func=None, suffix='Progress', prefix='Completed',
+                        length=150, theme=None):
             """
             This method will be used to create a progress bar for a task .
             :param master: master parent window/frame/toplevel window in which we will put the progressbar.
@@ -221,7 +223,7 @@ class Widgets:
             :param theme:
             :return:
             """
-
+            self.style.configure("Track.Horizontal.TProgressbar", troughcolor = 'red', background = 'white', bordercolor= 'black')
             # now here we need to define the Frame , Label and a Progressbar.
             self.Progress = bar_progress
             self.Progress_Frame = Frame(master, height=5, width=250)
@@ -230,7 +232,7 @@ class Widgets:
             # now in this frame we need to put some Label and a Progress bar
             # Note that we need to put the label and progress bar in order
             suffix_label = Label(self.Progress_Frame, text=suffix)
-            Progress_Bar = ttk.Progressbar(self.Progress_Frame, length=length)
+            Progress_Bar = ttk.Progressbar(self.Progress_Frame, length=length, style = "Track.Horizontal.TProgressbar")
             prefix_label = Label(self.Progress_Frame)
 
             suffix_label.pack(side='left', anchor='n')
@@ -242,7 +244,7 @@ class Widgets:
                 # this function will be run by a .after function.
                 # Now here we need to add some increment value in the Progress_Bar['value']
 
-                if self.Progress_Timer_Status: # if timer status is True
+                if self.Progress_Timer_Status:  # if timer status is True
                     # print(f"Progressbar timer is on {self.Progress_bar_name}")
                     self.Progress_Update_delay = 1000
                     self.update_progress_time()
@@ -253,7 +255,6 @@ class Widgets:
                     self.Progress_Update_delay = 1000  # if Progress_Timer is False then we will update the timer from local storage
                     # print("Progress bar delay: ",self.Progress_Update_delay)
                     # in a time interval.
-
 
                 # print("Progress value for: ",self.Progress_bar_name,"\t",self.Progress)
                 Progress_Bar['value'] = self.Progress
@@ -286,7 +287,7 @@ class Widgets:
 
             # Now we need to get the total percent of completed bar.
             if total_targeted_seconds != 0:
-                self.Progress = (100/total_targeted_seconds) * updated_seconds
+                self.Progress = (100 / total_targeted_seconds) * updated_seconds
             else:
                 self.Progress = 0
 
@@ -300,17 +301,17 @@ class Widgets:
             cardName = temp[-1]
             cardParent = '.'.join(temp[:-1])
             card = self.App_Track.Get_Card(cardParent, cardName, Widgets.Track_Card.Tracks_Cards_Database)
-            updated_time = self.Progress_Current_Countdown_Time + self.Time.time_to_seconds(self.Progress_Completed_Hour)
-            card["Completed Hour"] = self.Time.sec_to_time(updated_time,rt_str=True)
+            updated_time = self.Progress_Current_Countdown_Time + self.Time.time_to_seconds(
+                self.Progress_Completed_Hour)
+            card["Completed Hour"] = self.Time.sec_to_time(updated_time, rt_str=True)
 
-            card["Progress"] = (100/self.Time.time_to_seconds(self.Progress_Target_Hour)) * updated_time
+            card["Progress"] = (100 / self.Time.time_to_seconds(self.Progress_Target_Hour)) * updated_time
 
-            updated_Database = self.App_Track.update_card(cardName, cardParent,card,Widgets.Track_Card.Tracks_Cards_Database)
+            updated_Database = self.App_Track.update_card(cardName, cardParent, card,
+                                                          Widgets.Track_Card.Tracks_Cards_Database)
 
             with open(file, 'w') as write:
-                json.dump(updated_Database,write,indent=2)
-
-
+                json.dump(updated_Database, write, indent=2)
 
     # ======================================================================================================================#
     # ======================================================================================================================#
@@ -319,9 +320,9 @@ class Widgets:
         This frame will be used to create a three level progressbar to show the completion of working hour of the day.
         these progressbar will run in order, third after second, second after first one.
         """
-        COUNTDOWN_STATUS = None # To check that any timer is running or not.
-        COUNTDOWN_TIME = 0 #This is the time which will be retrieved from the local storage.
-        CURRENT_COUNTDOWN_TIME_ELAPSED = 0 # current countdown timer
+        COUNTDOWN_STATUS = None  # To check that any timer is running or not.
+        COUNTDOWN_TIME = 0  # This is the time which will be retrieved from the local storage.
+        CURRENT_COUNTDOWN_TIME_ELAPSED = 0  # current countdown timer
         WATCH_TYPE = None
         TODAY_COUNTDOWN_TIME = None
         SAVE_UPDATES = False
@@ -473,22 +474,22 @@ class Widgets:
 
                     self.set_bar_values(self.TODAY_COUNTDOWN_TIME)
                     print("TTH Timer Running, Total Elapsed Time", self.Today_Total_Elapsed_Time)
-                    print("TTH Timer Running, TODAY_COUNTDOWN_TIME",self.TODAY_COUNTDOWN_TIME)
+                    print("TTH Timer Running, TODAY_COUNTDOWN_TIME", self.TODAY_COUNTDOWN_TIME)
                     print("TTH Timer Running, COUNTDOWN_TIME", self.COUNTDOWN_TIME)
                     # print("Watch Type: ",self.WATCH_TYPE)
                     print()
                 else:
-                    print("Record Type not in WatchList: ",self.WATCH_TYPE)
+                    print("Record Type not in WatchList: ", self.WATCH_TYPE)
                     pass
 
             else:
                 # if this condition is true then it means that we need to retrieve data from local storage.
                 # self.Delay_Minutes = 30 # if are not running any timer then we will update the progress bar in every 30 min
-                if self.WATCH_TYPE in self.WatchList: # if our running time activity is in the watchlist then we will update the data
+                if self.WATCH_TYPE in self.WatchList:  # if our running time activity is in the watchlist then we will update the data
                     if Widgets.TTH_ProgressBar.SAVE_UPDATES:
                         self.Today_Total_Elapsed_Time = self.TODAY_COUNTDOWN_TIME
                         print("tth database is updated.")
-                        self.save_today_target(self.today_target,self.Today_Total_Elapsed_Time)
+                        self.save_today_target(self.today_target, self.Today_Total_Elapsed_Time)
                         Widgets.TTH_ProgressBar.SAVE_UPDATES = False
 
                 update_result = self.db_update.checkupdate()
@@ -499,12 +500,13 @@ class Widgets:
                     print("tth database is modified.")
                 else:
                     self.set_bar_values(self.Today_Total_Elapsed_Time)
-                print("TTH Timer Not Running getting data from local: ",update_result)
+                print("TTH Timer Not Running getting data from local: ", update_result)
 
             # Now we will make an after loop and we will store its id in a self object's attribute.
             self.Today_after_id = self.after(self.Today_Time_Update_Delay, self.update_tth_progressbar)
-            print(f"COUNTDOWN STATUS {Widgets.TTH_ProgressBar.COUNTDOWN_STATUS}: \t\t COUNTDOWN_TIME: {self.COUNTDOWN_TIME} ")
-            print(f"Today_Elepsed_Time: ",self.Today_Total_Elapsed_Time)
+            print(
+                f"COUNTDOWN STATUS {Widgets.TTH_ProgressBar.COUNTDOWN_STATUS}: \t\t COUNTDOWN_TIME: {self.COUNTDOWN_TIME} ")
+            print(f"Today_Elepsed_Time: ", self.Today_Total_Elapsed_Time)
             # print(f"Today countdown time: ")
 
         def retrieve_today_target(self, file="./data/daily_target.csv"):
@@ -552,25 +554,25 @@ class Widgets:
                     if row['Date'] == apps.Time.get_current_date():
                         # if we get any data of current day then we need to calculate the total time of the day.
                         # print("Total Time values: ", row["Total Time"], type(row['Total Time']))
-                        if row['Record Type'] in self.WatchList: # our row belongs to in watch list then we will count it.
+                        if row[
+                            'Record Type'] in self.WatchList:  # our row belongs to in watch list then we will count it.
                             today_time.append(int(row["Total Time"]))
             # and at last we need to sum all the times.
             # [int(i) for i in today_time]
             return sum(today_time)
 
-        def get_today_working_time2(self,file="./data/daily_target.csv"):
+        def get_today_working_time2(self, file="./data/daily_target.csv"):
             """
             This method will be used to get the total_today_working_time from daily_target.csv file.
             :param file:str, filepath
             :return:int, return seconds.
             """
 
-            with open(file, 'r',newline='') as read:
+            with open(file, 'r', newline='') as read:
                 reader = csv.DictReader(read)
                 for row in reader:
-                    if row["Date"]== self.Time.get_current_date():
+                    if row["Date"] == self.Time.get_current_date():
                         return int(row["Total Time"])
-
 
         def save_today_target(self, target, total_time=None):
             """
@@ -600,7 +602,7 @@ class Widgets:
                     temp.append(row)
 
                 if not today_present:
-                    self.today_data = {"Date":self.Time.get_current_date(),
+                    self.today_data = {"Date": self.Time.get_current_date(),
                                        "Time": self.Time.get_current_time(),
                                        "l1l": target[0][0],
                                        'l1h': target[0][1],
@@ -622,7 +624,7 @@ class Widgets:
                     # Now we need to save today data.
                     writer.writerow(self.today_data)
 
-                del temp # deleting the temporary data from memory.
+                del temp  # deleting the temporary data from memory.
 
         def set_bar_values(self, seconds):
             """
@@ -678,7 +680,7 @@ class Widgets:
 
             style = ttk.Style()
 
-            style.theme_create("NewNotebook", parent="vista", settings={
+            style.theme_create("NewNotebook", parent="clam", settings={
                 "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0], 'tabposition': 'wn', 'background': '#3e4c63'}},
 
                 "TNotebook.Tab": {
@@ -694,8 +696,13 @@ class Widgets:
                     "map": {"background": [("selected", '#7a3ca6')]}},
 
                 "TProgressbar": {
-                    "configure": {'background': 'green', 'troughcolor': 'white', 'bordercolor': 'red',
-                                  'darkcolor': 'red', 'lightcolor': 'yellow'},
+                    "configure": {'background': 'white', 'troughcolor': 'green', 'bordercolor': 'black',
+                                  'darkcolor': 'red', 'lightcolor': 'white'},
+                    "map": {"background": [("selected", '#4fbd9d')]}},
+
+                "TCombobox": {
+                    "configure": {'background': 'black', 'foreground': 'black', 'bordercolor': 'black',
+                                  'darkcolor': 'red', 'lightcolor': 'yellow', 'fieldbackground':'red' },
                     "map": {"background": [("selected", '#4fbd9d')]}}
 
             })
@@ -768,13 +775,14 @@ class Widgets:
         Tracks_Cards_AddButton_Mapping = {}
         Tracks_Cards_DelButton_Mapping = {}
         Tracks_Cards_Progress_Bars = {}
-        Set_Countdown_Timer = None # this is a class varibable which will be linked to the Ask_Countdown_Timer method from Apps module.
+        Set_Countdown_Timer = None  # this is a class varibable which will be linked to the Ask_Countdown_Timer method from Apps module.
 
         TCD = apps.Tracks_Cards()
-        Database_File =  "./Data/temp"
+        Database_File = "./Data/temp"
 
         def __init__(self, master=None):
-            Widgets.Track_Card.Tracks_Cards_Database = Widgets.Track_Card.TCD.Read_Cards_Database(Widgets.Track_Card.Database_File)
+            Widgets.Track_Card.Tracks_Cards_Database = Widgets.Track_Card.TCD.Read_Cards_Database(
+                Widgets.Track_Card.Database_File)
             self.Tracks_Cards_Frames = {}
             super().__init__(master)
             self.TypeName = None
@@ -849,15 +857,15 @@ class Widgets:
             bar.Progress_Target_Hour = Data['Target Hour']
             bar.Progress_Completed_Hour = Data['Completed Hour']
             self.Tracks_Cards_Progress_Bars[Data['FullPath']] = bar
-            CompletedBar = bar.progressbar(self.head_frame,bar_progress=Data["Progress"],
-                                           progress_func=lambda x=Data["Name"], y=Data["Parent"]:self.Card_Progress_Bar(x,y),
+            CompletedBar = bar.progressbar(self.head_frame, bar_progress=Data["Progress"],
+                                           progress_func=lambda x=Data["Name"],
+                                                                y=Data["Parent"]: self.Card_Progress_Bar(x, y),
                                            suffix="", prefix="")
 
             Thour_label = Label(self.head_frame, text=Data['Target Hour'])
             EndDate_label = Label(self.head_frame, text=Data['EndDate'])
             AddButton = Button(self.head_frame, text='+', font=('sarif', 10, 'bold'))
-            DeleteButton = Button(self.head_frame,text='x',font=('sarif', 10, 'bold'))
-
+            DeleteButton = Button(self.head_frame, text='x', font=('sarif', 10, 'bold'))
 
             # Now its time to pack all the widgets.
 
@@ -867,11 +875,11 @@ class Widgets:
             CompletedBar.pack(side='right', anchor='ne', padx=(5, 0))
             AddButton.pack(side='right', anchor='ne', padx=(50, 0))
             # Now here we will add a timer button which will start timer for that card.
-            self.Insert_Timer(self.head_frame,Data,Track_card_bar=bar,
-                              pack={'side':'right', 'anchor':'ne', 'padx':(5, 0)})
+            self.Insert_Timer(self.head_frame, Data, Track_card_bar=bar,
+                              pack={'side': 'right', 'anchor': 'ne', 'padx': (5, 0)})
             # Now here we need to map the Parent name with the button Tracks_Card_Mapping
             self.Tracks_Cards_AddButton_Mapping[AddButton] = "Root." + CardName
-            Widgets.Track_Card.Tracks_Cards_DelButton_Mapping = self.Root_Card_Frame # mapping Card Frame container
+            Widgets.Track_Card.Tracks_Cards_DelButton_Mapping = self.Root_Card_Frame  # mapping Card Frame container
 
             self.Tracks_Cards_Frames.update({Data['FullPath']: self.content_frame})
 
@@ -909,13 +917,13 @@ class Widgets:
             DeleteButton.config(command=lambda x=Data["Name"],
                                                y=Data['Parent'],
                                                z=Widgets.Track_Card.Tracks_Cards_Database,
-                                               card=self.Root_Card_Frame : self.delete_card(x,y,z,card))
+                                               card=self.Root_Card_Frame: self.delete_card(x, y, z, card))
             # setting the theme for root card.
             self.root_card_theme_configure(mainbody='#daffb5', head_bg_color='#3b4352', head_text_color='#73fffd',
                                            content_bg_color='#4b73c9', content_text_color='white')
 
-
             # Now we need to add the bar object in the Tracks_Cards_Progress_Bars dict
+
         def Create_Track_Record_Sub_Card(self, master, Parent=None, CardName=None, FullName=None, Data=None,
                                          use='create',
                                          height=None, width=None, f_cfg=None):
@@ -957,18 +965,19 @@ class Widgets:
             # We also need to define all the Labels with their Associted data from the incoming Data
             # which coming from the Add_SubCard method.
             bar = Widgets.Create_ProgressBar(SubHead)
-            bar.Progress_bar_name = Data['FullPath'] # setting the name of the progress bar.
+            bar.Progress_bar_name = Data['FullPath']  # setting the name of the progress bar.
             bar.Progress_Target_Hour = Data['Target Hour']
             bar.Progress_Completed_Hour = Data['Completed Hour']
             self.Tracks_Cards_Progress_Bars[Data['FullPath']] = bar
-            CompletedBar = bar.progressbar(SubHead,bar_progress=Data["Progress"],
-                                           progress_func=lambda x=Data["Name"], y=Data["Parent"]:self.Card_Progress_Bar(x,y),
+            CompletedBar = bar.progressbar(SubHead, bar_progress=Data["Progress"],
+                                           progress_func=lambda x=Data["Name"],
+                                                                y=Data["Parent"]: self.Card_Progress_Bar(x, y),
                                            suffix="", prefix="")
 
             Thour_label = Label(SubHead, text=Data['Target Hour'])
             EndDate_label = Label(SubHead, text=Data['EndDate'])
             AddButton = Button(SubHead, text='+', font=('sarif', 10, 'bold'))
-            DeleteButton = Button(SubHead, text = 'x',font=('sarif', 10, 'bold'))
+            DeleteButton = Button(SubHead, text='x', font=('sarif', 10, 'bold'))
 
             # Now its time to pack all the widgets.
             DeleteButton.pack(side='right', anchor='ne', padx=(50, 0))
@@ -977,8 +986,7 @@ class Widgets:
             CompletedBar.pack(side='right', anchor='ne', padx=(5, 0))
             AddButton.pack(side='right', anchor='ne', padx=(50, 0))
 
-
-            self.Insert_Timer(SubHead,Data,Track_card_bar=bar,
+            self.Insert_Timer(SubHead, Data, Track_card_bar=bar,
                               pack={'side': 'right', 'anchor': 'ne', 'padx': (5, 0)})
             # Now here we need to add the SubCard Full Name in the global Tracks_Card_Mapping dictionary
             self.Tracks_Cards_AddButton_Mapping[AddButton] = FullName
@@ -1040,8 +1048,8 @@ class Widgets:
                :return:
                 """
                 style = ttk.Style()  # a separate style for progressbar
-                style.configure("SubCard.Horizontal.TProgressbar", background='black', bordercolor='black',
-                                troughcolor='green')
+                style.configure("SubCard.Horizontal.TProgressbar", background='#07db5f', bordercolor='black',
+                                troughcolor='white', lightcolor = '#05ffb0', darkcolor='#b8ffcb')
 
                 # subcard main frame:
                 Subcard.config(bg=head_bg_color)
@@ -1209,7 +1217,7 @@ class Widgets:
                                                      'Time': Current_Time,
                                                      'Topic': {},
                                                      'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
-                                                     'Completed Hour':0,
+                                                     'Completed Hour': 0,
                                                      'EndDate': wid2.Date,  # here we need to pass a end date of the
                                                      'Progress': 0,
                                                      'Parent': Parent,
@@ -1229,7 +1237,8 @@ class Widgets:
                 # Now after Sucessfully save and create a new NTR Card we need to close this root window
                 # Now after saving the data we need to retrieve the data
                 save = apps.Tracks_Cards()
-                save.SaveCard(CardName=self.SubCard_Name, Parent=Parent, Database=Widgets.Track_Card.Tracks_Cards_Database,
+                save.SaveCard(CardName=self.SubCard_Name, Parent=Parent,
+                              Database=Widgets.Track_Card.Tracks_Cards_Database,
                               Subcard=SubCardData, FullName=self.SubCard_FullName)
                 master.destroy()
                 # print(".".join([parent_topic,data_dict['Topic']]))
@@ -1250,8 +1259,8 @@ class Widgets:
             :return:
             """
             style = ttk.Style()  # a separate style for progressbar
-            style.configure("Root.Horizontal.TProgressbar", background='black', bordercolor='black',
-                            troughcolor='green')
+            style.configure("Root.Horizontal.TProgressbar", background='#07db5f', bordercolor='black',
+                                troughcolor='white', lightcolor = '#05ffb0', darkcolor='#b8ffcb')
 
             ##Main body
             self.Root_Card_Frame.config(bg=mainbody)
@@ -1279,7 +1288,7 @@ class Widgets:
             # Now here is the last part of the Root card is content Frame in which other subcards are placed.
             self.content_frame.config(bg='#daffb5')
 
-        def Insert_Timer(self, master,carddata=None,Track_card_bar=None,pack = None):
+        def Insert_Timer(self, master, carddata=None, Track_card_bar=None, pack=None):
             """
             This method will be used to run a timer which will be linked to a Countdown timer and tth_Progress and also its own bar.
             :param master: This is the master window/container in which we will contain/put this Timer.
@@ -1290,23 +1299,23 @@ class Widgets:
             """
 
             def start_timer():
-                card_type = self.App_Cards.Get_Card_Type(Widgets.Track_Card.Tracks_Cards_Database,carddata['Parent'],carddata['Name'])
+                card_type = self.App_Cards.Get_Card_Type(Widgets.Track_Card.Tracks_Cards_Database, carddata['Parent'],
+                                                         carddata['Name'])
                 print("Print Card", card_type)
                 # for key,value in carddata.items():
                 #     print(f"{key}:\t{value}")
 
-                data = {'Record Type':card_type,
-                        'Record Name':carddata["Parent"],
-                        'Record Topic':carddata['Name'],
-                        'Record SubTopic':None}
-
+                data = {'Record Type': card_type,
+                        'Record Name': carddata["Parent"],
+                        'Record Topic': carddata['Name'],
+                        'Record SubTopic': None}
 
                 root = Toplevel()
                 countdown = self.Set_Countdown_Timer.Countdown(root)
-                countdown.Ask_Countdown_Time(root,data, Track_card_bar=Track_card_bar)
+                countdown.Ask_Countdown_Time(root, data, Track_card_bar=Track_card_bar)
                 root.mainloop()
 
-            Timer_Button = Button(master, text='Timer', command = start_timer)
+            Timer_Button = Button(master, text='Timer', command=start_timer)
 
             if pack:
                 Timer_Button.pack(**pack)
@@ -1314,7 +1323,7 @@ class Widgets:
                 Timer_Button.pack()
 
         @classmethod
-        def update_database(cls,Database):
+        def update_database(cls, Database):
             """
             This is a class method which we will be used to update the Tracks_Card_Database
             :param Database:dict or json object,  updated database.
@@ -1322,7 +1331,7 @@ class Widgets:
             """
             cls.Tracks_Cards_Database = Database
 
-        def Card_Progress_Bar(self,cardName, cardParent):
+        def Card_Progress_Bar(self, cardName, cardParent):
             """
             This method will be used update the progress bar, this will use the self.Tracks_Cards_Database to get the progress
                 of all cards.
@@ -1337,11 +1346,12 @@ class Widgets:
             for parent in parents:
                 if cardParent != 'Root' and parent != 'Root':
                     data = data[parent]['Topic']
-                else:data = data[parent]
+                else:
+                    data = data[parent]
 
             return data[cardName]["Progress"]
 
-        def save_card_progress(self,cardName,cardParent): # this is done in Progressbar classs
+        def save_card_progress(self, cardName, cardParent):  # this is done in Progressbar classs
             """
             This method will be used to save card progress while running the timer and after timer.
             :param cardName: str, Card name for which we want ot save the card progress
@@ -1349,7 +1359,7 @@ class Widgets:
             :return: None.
             """
             # first of all we need to get the card local data
-            card = self.App_Cards.Get_Card(cardParent,cardName,Widgets.Track_Card.Tracks_Cards_Database)
+            card = self.App_Cards.Get_Card(cardParent, cardName, Widgets.Track_Card.Tracks_Cards_Database)
             # Now we need to get two things, first we need to get the total target hour values
             # and second we need to get existing progress values.
             card_target_hour = card['Target Hour']
@@ -1389,7 +1399,7 @@ class Widgets:
                 else:
                     data = data[parent]
 
-            del data[cardName] # deleting the card from the database.
+            del data[cardName]  # deleting the card from the database.
 
             # Now after deleting the deleting the card we need to update the cls.Tracks_Cards_Database
             Widgets.Track_Card.update_database(Database)
@@ -1425,11 +1435,16 @@ class Widgets:
         WatchActivity :{}
         NoWatchActivity :{}
         """
-        ACTIVITY_DATABASE = None # this class method will be used to hold activity database.
-        def __init__(self,master = None, cnf=None, **kw):
+        ACTIVITY_FRAME = None
+        ACTIVITY_DATABASE = None  # this class method will be used to hold activity database.
+        ACTIVITY_CLASS_MENU_MAP = {}
+
+        def __init__(self, master=None, timer_class=None, cnf=None, **kw):
             """
             This will initiate the Activities class object which will be used to manage all the activities related functionality.
             :param master:tk.widget, a master window/widget/toplevel window to hold the Activities Frame.
+            :param timer_class: this is a special argument which is added in a problematic condition , this will hold the Timer class from the
+                    Apps module, since we cant import directly App module in Widgets module so we need to pass this class as an argument.
             :param cnf:options, Frame configuration options.
             :param kw: keyword arguments.
 
@@ -1440,66 +1455,103 @@ class Widgets:
                 NoWatchActivity :{}
 
             """
-            super().__init__(master,cfg=cnf, **kw) # initiating the activities bar.
+            super().__init__(master, cfg=cnf, **kw)  # initiating the activities bar.
+            self.Top_Frame = None  # this is the top frame from the frame_section
             self.activity_func = apps.Activity_Classes()  # initiating the activity record and loading into memory.
             self.tracks_func = apps.Tracks_Cards()
+            self.Apps_Timer = timer_class
 
             self.Activity_Database = self.activity_func.Activity_Database
-            self.WatchList = None # activities to watch for countdown timer.
-            self.TracksActivities = None # activity list for Tracks Activities.
-            self.DailyActivities = None # Daily activity
-            self.OtherActivities = None # Other Activities.
-            self.ActivityClasses =  self.Activity_Database["ActivityClasses"] # To hold all the activity classes in which we can hold all the activities.
-
+            self.WatchList = self.Activity_Database["WatchActivity"]  # activities to watch for countdown timer.
+            self.TracksActivities = None  # activity list for Tracks Activities.
+            self.DailyActivities = None  # Daily activity
+            self.OtherActivities = None  # Other Activities.
+            self.ActivityClasses = self.Activity_Database[
+                "ActivityClasses"]  # To hold all the activity classes in which we can hold all the activities.
+            self.New_activity = None
+            self.New_watchlist_item = None
+            # self.New_activity_class_item = None
             self.ActivityClasses_MenuMap = {}
             self.TracksActivities_MenuMap = {}
+
             # initiating the activity bar .
-            self.activity_bar()
-            self.tracks_activities()
+            self.activity_classes()  # init activity classes menu
+            self.tracks_activities()  # init activity tracks menu
+            # self.watchlist_menu()
+            # self.new_activity() # init start a new activity.
 
         @classmethod
         def Get_Database(cls):
             act = apps.Activity_Classes()
             cls.ACTIVITY_DATABASE = act.Activity_Database
 
-        def activity_bar(self):
+        def activity_classes(self):
             """
             This method will be used to set activity bar on its parent widget/window.
+            :param timer_class: This will be the timer class which should be used to create a time
             :return:
 
             pack: ActivityMainMenuButton
             """
+            actmap = Widgets.Activities.ACTIVITY_CLASS_MENU_MAP  # referencing with another name.
+            filter_class = ["Activities", "TracksActivity", "NoWatchActivity", "ActivityClasses"]
             # first of all we will make a menu to hold all the activity except Tracks card activities.
             # we will make separate menu for the TracksActivities.
 
             self.ActivityMainMenuButton = Menubutton(self, text='Activities')
 
             # Now in this activity menu we need to make a
-            self.ActivityMainMenu = Menu(self.ActivityMainMenuButton, tearoff = 0)
+            self.ActivityMainMenu = Menu(self.ActivityMainMenuButton, tearoff=0)
             # Now need to config the Menubutton for this menu.
-            self.ActivityMainMenuButton.config(menu = self.ActivityMainMenu)
+            self.ActivityMainMenuButton.config(menu=self.ActivityMainMenu)
             # Now in this we need to get all the activity classes and put them in their own separate menu.
-             # getting the Activity database form local storage.
-            for key , activities in self.ActivityClasses.items():
-                # Now here we need to make cascade menus for each key
-                class_menu = Menu(self.ActivityMainMenuButton, tearoff = 0)
-                class_menu.add_command(label = key,
-                                       command = lambda x=key, y=key: self.activity_command(x,y))
-                # This command section is for the Class key.
-                class_menu.add_separator() # separator to separate the child activities.
+            # getting the Activity database form local storage.
+            for key, activity in self.activity_func.retrieve_ActivityClasses(self.ActivityClasses):
+                # Now we need to bind every menu with actmap dict.
+                if key not in filter_class:
+                    classMenu = Menu(self.ActivityMainMenuButton, tearoff=0)
+                    classMenu.add_command(label=key,
+                                          command=lambda
+                                              x="ActivityClasses",
+                                              y=activity["Parent"],
+                                              other={"Record Topic": activity["Name"]}
+                                          : self.activity_command(x, y, other))
 
-                self.ActivityClasses_MenuMap[key] = class_menu
+                    classMenu.add_separator()
+                    classMenu.add_separator()
+                    # adding command to add new activity.
+                    classMenu.add_command(label="Add New",
+                                          command=lambda
+                                              db=self.Activity_Database,
+                                              x='ActivityClasses',
+                                              y=key,
+                                              z='.'.join([activity["Parent"], key])
+                                          : self.add_activity(db, x, y, z))
+                    # Now we need to put it into actmap
+                    fullname = '.'.join([activity["Parent"], activity["Name"]])
+                    actmap[fullname] = classMenu
 
-                if isinstance(activities, list):
-                    # Now we have list of activity for each one class
-                    for activity in activities:
-                        class_menu.add_command(label = activity ,
-                                               command = lambda x=key,y=activity: self.activity_command(x,y))
-                        # In this we will set the activity command will initiate the Ask_Countdown_Timer and also it will
-                        # set the attributes of the activity.
+            # Now after adding all the menus actmap dict we need to bind them with their parent menu
+            for key, activity in self.activity_func.retrieve_ActivityClasses(self.ActivityClasses):
+                # Now we need to bind every menu with actmap dict.
 
-                self.ActivityMainMenu.add_cascade(label=key,menu = class_menu)
+                if key not in filter_class:
+                    fullname = '.'.join([activity["Parent"], activity["Name"]])
+                    if activity["Parent"] == "ActivityClasses":
+                        # if this happens then we need to add menu into Root menu
+                        self.ActivityMainMenu.add_cascade(label=key, menu=actmap[fullname])
+                    else:
+                        parentMenu = actmap[activity["Parent"]]
+                        childMenu = actmap[fullname]
+                        pos = parentMenu.index('end') - 1
+                        parentMenu.insert_cascade(pos, label=key, menu=childMenu)
 
+            # we will call here self.watchlist_menu() to add all the Watchlist item before the Add New command
+            self.watchlist_menu()
+            self.ActivityMainMenu.add_separator()
+            self.ActivityMainMenu.add_command(label="Add New",
+                                              command=lambda
+                                                  x=Widgets.Activities.ACTIVITY_FRAME: self.add_activity_class(x))
             self.ActivityMainMenuButton.pack()
 
         def tracks_activities(self):
@@ -1515,7 +1567,8 @@ class Widgets:
 
             # Now create a root menu for it
             self.TracksActivities_RootMenu = Menu(self.TracksActivities_MbButton, tearoff=0)
-            self.TracksActivities_MbButton.config(menu = self.TracksActivities_RootMenu) # configuring the root menu in the menu button.
+            self.TracksActivities_MbButton.config(
+                menu=self.TracksActivities_RootMenu)  # configuring the root menu in the menu button.
 
             # 1. In this first we will retrieve all card recursively.
             # 2. Each card will have its Parent and FullPath we will use it to map each card
@@ -1525,7 +1578,7 @@ class Widgets:
                 database = json.load(read)
 
                 # Now we need to use this database to retrieve all cards/
-                for key , card in self.tracks_func.Retrieve_Cards(database):
+                for key, card in self.tracks_func.Retrieve_Cards(database):
                     if key != "Root":
                         if key != "Topic":
                             # Now we can access each card individually
@@ -1534,42 +1587,326 @@ class Widgets:
                             # To map the ParnetMenu and CardMenu we will use self.TracksActivities_MenuMap dictionay.
                             cardMenu = Menu(self.TracksActivities_MbButton, tearoff=0)
                             cardMenu.add_command(label=key,
-                                                 command = lambda x="Tracks",
-                                                                  y = card["Parent"],
-                                                                  other = {"Record Topic": card["FullPath"]}
-                                                                : self.activity_command(x,y,other))
-                            #Now we need to add a separator to separate child keys.
+                                                 command=lambda x="Tracks",
+                                                                y=card["Parent"],
+                                                                other={"Record Topic": card["FullPath"]}
+                                                 : self.activity_command(x, y, other))
+                            # Now we need to add a separator to separate child keys.
                             cardMenu.add_separator()
+                            # cardMenu.add_separator()
+                            # cardMenu.add_command(label="Add New", command=None)
                             self.TracksActivities_MenuMap[card['FullPath']] = cardMenu
+
                 # Now we have created Menus for each card we need to map each card with its parent cardMenu.
-                for key , card in self.tracks_func.Retrieve_Cards(database):
+                for key, card in self.tracks_func.Retrieve_Cards(database):
                     if key != "Root":
-                        if key !='Topic':
+                        if key != 'Topic':
                             if card["Parent"] == "Root":
-                                cardMenu = self.TracksActivities_MenuMap[card["FullPath"]] # retrieving the cardMenu
-                                self.TracksActivities_RootMenu.add_cascade(label=card["Name"] , menu = cardMenu)
+                                cardMenu = self.TracksActivities_MenuMap[card["FullPath"]]  # retrieving the cardMenu
+                                self.TracksActivities_RootMenu.add_cascade(label=card["Name"], menu=cardMenu)
                                 # if card is Root then we need to put this card into RootMenu
                             else:
                                 # if card is not Rott then it is a child os we need to its Menu into its card.
                                 parentMenu = self.TracksActivities_MenuMap[card["Parent"]]
                                 cardMenu = self.TracksActivities_MenuMap[card["FullPath"]]
                                 # Now need to put cardMenu in its Parent Menu.
-                                parentMenu.add_cascade(label = card["Name"] , menu = cardMenu)
-
-
+                                # pos = parentMenu.index('end')-1
+                                # parentMenu.insert_cascade(pos,label = card["Name"] , menu = cardMenu)
+                                parentMenu.add_cascade(label=card["Name"], menu=cardMenu)
 
                 # at the final we need to make cascade menu by using the very top menus.
-        def activity_command(self,type=None, name=None ,other=None):
+
+        # in new_activity method we need to resolve some execution problem.
+        def new_activity(self, tracks_object):
+            """
+            This method will be used to initiate a new activity which is not in the Database.
+            :param tracks_object: This is a class object which is defined in the Apps module.
+            :return:
+
+            Note: Since we need to start a new activity so we need to set some parameters which can be set by a toplevel
+                application which is already defined in Apps Module. So Now if we want to call that method we need to take
+                a function as an argument and then call that function with a toplevel object.
+            """
+            self.NewActivityButton = Button(self, text='New')
+            self.NewActivityButton.pack()
+
+            def new_activity_command():
+                # This method will be used to invoke when the NewActivity button is pressed.
+                root = Toplevel()
+                # Now we need  class object.
+                tracks = tracks_object(root)
+                tracks.Add_Time_Record(root)
+                self.wait_window(root)
+                root.mainloop()
+
+            self.NewActivityButton.config(command=new_activity_command)
+
+        def add_activity(self, Database, Key, Name, Parent=None):
+            """
+            This method will be used to add activities in ActivityClasses, Tracks Activity and it will also will be used to add
+                into WatchList activities.
+
+            :param Key: str, Key of the activity in which we want to add activity.
+                        a Key can any of them  ActivityClasses :{} TracksActivity:{} WatchActivity :{}
+
+            Note: Tracks activity will be added automatically in the list when a new Track card will be added.
+                    So we don't need to make another function or logic for this section.
+
+            :param Name: str, Name of the activity.
+            :param Parent: str, Parent full name of the activity if there is any parent.
+            :return: None
+            """
+
+            # Now first of all we need to make
+            # print("new activity info: ")
+            # print("Database:\t",Database)
+            # print("Key:\t",Key)
+            # print("Name:\t",Name)
+            # print("Parent:\t",Parent)
+
+            # Now here we need to make toplevel window to ask name of the activity.
+            root = Toplevel()
+            root.geometry("400x400")
+            self.add_activity_toplevel(root, Parent)
+            self.wait_window(root)
+            # print("New activity Name: ",self.New_activity)
+            # root.mainloop()
+
+            if Key == "ActivityClasses" and self.New_activity is not None:
+                # print("Creating a new activity: ")
+                self.activity_func.add_to_activityclasses(Database=Database, Name=self.New_activity, Parent=Parent)
+                # Now after creating a new activity we need to reload the Database.
+                # print("New activity created.")
+                parent_menu = self.ACTIVITY_CLASS_MENU_MAP[Parent]
+                self.insert_menu(menu=parent_menu, Activity=self.New_activity, Activity_parent=Parent,
+                                 use="Child")  # self.New_activity used to get the name of the activity.
+
+            elif Key == "WatchActivity":
+                self.activity_func.add_to_watchlist(Database, Name)
+            else:
+                print("KeyError: invalid Key please pass ActivityClasses or WatchActivity ")
+
+        def activity_command(self, type=None, name=None, other=None):
             # Record Type,Record Name,Record Topic,Record SubTopic
             data = {"Record Type": type,
-                    "Record Name":name,
-                    "Record Topic":None,
-                    "Record SubTopic":None}
+                    "Record Name": name,
+                    "Record Topic": None,
+                    "Record SubTopic": None}
             if other:
-                data["Record Topic"] = other.get('Record Topic',None)
-                data["Record SubTopic"] = other.get("Record SubTopic",None)
+                data["Record Topic"] = other.get('Record Topic', None)
+                data["Record SubTopic"] = other.get("Record SubTopic", None)
 
-            print("Activity Data: ",data)
+            print("Activity Data for timer: ", data)
+
+            root = Toplevel()  # Since Ask Count down timer need a Toplevel window.
+            # So we will give it a top level window.
+            countdown = self.Apps_Timer.Countdown(root)
+            countdown.Ask_Countdown_Time(root, data)
+            self.wait_window(root)
+            root.mainloop()
+
+        # add_activity_toplevel method name does not match to its
+        def add_activity_toplevel(self, frame, parent):
+            """
+            This method will be used to execute after selecting one of the parent to add new activity in database.
+            :param frame:tk.Frame, frame object in which we will put our widgets.
+            :return:
+            """
+            self.parent_label = Label(frame, text='Activity Parent:')
+            self.parent_label2 = Label(frame, text=parent)
+
+            self.activity_var = StringVar()
+            self.Name_label = Label(frame, text='Activity Name:')
+            self.Name_entry = Entry(frame, textvariable=self.activity_var)
+
+            self.submit_button = Button(frame, text="Submit")
+
+            self.parent_label.grid(row=0, column=0, )
+            self.parent_label2.grid(row=0, column=1)
+
+            self.Name_label.grid(row=1, column=0)
+            self.Name_entry.grid(row=1, column=1)
+
+            self.submit_button.place(x=50, y=50)
+
+            def submit():
+                self.New_activity = self.activity_var.get()
+                frame.destroy()
+
+            self.submit_button.config(command=submit)
+
+        def watchlist_menu(self):
+            """
+            This method will be used to show the watchlist menu from the database.
+            :return: None
+            """
+            # To put the watchlist in the activity bar we need the RootMenu
+            # self.ActivityMainMenu is our root main menu
+            self.WatchList_Menu = Menu(self.ActivityMainMenuButton, tearoff=0)
+            # Now we need to  put this menu inside the Root menu
+            self.ActivityMainMenu.add_cascade(label='WatchList', menu=self.WatchList_Menu)
+
+            for item in self.WatchList:
+                self.WatchList_Menu.add_command(label=item,
+                                                command=lambda x=item: self.watchList_command(x))
+
+            self.WatchList_Menu.add_separator()
+            self.WatchList_Menu.add_command(label="Add New",
+                                            command=lambda
+                                                x=Widgets.Activities.ACTIVITY_FRAME: self.add_activity_to_watchlist(x))
+
+            # we will define it later.
+
+        def add_activity_to_watchlist(self, frame):
+            """
+            This method will be used to add a new activity item inside the watchlist this will also update the activity list.
+            :return:
+
+            Note: This method will use the self.ActivityClasses and self.WatchList instance to use the data of Database.
+
+            This will use a toplevel window to add a new activity.
+            """
+
+            self.cbox_var = StringVar()
+            self.New_WatchList_Entry_Frame = Frame(frame, highlightbackground='black',
+                                                   highlightcolor='black', highlightthickness=2)
+            # Now we need to put a combobox and a submit button.
+            self.cbox = ttk.Combobox(self.New_WatchList_Entry_Frame, textvariable=self.cbox_var,
+                                     values=list(self.ActivityClasses.keys()))
+            self.submit_button = Button(self.New_WatchList_Entry_Frame, text='Submit')
+
+            self.cbox.pack(side='left', anchor='w')
+            self.submit_button.pack(side='left', anchor='w')
+            self.New_WatchList_Entry_Frame.pack(side='left', anchor='nw')
+
+            def submit_action():
+                # this method will be used to invoke below statement when the submit button is pressed.
+                # 1. add item in the Watchlist menu
+                # 2. add item in the Watchlist
+                # 3. add item in the database.
+                self.New_watchlist_item = self.cbox_var.get()
+                if self.New_watchlist_item not in self.WatchList and not None:
+                    # if our new item not in the Watch list then add it else go in else condition.
+                    pos = self.WatchList_Menu.index('end') - 1
+                    self.WatchList_Menu.insert_command(pos, label=self.New_watchlist_item)
+                    self.WatchList.append(self.New_watchlist_item)
+                    self.activity_func.add_to_watchlist(self.Activity_Database, self.New_watchlist_item)
+
+                    # Now we need to destroy the Frame after doing all the above statement.
+                    self.New_WatchList_Entry_Frame.destroy()
+                else:
+                    # if our item is already present in the watchlist then show a warning.
+                    result = messagebox.askretrycancel(title="Key Error",
+                                                       message='Selected key is already present in Watchlist \ntry to add different key.')
+                    if not result:
+                        # if we cancel the choice then we need to destroy the  self.New_WatchList_Entry_Frame
+                        self.New_WatchList_Entry_Frame.destroy()
+
+            self.submit_button.config(command=submit_action)
+
+        def add_activity_class(self, frame):
+            """
+            This method will be used to add a new activity class in ActivityClasees dict. This will add a Root class not a child
+                class.
+            :param frame:tk.Frame object,
+            :return:
+            """
+            self.Entry_box_var = StringVar()
+            self.Class_Frame = Frame(frame, highlightbackground='black', highlightcolor='black', highlightthickness=2)
+
+            self.Entry_box = Entry(self.Class_Frame, textvariable=self.Entry_box_var)
+            self.Submit_class = Button(self.Class_Frame, text='submit')
+
+            self.Entry_box.pack(side='left', anchor='w')
+            self.Submit_class.pack(side='left', anchor='w')
+            self.Class_Frame.pack(side='left', anchor='nw')
+
+            def submit():
+                # This method will be executed when the submit button is pressed.
+                # first of all we will get the new class value.
+                if self.Entry_box_var.get() not in self.ActivityClasses.keys() and self.Entry_box_var.get() != '' and not None:
+                    # here we need to add new item in the activityclasses
+                    self.activity_func.add_activity_class(self.Activity_Database, self.Entry_box_var.get())
+                    # Need to add a cascade menu here for new class activity.
+                    self.insert_menu(self.ActivityMainMenu, self.Entry_box_var.get(), use='Root')
+                    # Now after completing all work we need to destroy the Class_Frame so we can free the space.
+                    self.Class_Frame.destroy()
+                else:
+                    if self.Entry_box_var.get() is None:
+                        messagebox.showerror(title='Key Error', message="Invalid key input.")
+                        self.Class_Frame.destroy()
+                    elif self.Entry_box_var.get() == '':
+                        result = messagebox.askretrycancel(title='Key Error',
+                                                           message="Class name required got no name for class.")
+                        if not result:
+                            self.Class_Frame.destroy()
+                    elif self.Entry_box_var.get() in self.ActivityClasses.keys():
+                        message = f"""{self.Entry_box_var.get()} key already exist in the ActivityClasses
+    Please try again."""
+                        result = messagebox.askretrycancel(title='Key Error', message=message)
+                        if not result:
+                            self.Class_Frame.destroy()
+                    else:
+                        messagebox.showerror(title='Key Error', message="Invalid key input.")
+                        self.Class_Frame.destroy()
+
+            # configuring the Submit_class button for doing desired action which is defined above
+            self.Submit_class.config(command=submit)
+
+        # In insert_menu: make this method short as much as possible and remove the add_new_activity_menu method
+        def insert_menu(self, menu, Activity, Activity_parent=None, use='Root'):
+
+            """
+            This method will be used to created a default cascade menu with four additional item. it will have two command and two separator,
+            b/w separator we will have our separators.
+            :param menu:tk.Menu, it will be the parent menu in which we will add these four items.
+            :param Activity:str, it will be the label to show the name of the command item selection.
+            :param Activity_parent:str, it is the parent of the activity if it has any parent, pass this if we are adding a child activity.
+            :param use:str, this will define the use of this function either for Root ActivityClasses or for child activity.
+            :return:
+
+            use: 'Root'  to use this function for ActivityClasses class,
+                 'Child' to use this function for child activity classes.
+
+            itemfunc:func, it is the command function for its own selection.
+            addfunc:func, it is the command function to add new item in current selected category.
+            """
+            childmenu = Menu(self.ActivityMainMenuButton, tearoff=0)
+            activity_fullname = None
+            add_func = None  # initiating the reference for the add_func
+            item_func = None  # initiating the reference for the item_func
+            if use == "Root":
+
+                activity_fullname = '.'.join(["ActivityClasses", Activity])
+
+                def item_func():
+                    self.activity_command("ActivityClasses", Activity)
+
+                def add_func():
+                    self.add_activity(self.Activity_Database, "ActivityClasses", Activity, activity_fullname)
+
+            elif use == "Child":
+
+                activity_fullname = '.'.join([Activity_parent, Activity])
+
+                def item_func():
+                    self.activity_command("ActivityClasses", Activity_parent, {"Record Topic": self.New_activity})
+
+                def add_func():
+                    self.add_activity(self.Activity_Database, "ActivityClasses", Activity, activity_fullname)
+
+                # db = self.Activity_Database,
+                # x = 'ActivityClasses',
+                # y = self.New_activity,
+                # z = new_activity_fullname
+            childmenu.add_command(label=Activity, command=item_func)
+            childmenu.add_separator()  #
+            childmenu.add_separator()
+            childmenu.add_command(label='Add New', command=add_func)
+            self.ACTIVITY_CLASS_MENU_MAP[activity_fullname] = childmenu
+            pos = menu.index('end') - 1
+            menu.insert_cascade(pos, label=Activity, menu=childmenu)
+
     # ======================================================================================================================#
     # ======================================================================================================================#
     class Keeps_Card:
