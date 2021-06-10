@@ -9,6 +9,7 @@ from random import randint
 import time, json
 import Apps_func as apps
 import calendar
+import datetime
 
 apps_func_keep_card = apps.Keep_Cards()
 
@@ -223,7 +224,8 @@ class Widgets:
             :param theme:
             :return:
             """
-            self.style.configure("Track.Horizontal.TProgressbar", troughcolor = 'red', background = 'white', bordercolor= 'black')
+            self.style.configure("Track.Horizontal.TProgressbar", troughcolor='red', background='white',
+                                 bordercolor='black')
             # now here we need to define the Frame , Label and a Progressbar.
             self.Progress = bar_progress
             self.Progress_Frame = Frame(master, height=5, width=250)
@@ -232,7 +234,7 @@ class Widgets:
             # now in this frame we need to put some Label and a Progress bar
             # Note that we need to put the label and progress bar in order
             suffix_label = Label(self.Progress_Frame, text=suffix)
-            Progress_Bar = ttk.Progressbar(self.Progress_Frame, length=length, style = "Track.Horizontal.TProgressbar")
+            Progress_Bar = ttk.Progressbar(self.Progress_Frame, length=length, style="Track.Horizontal.TProgressbar")
             prefix_label = Label(self.Progress_Frame)
 
             suffix_label.pack(side='left', anchor='n')
@@ -338,7 +340,8 @@ class Widgets:
             self.db_file = "./data/daily_target.csv"
             self.Time = apps.Time()
             self.style = ttk.Style()
-            self.Today_Total_Elapsed_Time = None
+            self.Today_Total_Elapsed_Time = 0
+            self.current_date = self.Time.get_current_date()
             if not time:
                 # self.today_target = [(1,3),(3,6),(6,8)]
                 self.retrieve_today_target()
@@ -352,8 +355,10 @@ class Widgets:
             self.t2 = self.today_target[1]  # level two time (l2l, l2h)
             self.t3 = self.today_target[2]  # level three time (l3l, l3h)
             self.db_update = apps.CheckFileStats(self.db_file)
+            self.today_date = datetime.date(*self.Time.get_present_date_values())  # getting today values in tuple
 
             # creating the TTH_Progress bar.
+            self.new_date = self.today_date
             self.Create_TTH_Progress_bar()
             self.update_tth_progressbar()
 
@@ -462,6 +467,20 @@ class Widgets:
                 will retrieve the saved time from the Countdown timer data and we will
             :return:
             """
+            # self.new_date = datetime.date(*self.Time.get_present_date_values())
+            if self.CURRENT_COUNTDOWN_TIME_ELAPSED > 60 * 5:
+                self.new_date = datetime.date(2021, 6, 10)
+
+            if self.new_date > self.today_date:
+                print("Day changed resetting TTH Progressbar.")
+                # it means that day has been changed
+                self.save_today_target(self.today_target, self.TODAY_COUNTDOWN_TIME,
+                                       day_date=self.current_date)  # Saving the yesterday details
+                self.COUNTDOWN_TIME = 0  # making all Countdown time to 0 for new day.
+                self.CURRENT_COUNTDOWN_TIME_ELAPSED = 0
+                self.set_bar_values(0)  # setting bar to 0
+                self.current_date = '10-Jun-2021'
+                self.retrieve_today_target()  # retrieving new day data.
 
             if Widgets.TTH_ProgressBar.COUNTDOWN_STATUS == True:
                 # if this condition is true then it means that countdown is running
@@ -521,10 +540,10 @@ class Widgets:
             with open(file, 'r', newline='') as read:
 
                 reader = csv.DictReader(read)
-                # fields = reader.fieldnames
+                # fields = reader.fieldnames  '09-Jun-2021'
                 today_present = False
                 for row in reader:
-                    if row['Date'] == self.Time.get_current_date():
+                    if row['Date'] == self.current_date:
                         print(row)
                         self.today_target = [(int(row['l1l']), int(row['l1h'])),
                                              (int(row['l2l']), int(row['l2h'])),
@@ -538,7 +557,7 @@ class Widgets:
                     # if there is no target present for today then we will write a default target.
                     self.today_target = [(0, 2), (2, 4), (4, 6)]
                     # and also we will save our default target on local storage.
-                    self.save_today_target(self.today_target, total_time=0)
+                    self.save_today_target(self.today_target, total_time=0, day_date=self.current_date)
 
         def get_today_working_time(self, file="./data/Timer_Data.csv"):
             """
@@ -574,7 +593,7 @@ class Widgets:
                     if row["Date"] == self.Time.get_current_date():
                         return int(row["Total Time"])
 
-        def save_today_target(self, target, total_time=None):
+        def save_today_target(self, target, total_time=None, day_date=None):
             """
             This method will be used to save  today_target time
             :param target: list, target will be a list of tuples.
@@ -587,9 +606,12 @@ class Widgets:
                 Data = csv.DictReader(read)
                 self.data_fileds = Data.fieldnames
 
+                if not day_date:
+                    day_date = self.Time.get_current_date()
+
                 for row in Data:
                     # checking for today date.
-                    if row["Date"] == self.Time.get_current_date():
+                    if row["Date"] == day_date:
                         row["l1l"] = target[0][0]
                         row['l1h'] = target[0][1]
                         row['l2l'] = target[1][0]
@@ -602,7 +624,7 @@ class Widgets:
                     temp.append(row)
 
                 if not today_present:
-                    self.today_data = {"Date": self.Time.get_current_date(),
+                    self.today_data = {"Date": day_date,
                                        "Time": self.Time.get_current_time(),
                                        "l1l": target[0][0],
                                        'l1h': target[0][1],
@@ -702,7 +724,7 @@ class Widgets:
 
                 "TCombobox": {
                     "configure": {'background': 'black', 'foreground': 'black', 'bordercolor': 'black',
-                                  'darkcolor': 'red', 'lightcolor': 'yellow', 'fieldbackground':'red' },
+                                  'darkcolor': 'red', 'lightcolor': 'yellow', 'fieldbackground': 'red'},
                     "map": {"background": [("selected", '#4fbd9d')]}}
 
             })
@@ -1049,7 +1071,7 @@ class Widgets:
                 """
                 style = ttk.Style()  # a separate style for progressbar
                 style.configure("SubCard.Horizontal.TProgressbar", background='#07db5f', bordercolor='black',
-                                troughcolor='white', lightcolor = '#05ffb0', darkcolor='#b8ffcb')
+                                troughcolor='white', lightcolor='#05ffb0', darkcolor='#b8ffcb', relief='flat')
 
                 # subcard main frame:
                 Subcard.config(bg=head_bg_color)
@@ -1260,7 +1282,7 @@ class Widgets:
             """
             style = ttk.Style()  # a separate style for progressbar
             style.configure("Root.Horizontal.TProgressbar", background='#07db5f', bordercolor='black',
-                                troughcolor='white', lightcolor = '#05ffb0', darkcolor='#b8ffcb')
+                            troughcolor='white', lightcolor='#05ffb0', darkcolor='#b8ffcb')
 
             ##Main body
             self.Root_Card_Frame.config(bg=mainbody)
@@ -1627,15 +1649,15 @@ class Widgets:
                 application which is already defined in Apps Module. So Now if we want to call that method we need to take
                 a function as an argument and then call that function with a toplevel object.
             """
-            self.NewActivityButton = Button(self, text='New')
+            self.NewActivityButton = Button(self, text='New', relief='flat')
             self.NewActivityButton.pack()
 
             def new_activity_command():
                 # This method will be used to invoke when the NewActivity button is pressed.
                 root = Toplevel()
                 # Now we need  class object.
-                tracks = tracks_object(root)
-                tracks.Add_Time_Record(root)
+                track = tracks_object(root)
+                track.Add_Time_Record(master=root)
                 self.wait_window(root)
                 root.mainloop()
 
@@ -1907,6 +1929,21 @@ class Widgets:
             pos = menu.index('end') - 1
             menu.insert_cascade(pos, label=Activity, menu=childmenu)
 
+        def theme_configure(self, bar_bg_color=None, bar_item_bg=None, bar_item_fg=None):
+            """
+            This method will be used to change the color of the Activity bar these all configuration will be applied on the
+                child of master window.
+            :param bar_bg_color: background for frame child.
+            :param bar_item_bg: background for item.
+            :param bar_item_fg: foreground for item.
+            :return:
+            """
+            for child in self.winfo_children():
+                if isinstance(child, Frame):
+                    child.config(bg=bar_bg_color)
+                else:
+                    child.config(bg=bar_item_bg, fg=bar_item_fg)
+
     # ======================================================================================================================#
     # ======================================================================================================================#
     class Keeps_Card:
@@ -1926,6 +1963,8 @@ class Widgets:
         KEEP_CARD_CONTENT_COLOR = None
         KEEP_CARD_HEAD_TEXT_COLOR = None
         KEEP_CARD_CONTENT_TEXT_COLOR = None
+        KEEP_NEW_CHECK_TEXTBOX = None
+        KEEP_CARD_TITLE_BAR = None
 
         class CreateKeepsCard(Frame):
             """
@@ -1941,9 +1980,10 @@ class Widgets:
                 self.init_date = None
                 self.init_time = None
                 self.Next_Check_Position = (1, 0)
-                self.Next_AddButton_Postion = (1, 1)
+                self.Next_AddButton_Position = (1, 1)
                 self.CheckList = []
                 self.CheckContent = []
+                self.add_button_holder = None  # this attribute will be used to identify pressed button holder
                 # self.init_check = None
 
                 self.Create_Keep_Card(self.master, self.title)
@@ -1953,7 +1993,7 @@ class Widgets:
             def Create_Keep_Card(self, master, title=None, data=None, cfg={}, **kw):
                 """
                 This method will be used to Create a new card with some extra additional ability.
-                this method will allow us to add new to-do list reocrds.
+                this method will allow us to add new to-do list records.
                 :param master: We will place our cards data in this Frame.
                 :param title: str, this will be the  title of the keep Card.
                 :return:
@@ -1986,8 +2026,10 @@ class Widgets:
                 # now we will add a button to add new check label
                 self.AddCheckbutton = Button(self.CardContentFrame, text='+', font=('sarif', 10, 'bold'))
                 self.AddCheckbutton.grid(row=0, column=1, sticky='se')
-                self.AddCheckbutton.config(command=lambda x=self.CardContentFrame, y=self.AddCheckbutton:
-                self.Add_Keep_Check(master=x, bt=y))
+                self.AddCheckbutton.config(command=lambda x=self.CardContentFrame,
+                                                          y=self.AddCheckbutton,
+                                                          z=None
+                : self.Add_Keep_Check(master=x, bt=y))
 
             def Create_Keep_Card2(self, master, position, data, cfg={}, **kw):
                 """
@@ -2038,7 +2080,7 @@ class Widgets:
                 self.AddCheckbutton2.grid(row=0, column=1,
                                           sticky='se')
                 self.Next_Check_Position = (0, 0)
-                self.Next_AddButton_Postion = (0, 1)
+                self.Next_AddButton_Position = (0, 1)
                 for check_text, check_mark in self.checklist:
                     Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame2)
                     Textbox.text.insert(1.0, check_text)
@@ -2053,12 +2095,12 @@ class Widgets:
 
                     # now we will add a button to add new check label
 
-                    self.AddCheckbutton2.grid_configure(row=self.Next_AddButton_Postion[0],
-                                                        column=self.Next_AddButton_Postion[1])
+                    self.AddCheckbutton2.grid_configure(row=self.Next_AddButton_Position[0],
+                                                        column=self.Next_AddButton_Position[1])
 
                     # now increase the position of the Check and button
                     self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
-                    self.Next_AddButton_Postion = (self.Next_AddButton_Postion[0] + 1, 1)
+                    self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
                 r, c = position
                 # print("Keep Card position: ", position)
                 self.AddCheckbutton2.config(command=lambda x=self.CardContentFrame2,
@@ -2193,12 +2235,13 @@ class Widgets:
 
                 # Now we need to config every checkbox, for that we need to config Textbox.
                 style = ttk.Style()
-                style.configure('TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
+                style.configure('KeepCard.TCheckbutton', background=content_bg_color,
+                                indicatorbackground=content_bg_color,
                                 indicatorcolor=content_bg_color)
                 for Textbox in self.CheckList:
                     Textbox.text.config(bg=content_bg_color, fg=content_text_color, takefocus=0, relief='flat',
                                         state='disabled', font=('MS Sans Serif', 12), pady=5)
-                    Textbox.check.config(style='TCheckbutton', takefocus=0)
+                    Textbox.check.config(style='KeepCard.TCheckbutton', takefocus=0)
 
             def pack(self, cfg={}, **kw):
                 """
@@ -2214,10 +2257,12 @@ class Widgets:
                 """
                 self.CardMainFrame.grid(cfg, **kw)
 
-            def Add_Keep_Check(self, master, bt=None, row=None, column=None):
+            def Add_Keep_Check(self, master, bt=None, _class=None, row=None, column=None):
                 # print("Add keep check called")
                 """
                 This method will be used to create a new Text box inside the Keep card.
+                :param master:tk.Frame, parent window frame in which this new keep check will be placed.
+                :param bt: tk.Button, a common button for each CreateKeepCard object
                 :return:
                 """
                 # Now in this we will be need to the position of the text box since we are using the grid
@@ -2230,17 +2275,26 @@ class Widgets:
                     self.CheckList[-1].bind_Return(event=None)
                     # here bind return is used to perform the same task as it performed when enter is pressed.
                 Trow, Tcol = self.Next_Check_Position
-                Brow, Bcol = self.Next_AddButton_Postion
+                Brow, Bcol = self.Next_AddButton_Position
                 # here we need to put the Frame according to need
                 Textbox = Widgets.Keeps_Card.KeepCardCheck(master)
                 Textbox.grid(row=Trow, column=Tcol)
                 Textbox.focus_set()
 
-                bt.grid_configure(row=Brow, column=Bcol)
+                if self.add_button_holder == "KeepCardBar":  # this condition is used to use different theme for new check
+                    Textbox.title_theme_configure(Widgets.Keeps_Card.KEEP_CARD_TITLE_BAR.Content,
+                                                  content_bg_color='#1b4875',
+                                                  content_text_color='#a28cff',
+                                                  outmouse_bg='#1b4875', outmouse_fg='white',
+                                                  infocus_bg='#1b4875', infocus_fg='white',
+                                                  outfocus_bg='#1b4875', outfocus_fg='white')
+                else:
+                    Textbox.theme_configure()
 
+                bt.grid_configure(row=Brow, column=Bcol)
                 # Now we need to update the next Position for the Textbox and Add button.
                 self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
-                self.Next_AddButton_Postion = (self.Next_AddButton_Postion[0] + 1, 1)
+                self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
 
                 self.CheckList.append(
                     Textbox)  # this will append the new Textbox in the self.CheckList which contains all the check for self.
@@ -2454,51 +2508,87 @@ class Widgets:
                 self.keep_data = (self.text.get(1.0, 'end'), self.check_var.get())
                 self.MainFrame.focus_set()
 
-            def InFocus(self, event):
+            def InFocus(self, event, background=None, foreground=None):
                 """
                 This is a event method which will be invoked when focus is set to the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
                 :return:
                 """
-                self.text.config(state='normal', relief='sunken', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
-                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
 
-            def OutFocus(self, event):
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground, takefocus=0)
+
+            def OutFocus(self, event, background=None, foreground=None):
                 """
                 This is an event method which will be invoked when focus out from the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
                 :return:
                 """
-                self.text.config(state='disabled', relief='flat', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
-                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
 
-            def MouseEnter(self, event):
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
+
+            def MouseEnter(self, event, background=None, foreground=None):
                 """
                 This is a event method which will be invoked when a mouse is Enters over the widget.
                 :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
                 :return:
                 """
                 # default state color:  Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
                 # Mouse enter background color: #d8dbe8
                 # Mouse enter foreground color: #1b2e85
-                self.text.config(state='disabled', relief='ridge', bg='#d8dbe8',
-                                 fg='#1b2e85', takefocus=0)
+                if not background:
+                    background = '#d8dbe8'
 
-            def MouseLeave(self, event):
+                if not foreground:
+                    foreground = '#1b2e85'
+
+                self.text.config(state='disabled', relief='ridge', bg=background, fg=foreground, takefocus=0)
+
+            def MouseLeave(self, event, background=None, foreground=None):
                 """
                 This is a event method when the mouse leave the widget.
                 :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
                 :return:
                 """
-                self.text.config(state='disabled', relief='flat', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
-                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR, takefocus=0)
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
 
-            def bind_bt_1(self, event):
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
+
+            def bind_bt_1(self, event, background=None, foreground=None):
                 """
                 This method will be used to bind the event to the mouse button-1
+                :param foreground:
+                :param background:
                 :param event:
                 :return:
                 """
-                self.text.config(state='normal', relief='sunken', bg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR,
-                                 fg=Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR)
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground)
 
             def event_binding(self):
                 """
@@ -2543,9 +2633,87 @@ class Widgets:
 
                 # Textbox check color
                 style = ttk.Style()
-                style.configure('title.TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
+                style.configure('KeepCheck.TCheckbutton', background=content_bg_color,
+                                indicatorbackground=content_bg_color,
                                 indicatorcolor=content_bg_color)
-                self.check.configure(style='title.TCheckbutton')
+                self.check.configure(style='KeepCheck.TCheckbutton')
+
+            def title_theme_configure(self, container, content_bg_color='#a267c7',
+                                      content_text_color='#a28cff', **colors):
+                """
+                This method will be used to set the theme color for the Textbox class widgets for KeepCheckbar.
+                :param container: This container will hold the all the widgets of KeepCard.
+                :param head_bg_color: Heading widgets color.
+                :param head_text_color:  Heading widgets text color
+                :param content_bg_color:  content widgets background color.
+                :param content_text_color: content widgets text color.
+                :return:
+
+                colors: this is wid keyword argument which will give us some more color keys:
+
+                        {'inmouse_bg': color,
+                          'inmouse_fg': color,
+                          'outmouse_bg': color,
+                          'outmouse_fg': color,
+                          'infocus_bg': color,
+                          'infocus_fg': color,
+                          'outfocus_bg': color,
+                          'outfocus_fg': color}
+                """
+                self.check_bg_color = None
+                self.text_bg_color = content_bg_color
+                self.text_fg_color = content_text_color
+
+                color_options = ["inmouse_bg", "inmouse_fg", "outmouse_bg", "outmouse_fg",
+                                 "infocus_bg", "infocus_fg", "outfocus_bg", "outfocus_fg"]
+
+                color_dict = {'inmouse_bg': None,
+                              'inmouse_fg': None,
+                              'outmouse_bg': None,
+                              'outmouse_fg': None,
+                              'infocus_bg': None,
+                              'infocus_fg': None,
+                              'outfocus_bg': None,
+                              'outfocus_fg': None}
+
+                if colors:
+                    for key, value in colors.items():
+                        if key not in color_options:
+                            raise KeyError(f"BadKey: {key} key should be {color_options}")
+                        else:
+                            color_dict[key] = value
+
+                self.text.bind("<FocusIn>", lambda event: self.InFocus(event, background=color_dict['infocus_bg'],
+                                                                       foreground=color_dict['infocus_fg']))
+                self.text.bind("<FocusOut>", lambda event: self.OutFocus(event, background=color_dict['outfocus_bg'],
+                                                                         foreground=color_dict['outfocus_fg']))
+                self.text.bind("<Enter>", lambda event: self.MouseEnter(event, background=color_dict['inmouse_bg'],
+                                                                        foreground=color_dict['inmouse_fg']))
+                self.text.bind("<Leave>", lambda event: self.MouseLeave(event, background=color_dict['outmouse_bg'],
+                                                                        foreground=color_dict['outmouse_fg']))
+                self.text.bind("<Button-1>", lambda event: self.bind_bt_1(event, background=color_dict['infocus_bg'],
+                                                                       foreground=color_dict['infocus_fg']))
+
+                # Now we need to set the container's theme configuration.
+                for child in misc.get_children(container.CardMainFrame):
+                    # getting all children from CardMainFrame.
+                    if isinstance(child, Frame):
+                        child.config(bg=content_bg_color)
+                    elif isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12,'bold'))
+
+                # Textbox container frame
+                self.MainFrame.config(bg=content_bg_color)
+
+                # Textbox text color
+                self.text.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12))
+
+                # Textbox check color
+                style = ttk.Style()
+                style.configure('TitleCheck.TCheckbutton', background=content_bg_color,
+                                indicatorbackground=content_bg_color,
+                                indicatorcolor='white', padding=3, indicatormargin=5)
+                self.check.configure(style='TitleCheck.TCheckbutton')
 
         class KeepCardBar(Frame):
             """
@@ -2593,8 +2761,8 @@ class Widgets:
                 self.BottomFrame = Frame(self.MainFrame, bg='green')
                 self.BottomFrame.pack(fill='y', anchor='se', side='bottom')
 
-                self.theme_configure(Mainbody_color="#6b3dd1", head_bg_color='#926ce6',
-                                     head_text_color='#827c91', content_bg_color='#a267c7',
+                self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
+                                     head_text_color='#827c91', content_bg_color='#1b4875',
                                      content_text_color='#a28cff')
 
             def pack(self, cnf={}, **packvalues):
@@ -2630,6 +2798,7 @@ class Widgets:
                     self.MainFrame.pack_configure(pady=10)
                     # Now we need to initiate a Keep check
                     self.Content = Widgets.Keeps_Card.CreateKeepsCard(self.ChecksFrame, title=None)
+                    self.Content.add_button_holder = "KeepCardBar"
                     self.Content.CardMainFrame.config(highlightbackground=None, highlightcolor=None,
                                                       highlightthickness=0)
                     self.Content.pack(pady=10)
@@ -2648,11 +2817,18 @@ class Widgets:
 
                     # Here after all packing we need to configure theme of the title bar.
 
-                    self.theme_configure(Mainbody_color="#a267c7", head_bg_color='#926ce6', head_text_color='#e08e46',
-                                         content_bg_color='#a267c7', content_text_color='#a28cff')
-                    self.Content.Textbox.theme_configure()
-                    self.Content.AddCheckbutton.config(bg='#a267c7', fg='white', relief='flat',
-                                                       activebackground='#a267c7', activeforeground='white')
+                    self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
+                                         head_text_color='#827c91', content_bg_color='#1b4875',
+                                         content_text_color='#a28cff')
+
+                    self.Content.Textbox.title_theme_configure(self.Content, content_bg_color='#1b4875',
+                                                               content_text_color='#a28cff',
+                                                               outmouse_bg='#1b4875', outmouse_fg='white',
+                                                               infocus_bg='#1b4875', infocus_fg='white',
+                                                               outfocus_bg='#1b4875', outfocus_fg='white')
+                    self.Content.AddCheckbutton.config(bg='#1b4875', fg='white', relief='flat',
+                                                       activebackground='#1b4875', activeforeground='white',
+                                                       font=('MS Serif', 12,'bold'))
 
             def bind_envents(self):
                 self.Entry.bind("<Button-1>", self.bt1_active_state)
@@ -2788,7 +2964,7 @@ class Widgets:
                 self.ChecksFrame.config(bg=content_bg_color)
                 # Now we will configure the CheckFrame child color (text, checkbutton)
                 style = ttk.Style()
-                style.configure('TCheckbutton.check', background=content_bg_color, indicatorbackground=content_bg_color,
+                style.configure('Check.TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
                                 indicatorcolor=content_bg_color)
                 for child in self.ChecksFrame.winfo_children():
 
@@ -2796,7 +2972,7 @@ class Widgets:
                         child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
                                      activebackground=content_bg_color, activeforeground=content_text_color)
                     elif isinstance(child, ttk.Checkbutton):
-                        child.configure(style='TCheckbutton.check')
+                        child.configure(style='Check.TCheckbutton')
                     elif isinstance(child, Text):
                         child.config(bg=content_bg_color, fg=content_text_color)
 
