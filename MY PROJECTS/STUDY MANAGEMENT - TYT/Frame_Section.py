@@ -1,8 +1,13 @@
 # In this file we will cover all the widget defination which will be used many times on the dashboard.
-from tkinter import Tk, Toplevel ,Frame, BOTTOM,LEFT,RIGHT,TOP , BOTH , Button
-from Apps import Tracks
+from tkinter import ttk,Tk, Toplevel ,Frame, BOTTOM,LEFT,RIGHT,TOP , BOTH , Button, Label, PhotoImage
+
+import Apps_func
+from Apps import Tracks,Timer
 from Widgets import Widgets
+import DailyRoutine as dr
 from Apps_func import Keep_Cards
+from ExWid import ScrollFrame
+
 
 class Sections:
 
@@ -36,25 +41,44 @@ class Frames(Frame):
         super().__init__(master)
         self.Tracks = Tracks()
         self.Wid = Widgets()
+        self.Timer = Timer()
 
-    def Tracks_Frame(self ,master, height=100,width=100, cfg = None):
+    def Tracks_Frame(self, master, height=100,width=100, cfg = None):
 
-        # We need a Create_ProgressBar() object from a widges module
-        tracks = Frame(master,height=height,width=width , bg = 'red')
-        tracks.pack_propagate(False)
+        # We need a Create_ProgressBar() object from a widgets module
+        tracks = Frame(master, height=height, width=width, bg = '#bad5ff')
+        # tracks.pack_propagate(False)
 
         # Top section
-        top_section = Frame(tracks , height = 20, bg = 'white')
+        top_section = Frame(tracks, height=20, bg = '#d9baff')
         top_section.pack(side=TOP, fill = 'x', expand = 0 , anchor = 'n')
+        self.Wid.Activities.ACTIVITY_FRAME = top_section  # referencing teh
+        #-------------------------------------------------------------------------------------------------#
+        #------------------------------ SETTING THE ACTIVITIES--------------------------------------------#
+        activity_bar = Frame(top_section,height = 25,width =200, bg='#d9baff')
+        activity_bar.pack(side='left', anchor='nw')
 
+        # Now we need to put activities in this frame.
+        activity = self.Wid.Activities(activity_bar, self.Timer) # initiating the activity bar
+        activity.ActivityMainMenuButton.pack_configure(side='left', anchor='nw') # packing ActivityClasses Menu
+        activity.TracksActivities_MbButton.pack_configure(side='left', anchor='nw') # Packing Tracks Activities.
+        activity.new_activity(Tracks) # if we need any other activity which is not present in the list then use this.
+        activity.NewActivityButton.pack(side='left', anchor='nw') # Packing the new custom activity.
+        activity.pack()  # putting all the activities.
+        activity.theme_configure(bar_bg_color="#d9baff", bar_item_bg='#d9baff', bar_item_fg='black')
+
+        # passing the top frame into instance object.
+
+        # -------------------------------------------------------------------------------------------------#
         # Here in this top section we will put progress bar and set_today_target button
         # first we will set the set_target-button
-        set_target_button = Button(top_section,text='Set')
-        set_target_button.pack(side=RIGHT, anchor='se')
+        set_target_button = Button(top_section, text='Set', relief='groove', background=top_section.cget('bg'))
+        set_target_button.pack(side=RIGHT, anchor='se', padx=(10,0))
 
         # Now in top section we need to put the tth_progressbar
         tth = self.Wid.TTH_ProgressBar(top_section)
         tth.pack(side=RIGHT, anchor='ne')
+        tth.tth_theme_configure(head_bg_color=top_section.cget('bg'), head_text_color='black')
         top_section.update_idletasks()
 
 
@@ -77,23 +101,24 @@ class Frames(Frame):
 
 #----------------------------------------------------------------------------------------------------------------------##
 #----------------------------------------------------------------------------------------------------------------------##
-        # Mid Secion
-        mid_section = Frame(tracks , bg = 'blue')
-
+        # Mid Section, this mid section will be put in a scroll frame which has the ability to scroll items
+        scroll_mid_section = ScrollFrame(tracks, height=900)
+        mid_section = Frame(scroll_mid_section.ContentFrame, bg='#bad5ff', height=900, width=1200)
+        # mid_section.pack_propagate(False)
         # here we need to retrieve the data and need to make the Cards.
         self.Tcards = Widgets.Track_Card(mid_section)
-        print("Databse",self.Tcards.Tracks_Cards_Database)
+        # print("Databse", self.Tcards.Tracks_Cards_Database)
         self.Tcards.Retrieve_Cards(mid_section,self.Tcards.Tracks_Cards_Database)
         # wid.Create_Track_Record_Card(mid_section)
-
-        mid_section.pack(fill=BOTH, expand=True)
+        scroll_mid_section.pack(fill='both', anchor='nw')
+        mid_section.pack(fill='both', expand=1, anchor='nw')
         # Now here we need to
 
         #------------------------------------------------------------|
         # creating a after loop to check the update in the Database. |
         def update_database():
             Widgets.Track_Card.reload_Database()
-            mid_section.after(1000,update_database)
+            mid_section.after(1000, update_database)
         update_database()
         #-------------------------------------------------------------
 
@@ -101,8 +126,8 @@ class Frames(Frame):
 #----------------------------------------------------------------------------------------------------------------------##
 #----------------------------------------------------------------------------------------------------------------------##
         # Bottom Section
-        bottom_section = Frame(tracks , height = 20, bg = 'white')
-        bottom_section.pack(side=BOTTOM, fill = 'x', expand = 0 , anchor = 's')
+        bottom_section = Frame(tracks, height=30, bg='white')
+        bottom_section.pack(side=BOTTOM, fill='x', anchor='s')
 
         # Now here we need to put a button on the bottom section
         # here in this section we will put the button for adding the new time record.
@@ -178,9 +203,12 @@ class Frames(Frame):
         #self.Keep_Bar_Frame.pack_propagate(False)
         # Now we will put the Keep bar in this frame
         # Now we will make another frame in which we will put the created Keep Card,
-        self.Keep_Card_Container = Frame(self.Main_Keeps_Frame, bg='white', relief='groove', bd=5)
+
+        self.ScrollFrame = ScrollFrame(self.Main_Keeps_Frame)
+        self.Keep_Card_Container = Frame(self.ScrollFrame.ContentFrame, bg='white', relief='groove', bd=5)
         self.keepbar = Widgets.Keeps_Card.KeepCardBar(self.Keep_Bar_Frame,container_frame=self.Keep_Card_Container,
                                                       height = 200, width =50, relief = 'groove', bd=5)
+        Widgets.Keeps_Card.KEEP_CARD_TITLE_BAR = self.keepbar
 
 
 #-----------------------------------------------------------------------------------------------------------------------#
@@ -209,11 +237,178 @@ class Frames(Frame):
                 add_keep.Create_Keep_Card2(self.Keep_Card_Container,pos,card_detail)
                 # Now we will append the card in Widgets.Keep_Card.Keep_Card_Objects list
                 Widgets.Keeps_Card.Keep_Card_Object.append(add_keep)
+                Widgets.Keeps_Card.KEEP_NEW_CHECK_TEXTBOX = add_keep
 #-----------------------------------------------------------------------------------------------------------------------#
 #-----------------------------------------------------------------------------------------------------------------------#
         self.keepbar.pack()
+        self.ScrollFrame.pack(fill = 'both')
         self.Keep_Card_Container.pack(fill = 'both', expand=1, ipadx = 50)
 
         # Now we need data to create the Keeps.
-
         return self.Main_Keeps_Frame
+
+    class DailyRoutineFrame(dr.DailyRoutine):
+        """
+        This class in Frame Frame_section will be used to create a frame in Notebook for DaliRoutine widgets.
+            In this we will inherit our dr.DailyRotation ttk.Frame class which will hold all the functionality.
+        """
+        def __init__(self, master=None):
+            """
+            This will construct the ttk.Frame object which is held by the the notebook object it means that its parent will
+                be a notebook object.
+            :param master:
+            """
+            super().__init__(master)
+            self.style = ttk.Style()
+            self.style.configure("Routine.TFrame", background='#ebccff')
+            self.style.configure("RoutineHead.TFrame", background='#ccd0ff')
+            self.style.configure("RoutineContent.TFrame", background='#ffe7cc')
+            self.style.configure("RoutineButton.TButton", shiftrelief=2, highlightcolor='red', highlighthickness='5')
+            self.configure(style='Routine.TFrame')
+
+            self.daily_app_func.init_daily_tasklist()  # initiating the daily tasklist data if they are not present
+            self.daily_app_func.init_dailyroutine()  # initiating the daily routine data if it is not present
+            # self.daily_app_func.retrieve_tasklists()  # retrieving the local task list data from the storage.
+            # self.daily_app_func.retrieve_dailyroutine()  # retrieving the local daily routine dat from the storage.
+            self.daily_app_func.filter_tasklist_items()
+
+            self.scrollframe = ScrollFrame(self)
+            self.contentframe = self.ContentFrame(self.scrollframe.ContentFrame, utility=self)
+            self.headframe = self.HeadFrame(self, self.contentframe)
+            self.headframe.pack(side='top', anchor='n', fill='x')
+            self.contentframe.pack(side='top', fill='both', anchor='n', expand=1)
+
+            self.scrollframe.pack(fill='both')
+
+        class HeadFrame(ttk.Frame):
+            """
+            This class will be used to define all the HeadFrame functionality which is placed inside the DailyRoutineFrame class.
+            """
+            def __init__(self, master=None, container=None):
+                super().__init__(master)
+                self.master = master  # master is the object of DailyRoutine object
+                self.container = container
+                self.utility = self.master.daily_app_func
+                self.configure(width=50, height=50, style='RoutineHead.TFrame')
+                self.master.style.map("RoutineButton.TButton",
+                                      background=[('hover', 'white')],
+                                      relief=[('hover', 'raised'), ('pressed', 'sunken')],
+                                      shiftrelief=[('pressed', 10)],
+                                      highlightcolor = [('hover','black')],
+                                      highlightthickness=[('hover',5)])
+
+                # Now we will add a button which will be used to create a TaskList inside the content frame.
+                self.add_tasklist_image = PhotoImage(file= './Resources/icons/icons8_tasks_32.png')
+                self.add_tasklist = ttk.Button(self, text='add', takefocus=False, command=self.add_tasklist_command,
+                                               image=self.add_tasklist_image, style="RoutineButton.TButton")
+
+                self.add_tasklist.pack(side='right', anchor='e')
+
+
+            def add_tasklist_command(self):
+                """
+                This method will be executed when the self.add_tasklist button is pressed.
+                :return:
+                """
+                pos = len(self.master._taskcards_list_)  # getting the the length of the
+                # Now we need to create a tasklist
+                if pos % 3 == 0:
+                    self.container.next_row += 1
+                    self.container.next_col = 0
+                else:
+                    self.container.next_col += 1
+                self.tasklist = self.master.TaskList(self.container)
+                self.tasklist.grid(row=self.container.next_row, column=self.container.next_col, pady=20, padx=20, sticky='n')
+                self.master._taskcards_list_.append(self.tasklist)
+
+                # Now we need to generate a ids for every tasklist
+                self.utility.get_tasklist_ids2()
+                new_id = self.utility.gen_tasklist_id(self.tasklist.tasklist_title.get())
+
+                data = {"Title":self.tasklist.tasklist_title.get(),
+                        "Id":new_id}
+
+                self.utility.add_daily_tasklist(data, new_id)
+
+        class ContentFrame(ttk.Frame):
+            """
+            This class will be used to define all the content functionality which is placed inside the DailyRoutineFrame class.
+            """
+            def __init__(self, master=None, utility=None):
+                super().__init__(master)
+                self.master = master
+                self.configure(width=50, height=50, style='RoutineContent.TFrame')
+                self.next_row = 0
+                self.next_col = 0
+                self.parent = utility
+                self.utility = utility.daily_app_func
+                self.utility.retrieve_tasklists()
+                self.utility.retrieve_dailyroutine()
+                self.utility.filter_tasklist_items()
+                self.retrieve_tasklist_cards()
+            # Now we need to retrieve all the cards.
+            # self.daily_routine_database_csv = DailyRoutine.CSV_DATABASE
+            # self.daily_routine_database_json = DailyRoutine.JSON_DATABASE
+
+            def retrieve_tasklist_cards(self):
+                """
+                This method will be used to retrieve all the cards which are saved on the local storage.
+                :return:
+                """
+                self.task_db = self.utility.TASKLIST_DATABASE
+
+                for key, value in self.utility.JSON_DATABASE.items():
+                    # Now we need to create cards by using the current details.
+                    pos = len(self.parent._taskcards_list_)  # getting the the length of the
+                    if pos % 3 == 0:
+                        self.next_row += 1
+                        self.next_col = 0
+                    else:
+                        self.next_col += 1
+
+                    self.tasklist = self.parent.TaskList(self)
+                    self.tasklist.heading.label_var.set(value['Title'])
+                    self.tasklist.tasklist_title = value["Title"]
+                    self.tasklist.tasklist_id = key
+                    self.retrieve_tasklist_card_tasks()
+                    self.tasklist.grid(row=self.next_row, column=self.next_col, pady=20, padx=20,
+                                       sticky='n')
+                    self.parent._taskcards_list_.append(self.tasklist)
+
+            def retrieve_tasklist_card_tasks(self):
+                """
+                This method will be used to retrieve tasklist card task from DailyRoutine.TASKLIST_DATABASE
+                :return:
+                """
+                Id = self.tasklist.tasklist_id
+                alltask = self.task_db.get(Id, {})
+
+                for data in alltask:
+                    if bool(data):
+                        task = dr.DailyRoutine.CheckTask(self.tasklist.content)
+                        task.textvariable.set(data["Task"])
+                        task.TaskTitle = data["TaskTitle"]
+                        task.notify = data["Notify"]
+                        task.notify_time = data["NotifyTime"]
+                        task.alert_time = data["AlertTime"]
+                        task.alert_start_time = data["StartTime"]
+                        task.completed = data["TaskCompleted"]
+                        task.alert_end_time = data["EndTime"]
+                        task.notify_day = data["NotifyDay"]
+                        self.tasklist.heading.insert_task(task)
+                        self.tasklist.tasklists_data.append(data)
+                        if task not in self.tasklist.tasklist:
+                            self.tasklist.tasklist.append(task)
+
+
+
+
+
+
+
+
+
+
+
+
+

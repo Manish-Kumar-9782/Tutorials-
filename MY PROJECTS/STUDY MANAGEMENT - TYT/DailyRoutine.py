@@ -1,3 +1,5 @@
+import csv, Misc
+
 import ExWid
 import Widgets
 import Apps_func as apps
@@ -5,6 +7,7 @@ from tkinter import (Tk, Frame, Label, Button, StringVar,
                      IntVar, Spinbox, Toplevel, Entry, Text,
                      Menu, Menubutton, messagebox, PhotoImage, LabelFrame)
 from tkinter import ttk, font
+misc = Misc.Misc()
 
 
 class DailyRoutine(ttk.Frame):
@@ -16,13 +19,13 @@ class DailyRoutine(ttk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
         self.checkbutton_list = []  # list to store all check list
-        self._taskcards_list_ =[]   # this list will hold all tasklist card in it.
+        self._taskcards_list_ = []  # this list will hold all tasklist card in it.
         self.style = ttk.Style()
         self.style.map("TaskList.TButton",
                        background=[('hover', '#e8f0ff'), ('pressed', '#598dff'), ('active', '#598dff')],
                        relief=[('hover', 'raised'), ('active', 'sunken'), ('pressed', 'sunken')],
                        )
-
+        self.daily_app_func = apps.DailyRoutine()
 
     class CheckTask(ttk.Checkbutton):
         """
@@ -44,6 +47,7 @@ class DailyRoutine(ttk.Frame):
             super().__init__(master)
             self.style = ttk.Style()
             self.TaskTitle = None
+            self.checktaskid = None
             self.variable = IntVar()
             self.variable.set(0)  # setting 0 to variable to make checkbutton as deselected.
             self.textvariable = StringVar()
@@ -51,12 +55,15 @@ class DailyRoutine(ttk.Frame):
             self.striked_font = font.Font(family='Sarif', size=12, overstrike=1)
             self.style.configure("Unchecked.TCheckbutton", font=self.normal_font)
             self.style.configure("checked.TCheckbutton", font=self.striked_font)
-            self.alert_time = []     # this will contain the alert time at which we need to alert the user about this task.
-            self.notify = False    # if this is True then only self.notify_time and self.alert_time will work.
+            self.alert_time = []  # this will contain the alert time at which we need to alert the user about this task.
+            self.notify = False  # if this is True then only self.notify_time and self.alert_time will work.
             self.notify_time = None
             self.completed = False
+            self.alert_start_time = None
+            self.alert_end_time = None
+            self.notify_day = None
             self.configure(style="Unchecked.TCheckbutton", variable=self.variable, textvariable=self.textvariable)
-            self.edit_button = None   # this edit button will be used to edit the this task.
+            self.edit_button = None  # this edit button will be used to edit the this task.
             self.notify_button = None
             self.bind("<Button-1>", self.oncheck)
 
@@ -82,15 +89,17 @@ class DailyRoutine(ttk.Frame):
             :param event:
             :return:
             """
-            print("checkbutton value: ",self.variable.get())
+            print("checkbutton value: ", self.variable.get())
             # Now we will get the Checkbutton's on and off values by using the self.variable attribute
             # since on and off value will change after executing the event handler so we need to check variable value in reverse order.
             if not self.variable.get():
                 # if these happens it means that checkbutton is selected.
                 self.configure(style="checked.TCheckbutton")
+                self.completed = True
             else:
                 # if it happens it means that checkbutton is not selected.
                 self.configure(style="Unchecked.TCheckbutton")
+                self.completed = False
 
         def onedit(self):
             """
@@ -105,19 +114,45 @@ class DailyRoutine(ttk.Frame):
             :return:
             """
             print("print notify called")
-            root = Toplevel()
-            root.title("Set Task Notification")
-            root.pack_propagate(False)
-            root.geometry("400x400")
-            Notify = DailyRoutine.SetNotify(root, task=self)
+            self.notifyroot = Toplevel()
+            self.notifyroot.title("Set Task Notification")
+            self.notifyroot.pack_propagate(False)
+            self.notifyroot.geometry("400x400")
+            self.notifyroot.protocol("WM_DELETE_WINDOW", self.modify_task_details)
+            Notify = DailyRoutine.SetNotify(self.notifyroot, task=self)
             Notify.pack()
 
+        def modify_task_details(self):
+            """
+            This method will be used to modify when the SetNotification window will be destroyed.
+            :return:
+            """
+            print(self.checktaskid)
+            # Now first of all we need to access the index of the task in tasklist
+            index = self.master.master.tasklist.index(self)
+            # Now we need to verify that we have selected right choice
+
+            key = {"Task": self.textvariable.get(),
+                   "TaskId": self.master.master.tasklist_id,
+                   "CheckTaskid": self.checktaskid,
+                   "TaskTitle": self.TaskTitle,
+                   "Notify": self.notify,
+                   "NotifyTime": self.notify_time,
+                   "AlertTime": self.alert_time,
+                   "StartTime": self.alert_start_time,
+                   "EndTime": self.alert_end_time,
+                   "NotifyDay": self.notify_day,
+                   "TaskCompleted": self.completed}
+
+            self.master.master.tasklists_data[index].update(key)
+            self.notifyroot.destroy()
 
     class SetNotify(ttk.Frame):
         """
         This class will be used to Set notification for a particular task, this is a object will have ttk.Frame class
         attributes and function so we can use it like a ttk.Frame object with some additional method as functionality.
         """
+
         def __init__(self, master=None, task=None):
             super().__init__(master)
             self.Task = task
@@ -129,16 +164,20 @@ class DailyRoutine(ttk.Frame):
             self.alert_var = IntVar()
             self.alert_var.set(0)
             self.notify_time = None
-            self.alert_time = []
+            self.alert_time_wid = []
+            self.alert_time_values = []
+            self.notify_days = []
             self.start_time = "00:00:00 AM"
             self.end_time = "11:59:59 PM"
-            self.wid = Widgets     # widgets class
+            self.wid = Widgets  # widgets class
+            self.add_alert_count = 0
             self.set_time = False  # it will be true if we have any widget for settime
             self.day_choice = False  # it will be true if we have any widget for day choice.
-            self.alert = True        # it will be true if we have any widget of alert time.
+            self.alert = True  # it will be true if we have any widget of alert time.
             # Now We need to set notification for every individual task.
             self.notify_label = ttk.Label(self, text='Task Notification Setting', font=("sarif", 15, 'bold'))
-            self.notify_check = ttk.Checkbutton(self, text='Notify', variable=self.notify_var, command=self.notify_status)
+            self.notify_check = ttk.Checkbutton(self, text='Notify', variable=self.notify_var,
+                                                command=self.notify_status)
             self.submit_notify = ttk.Button(self.master, text="Submit", command=self.get_notify_settings)
             self.notify_label.pack(pady=5)
             self.notify_check.pack(pady=5)
@@ -148,18 +187,19 @@ class DailyRoutine(ttk.Frame):
             self.SetNotifyTime = ExWid.SetTime(self.Notifytimeframe, 'Notify Time:')
             self.SetStartTime = ExWid.SetTime(self.Notifytimeframe, 'Start Time:')
             self.SetEndTime = ExWid.SetTime(self.Notifytimeframe, 'End Time:')
-            self.AlertCheck = ttk.Checkbutton(self.Notifytimeframe, text='Alert Time:', variable=self.alert_var, command=self.alert_commad)
+            self.AlertCheck = ttk.Checkbutton(self.Notifytimeframe, text='Alert Time:', variable=self.alert_var,
+                                              command=self.alert_commad)
             self.SetNotifyTime.pack(pady=5, anchor='e')
             self.SetStartTime.pack(pady=5, anchor='e')
             self.SetEndTime.pack(pady=5, anchor='e')
             self.AlertCheck.pack()
-
 
             self.Alerttimeframe = LabelFrame(self, text='Set Alert Time')
 
             self.Notifydayframe = LabelFrame(self, text='Set Notify Days')
             self.DayChoice = ExWid.DayChoice(self.Notifydayframe)
             self.DayChoice.pack(pady=5)
+            self.set_notify_setting()
 
         def notify_status(self):
             """
@@ -188,17 +228,63 @@ class DailyRoutine(ttk.Frame):
             :return:
             """
             if self.alert_var.get():
-                if not bool(self.alert_time):   # if self.alert_time is empty
-                    self.add_alert_count = len(self.alert_time) + 1
-                    alerttime = ExWid.SetTime(self.Alerttimeframe, label = f"Alert Time {str(self.add_alert_count)}:")
+                if not bool(self.alert_time_wid):  # if self.alert_time is empty
+                    self.add_alert_count = len(self.alert_time_wid) + 1
+                    alerttime = ExWid.SetTime(self.Alerttimeframe, label=f"Alert Time {str(self.add_alert_count)}:")
                     alerttime.grid(row=0, column=0)
                     self.add_alert = ttk.Button(self.Alerttimeframe, text='add', command=self.add_new_alert)
                     self.add_alert.grid(row=0, column=1)
-                    self.alert_time.append(alerttime)
+                    self.alert_time_wid.append(alerttime)
                 else:
                     self.Alerttimeframe.pack_configure(before=self.Notifydayframe)
             else:
                 self.Alerttimeframe.pack_forget()
+
+        def set_notify_setting(self):
+            """
+            This method will be used to set saved setting for the current task notification setting.
+            :return:
+            """
+            self.days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            # Now self.Task will hold all th available information to set the notification setting
+            if self.Task.notify == 'True':
+                self.notify = True
+                self.notify_var.set(1)
+                self.set_time = True
+                # Now we need to pack Set time for notify time
+                # Notify time setting.
+                self.notify_time = misc._eval(self.Task.notify_time)
+                self.start_time = misc._eval(self.Task.alert_start_time)
+                self.end_time = misc._eval(self.Task.alert_end_time)
+
+                self.SetNotifyTime.set_time_values(self.notify_time)
+                self.SetStartTime.set_time_values(self.start_time)
+                self.SetEndTime.set_time_values(self.end_time)
+                self.Notifytimeframe.pack()
+
+                # Alert Time setting
+                self.alert_time_values = misc._eval(self.Task.alert_time)
+                if self.alert_time_values:
+                    self.alert = True
+                    self.alert_var.set(1)
+
+                    for index, atime in enumerate(self.alert_time_values):
+                        self.add_alert_count = len(self.alert_time_wid) + 1
+                        alerttime = ExWid.SetTime(self.Alerttimeframe, label=f"Alert Time {str(self.add_alert_count)}:")
+                        alerttime.grid(row=index, column=0)
+                        alerttime.set_time_values(atime)
+
+                        self.add_alert = ttk.Button(self.Alerttimeframe, text='add', command=self.add_new_alert)
+                        self.add_alert.grid_configure(row=index, column=1)
+                        self.alert_time_wid.append(alerttime)
+                self.Alerttimeframe.pack()
+
+                # Day setting
+                self.notify_days = misc._eval(self.Task.notify_day)
+                if self.notify_days:
+                    self.day_choice = True
+                    self.Notifydayframe.pack()
+                    self.DayChoice.set_days(self.notify_days)
 
         def add_new_alert(self):
             """
@@ -207,41 +293,57 @@ class DailyRoutine(ttk.Frame):
             :param master:tk.Frame, parent in which it will be packed.
             :return:
             """
-            self.add_alert_count = len(self.alert_time) + 1
+            self.add_alert_count = len(self.alert_time_wid) + 1
             alerttime = ExWid.SetTime(self.Alerttimeframe, label=f"Alert Time {str(self.add_alert_count)}:")
-            alerttime.grid(row=self.add_alert_count-1, column=0)
-            self.add_alert.grid_configure(row=self.add_alert_count-1, column=1)
-            self.alert_time.append(alerttime)
+            alerttime.grid(row=self.add_alert_count - 1, column=0)
+            self.add_alert.grid_configure(row=self.add_alert_count - 1, column=1)
+            self.alert_time_wid.append(alerttime)
 
         def get_notify_settings(self):
             """
             This method will be used to get the settings of the notify which is set.
             :return:
             """
-            key = {"Task":self.Task.textvariable.get(),
-                   "TaskTitle":self.Task.TaskTitle,
-                   "Notify":self.notify,
-                   "NotifyTime":self.SetNotifyTime.get_time_values(),
-                   "AlertTime":[i.get_time_values() for i in self.alert_time],
-                   "StartTime":self.SetStartTime.get_time_values(),
-                   "EndTime":self.SetEndTime.get_time_values(),
-                   "NotifyDay":self.DayChoice.get_day()}
+            # Now we need to set some value taskcheck
+            self.Task.notify = self.notify
+            if self.notify:
+                self.Task.notify_time = tuple([int(i) for i in self.SetNotifyTime.get_time_values()])
+                self.Task.alert_start_time = tuple([int(i) for i in self.SetStartTime.get_time_values()])
+                self.Task.alert_end_time = tuple([int(i) for i in self.SetEndTime.get_time_values()])
+                self.Task.notify_day = self.DayChoice.get_day()
+                if self.alert_var.get():
+                    self.Task.alert_time_wid = [tuple([int(value) for value in atime.get_time_values()]) for atime in self.alert_time_wid]
+            # since alert time has many time values and all values are in string format so we have to convert them into integet.
 
-            for key, value in key.items():
-                print(f"{key}:\t{value}")
-
+            # key = {"Task": self.Task.textvariable.get(),
+            #        "TaskId": None,
+            #        "CheckTaskid": None,
+            #        "TaskTitle": self.Task.TaskTitle,
+            #        "Notify": self.notify,
+            #        "NotifyTime": self.SetNotifyTime.get_time_values(),
+            #        "AlertTime": [i.get_time_values() for i in self.alert_time],
+            #        "StartTime": self.SetStartTime.get_time_values(),
+            #        "EndTime": self.SetEndTime.get_time_values(),
+            #        "NotifyDay": self.DayChoice.get_day(),
+            #        "TaskCompleted": self.Task.completed}
+            #
+            # for key, value in key.items():
+            #     print(f"{key}:\t{value}")
 
 
     class TaskList(ttk.Frame):
         """
-        This class will be used to create a tasklist. it will be used to opearate different functionality related to the TaskList
-        like list of checkbuttons , color configurations, style and other functionality.
+        This class will be used to create a tasklist. it will be used to operate different functionality related to the TaskList
+        like list of checkbutton , color configurations, style and other functionality.
         """
 
-        def __init__(self,master=None):
+        def __init__(self, master=None):
             super().__init__(master)
             self.master = master
             self.tasklist = []
+            self.tasklists_data = []
+            self.tasklist_id = None
+            self.tasklist_title = None
             self.next_task_row = 1
             self.edit_button_map = {}
             self.style = ttk.Style()
@@ -249,6 +351,7 @@ class DailyRoutine(ttk.Frame):
             self.init_date = apps.Time.get_current_date()
             self.content = self.Content(self)
             self.heading = self.Heading(self)
+
         # Note to use all inner class with outer class attributes we need to return a one object of each class by using
         # a method like below one.
         def _init_Heading_(self):
@@ -270,18 +373,17 @@ class DailyRoutine(ttk.Frame):
             """
             return self.Content(self)
 
-
         class Content(ttk.Frame):
 
             def __init__(self, master=None, ):
                 super().__init__(master)
+                self.master = master
                 self.style = ttk.Style()
                 self.contentbox_background = "#d6c1e8"
                 self.style.configure("Content.TFrame", background=self.contentbox_background)
-                self.configure(width=300, height=400, style='Content.TFrame')
-                self.pack(side='bottom', anchor='s', fill='both', expand=1, pady=(10,0))
+                self.configure(width=300, height=200, style='Content.TFrame')
+                self.pack(side='bottom', anchor='s', fill='both', expand=1, pady=(10, 0))
                 self.pack_propagate(False)
-
 
             def content(self, style=None):
                 """
@@ -290,7 +392,6 @@ class DailyRoutine(ttk.Frame):
                 :param style:style, style object to set style configure for content frame.
                 :return:
                 """
-
 
         class Heading(ttk.Frame):
             """
@@ -309,36 +410,45 @@ class DailyRoutine(ttk.Frame):
                 self.style = ttk.Style()
                 self.heading_master = master
                 self.container = self.heading_master.content
-
+                self.utility = apps.DailyRoutine()
                 self.headbox_background = "#20627a"
                 self.style.configure("Heading.TFrame", background=self.headbox_background)
                 self.style.configure(width=300, height=50, style="Heading.TFrame")
-                
+                self.style.configure("Title.TLabel", font=("sarif", 12, 'bold'))
+                self.style.map("Title.TLabel",
+                               background=[('hover', 'white')])
 
                 self.label_var = StringVar()
-                self.label_var.set("Untitled")
-
+                if self.heading_master.tasklist_title:
+                    self.label_var.set(self.heading_master.tasklist_title)
+                else:
+                    self.label_var.set("Untitled")
+                self.heading_master.tasklist_title = self.label_var
                 # Now we will make a label to show the title of the TaskList
-                self.title_label = ttk.Label(self, textvariable=self.label_var)
+                self.title_label = ttk.Label(self, textvariable=self.label_var, style="Title.TLabel")
+                self.title_label.bind("<Button-1>", self.change_title)
 
                 # Now we will make three buttons, save, delete and add a task button
                 self.add_task_var = StringVar()
                 self.add_task_var.set("add")
-                self.add_task = ttk.Button(self, textvariable=self.add_task_var, style='TaskList.TButton',  takefocus=False)
+                self.add_task = ttk.Button(self, textvariable=self.add_task_var, style='TaskList.TButton',
+                                           takefocus=False)
 
                 # Now we will make a delete button
                 self.delete_var = StringVar()
                 self.delete_var.set("delete")
-                self.delete_task = ttk.Button(self, textvariable=self.delete_var, style='TaskList.TButton',  takefocus=False)
+                self.delete_task = ttk.Button(self, textvariable=self.delete_var, style='TaskList.TButton',
+                                              takefocus=False)
 
                 # Now we will make a save button
                 self.save_var = StringVar()
                 self.save_var.set("save")
-                self.save_task = ttk.Button(self, textvariable=self.save_var, style='TaskList.TButton',  takefocus=False)
+                self.save_task = ttk.Button(self, textvariable=self.save_var, style='TaskList.TButton', takefocus=False,
+                                            command = self.save_command)
 
-#===========================================================================================#
-                self.pack_widgets()   # packing all widgets at once.
-                self.add_task.config(command= self.add_command)
+                # ===========================================================================================#
+                self.pack_widgets()  # packing all widgets at once.
+                self.add_task.config(command=self.add_command)
                 self.pack(side='top', anchor='n', fill='x')
 
             def pack_widgets(self):
@@ -362,42 +472,102 @@ class DailyRoutine(ttk.Frame):
                 self.Entery_var = StringVar()
                 self.Entery = Entry(self.master, textvariable=self.Entery_var, width=35, font=('sarif', 12))
                 self.Entery.focus_set()
-                self.Entery.pack(side='left', anchor='w',)
+                self.Entery.pack(side='left', anchor='w', )
                 self.Entery.pack_propagate(False)
 
                 self.task_check = DailyRoutine.CheckTask(self.container)
-                self.task_check.TaskTitle = self.label_var.get()    # passing the Title to the TaskCheck object.
+                self.task_check.TaskTitle = self.label_var.get()  # passing the Title to the TaskCheck object.
                 self.container.grid_columnconfigure(0, minsize=250)
-                self.container.grid_columnconfigure(1,minsize=50)
+                self.container.grid_columnconfigure(1, minsize=50)
                 self.task_check.grid(row=self.master.next_task_row, column=0, sticky='w')
 
                 # Now we need to pack a edit button to edit the task_check
                 self.edit_check = ttk.Button(self.container, text='edit', style='TaskList.TButton', takefocus=False)
                 self.edit_check.grid(row=self.master.next_task_row, column=1, sticky='e')
-                self.task_check.edit_button = self.edit_check    # setting the edit button into checkbutton
-                self.task_check.edit_config()    # configuring the edit command.
+                self.task_check.edit_button = self.edit_check  # setting the edit button into checkbutton
+                self.task_check.edit_config()  # configuring the edit command.
 
                 # Now we will make a notification
                 self.notify_check = ttk.Button(self.container, text='notify', style='TaskList.TButton', takefocus=False)
                 self.notify_check.grid(row=self.master.next_task_row, column=2, sticky='e')
-                self.task_check.notify_button = self.notify_check    # setting the notify button into checkbutton
-                self.task_check.notify_config()     # configuring the notify command
-
+                self.task_check.notify_button = self.notify_check  # setting the notify button into checkbutton
+                self.task_check.notify_config()  # configuring the notify command
 
                 self.master.tasklist.append(self.task_check)
                 self.master.edit_button_map[self.edit_check] = self.task_check
                 self.master.next_task_row += 1
                 self.Entery.bind("<Return>", self.get_entrytext)
 
+            def insert_task(self, task_object):
+                """
+                This method will be used when we will retrieve our data from the local storage
+                :return:
+                """
+
+                # Now here we need to make a Dailyroutine.Checkbutton object to create a object
+                self.task_check = task_object
+                self.task_check.TaskTitle = self.label_var.get()  # passing the Title to the TaskCheck object.
+                self.container.grid_columnconfigure(0, minsize=250)
+                self.container.grid_columnconfigure(1, minsize=50)
+                self.task_check.grid(row=self.master.next_task_row, column=0, sticky='w')
+                self.task_check.checktaskid = self.master.next_task_row
+
+
+                # Now we need to pack a edit button to edit the task_check
+                self.edit_check = ttk.Button(self.container, text='edit', style='TaskList.TButton', takefocus=False)
+                self.edit_check.grid(row=self.master.next_task_row, column=1, sticky='e')
+                self.task_check.edit_button = self.edit_check  # setting the edit button into checkbutton
+                self.task_check.edit_config()  # configuring the edit command.
+
+                # Now we will make a notification
+                self.notify_check = ttk.Button(self.container, text='notify', style='TaskList.TButton', takefocus=False)
+                self.notify_check.grid(row=self.master.next_task_row, column=2, sticky='e')
+                self.task_check.notify_button = self.notify_check  # setting the notify button into checkbutton
+                self.task_check.notify_config()  # configuring the notify command
+
+                self.master.tasklist.append(self.task_check)
+                self.master.edit_button_map[self.edit_check] = self.task_check
+                self.master.next_task_row += 1
+
             def get_entrytext(self, event):
                 """
-                This method will be binded to the Entry box of the Tasklist and it will be executed when Return key is pressed.
+                This method will be bound to the Entry box of the Tasklist and it will be executed when Return key is pressed.
                 :return: 
                 """
+                data = {"Task": self.Entery_var.get(),
+                        "TaskId": self.heading_master.tasklist_id,
+                        "TaskTitle": self.label_var.get()}
                 self.task_check.textvariable.set(self.Entery_var.get())
+
+                self.utility.save_dailyroutine(data)
+                self.utility.CSV_DATABASE.append(data)
                 self.Entery.destroy()
 
-                
+            def change_title(self, event):
+                """
+                This method will be used to change the title of the tasklist. this method will be bind to the table variable.
+                :return:
+                """
+                print("change title function is called.")
+                self.title_label.pack_forget()
 
+                Entry = ttk.Entry(self, textvariable=self.label_var, font=('sarif', 12, 'bold'))
+                Entry.pack(side='left', anchor='w')
 
+                def set_title(event2):
+                    # this method will be executed when the enter will be hit.
+                    Entry.destroy()
+                    self.title_label.pack(side='left', anchor='w')
+                    self.utility.JSON_DATABASE[self.heading_master.tasklist_id]['Title'] = self.label_var.get()
 
+                Entry.bind("<Return>", set_title)
+
+            def save_command(self):
+                """
+                This method will be used to save a tasklist's task data and notify values also.
+                :return:
+                """
+                with open("./data/dailyroutine.csv", 'w', newline='') as file:
+                    writer = csv.DictWriter(file, fieldnames=self.utility.tasklist_fields)
+                    writer.writeheader()
+                    writer.writerows(self.utility.CSV_DATABASE)

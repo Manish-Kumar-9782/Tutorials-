@@ -6,6 +6,68 @@ import tkinter as tk
 from tkinter import ttk, font
 
 
+class ScrollFrame(tk.Frame):
+    """
+    This class will be used to define and set a scrollbar on a frame widgets and it unable us to scroll through a frame.
+    widgets.
+    """
+
+    def __init__(self, master=None, cfg=None, **kw):
+        """
+        init constructor will initialize all the feature of the frame in which will put our scrollbar and a canvas which
+        will help us to scroll through the whole region.
+        :param master:master, a master window in which we will put our our ScrollFrame window.
+        :param mainframe:widget, it is the main frame in which we will put all of our other content or widgets of the application.
+        """
+        super().__init__(master, cnf=cfg, **kw)
+        # Now first of all we need to create a ttk.scrollbar widget and put it into the ScrollFrame object
+        self.scroll = ttk.Scrollbar(self, orient='vertical')
+        self.scroll.pack(side='right', anchor='e', fill='y')
+
+        # Now we need to make a canvas which will hold our main frame in which we will put our mainframe
+        self.canvas = tk.Canvas(self, background='green')
+        self.canvas.pack(side='left', anchor='w', fill='both', expand=1)
+
+        # Now we need to configure the scrollbar and canvas also.
+        self.scroll.config(command=self.canvas.yview)
+        self.canvas.config(yscrollcommand=self.scroll.set, confine=True)
+        self.canvas.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox('all')))
+
+        # Now we need to put our mainframe inside the canvas.
+        self.ContentFrame = tk.Frame(self.canvas, height=800)
+
+        self.canvas.create_window(0, 0, anchor='nw', window=self.ContentFrame, tags='contentframe')
+        self.canvas.itemconfigure('contentframe', width=self.canvas.winfo_width())
+        self.bind("<Configure>", self._configure_content_frame)
+        self.ContentFrame.bind("<Enter>", self._bound_to_mousewheel)
+        self.ContentFrame.bind("<Leave>", self._unbound_to_mousewheel)
+        self.update_idletasks()
+
+    def _bound_to_mousewheel(self, event):
+        self.bind_all("<MouseWheel>", self._on_mousewheel)
+
+    def _unbound_to_mousewheel(self, event):
+        self.unbind_all("<MouseWheel>")
+
+    def _on_mousewheel(self, event):
+        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        # here delta is used for mouse , delta is a integer value which is eaual to 120
+        # if we dont devide event.delta by 120 then our frame will move very fast.
+
+    def _configure_content_frame(self, event):
+        # this method will be used to update the size of the content frame as it updates.
+        self.update_idletasks()
+        size = (self.canvas.winfo_height(), self.canvas.winfo_width())
+        if self.canvas.winfo_height() != self.ContentFrame.winfo_height():
+            self.canvas.config(height=self.ContentFrame.winfo_height())
+
+        if self.canvas.winfo_width() != self.ContentFrame.winfo_width():
+            self.canvas.itemconfigure('contentframe', width=self.canvas.winfo_width())
+
+        self.update_idletasks()
+
+
+
 class SetTime(ttk.Frame):
     """
     This class will be used to set the time for a task it will contain three Spinbox to set the hour, minute and second
@@ -19,6 +81,9 @@ class SetTime(ttk.Frame):
         self.minute = tk.StringVar()
         self.seconds = tk.StringVar()
         self.label_var = tk.StringVar()
+        self._hour_ = 0
+        self._minute_ = 0
+        self._sec_ = 0
         self.s_epadx= 5
 
         self.spin_config = {'width':2, 'font':('sarif',15,'bold'), 'bg':'white',
@@ -56,6 +121,16 @@ class SetTime(ttk.Frame):
         """
         return self._hour_, self._minute_, self._sec_
 
+    def set_time_values(self,value):
+        """
+        This method will be used to set the time value from the local storage if there are any.
+        :param value:tuple, tuple or iterable like object containing hour, min, and seconds value.
+        """
+        _hr, _min, _sec = value
+        self.hour.set(_hr)
+        self.minute.set(_min)
+        self.seconds.set(_sec)
+        
         # Now we need to create some Spinbox which will help us to set some valus.
 
     def pack_settime(self, cfg=None, **kw):
@@ -89,7 +164,6 @@ class DayChoice(ttk.Frame):
         self.label.grid(row=0, column=0, sticky='w')
         self.Notify_Daily.grid(row=0, column=1, sticky='w')
         self.Notify_Choice.grid(row=0, column=2, sticky='w')
-
 
     def choice_command(self, selection):
         """
@@ -125,8 +199,33 @@ class DayChoice(ttk.Frame):
                 for day in self.day_widgets:
                     day.destroy()
 
-
-
+    def set_days(self, days):
+        """
+        This method will be used to set selected days while opening the notify setting.
+        :return:
+        """
+        if len(days) == 7:
+            self.Notify_Daily.invoke()
+        else:
+            self.allday = False
+            self.Notify_Choice.invoke()
+            col = 0
+            row = 1
+            for index, day in enumerate(self.days):
+                selected_choice = tk.IntVar()
+                if day in days:
+                    selected_choice.set(1)
+                choice = ttk.Checkbutton(self, text=day, variable=selected_choice)
+                choice.grid(row=row, column=col, sticky='w')
+                # self.day_choice_map.append((selected_choice, day))
+                choice.config(command=lambda x=selected_choice,
+                                             y=day: self.add_day(x, y))
+                self.day_widgets.append(choice)
+                if index % 3 == 0 and index != 0:
+                    col = 0
+                    row += 1
+                else:
+                    col += 1
 
     def add_day(self, var, day):
         """

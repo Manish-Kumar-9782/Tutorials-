@@ -1,12 +1,11 @@
-
-import time, os , csv
+import time, os, csv, random
 import tkinter.messagebox
 from tkinter import messagebox
 import calendar
 import json
 from collections.abc import Mapping
+import datetime
 from calendar import Calendar
-
 
 # This module will cover all the small application functionality which will be used together in the dashboard and the main application.
 """Apps:
@@ -14,25 +13,29 @@ from calendar import Calendar
 2. Countdown
 3. Time
 """
+
+
 class Misc:
     """
     This class will hold some basic and common operation on data
     """
-    def is_key_present(self,dict, key):
+
+    def is_key_present(self, dict, key):
         """
         This method will be used to check that a key is present in a dictionary or not. this method does not work on a nested key.
         :return: bool, this will return True if key is present else False.
         """
         return key in dict.keys()
 
-    def is_content(self,object):
+    def is_content(self, object):
         """
         This method will be used to check that if an object contains something or not.
         :return: bool, This will return True if content is present else Flase.
         """
         if bool(object):
             return True
-        else: return False
+        else:
+            return False
 
 
 class Time:
@@ -40,29 +43,29 @@ class Time:
     def __init__(self):
         self.Idle_Time = 0
         self.Idle_init_time = time.mktime(time.localtime())
-        self.Idle_Timer_status = None # it can be Running or Stopped.
+        self.Idle_Timer_status = None  # it can be Running or Stopped.
 
     def time_to_seconds(self, time):
         # first separate the hour , minute and second.
         hr, mins, sec = 0, 0, 0
-        if isinstance(time,str):
+        if isinstance(time, str):
             hr, mins, sec = [int(i) for i in time.split(":")]
-            #print("spliting the time:",hr, mins, sec)
-        elif isinstance(time,tuple) or isinstance(time, list):
+            # print("spliting the time:",hr, mins, sec)
+        elif isinstance(time, tuple) or isinstance(time, list):
             hr, mins, sec = [int(i) for i in time]
         # now convert them into second.
-        return hr*3600 + mins*60 + sec
+        return hr * 3600 + mins * 60 + sec
 
-    def sec_to_time(self ,second , rt_str = False):
+    def sec_to_time(self, second, rt_str=False):
         """
         This function will take the seconds and it will return time in the form of hr:min:sec
         second: seconds which is needed to convert into time format.
         rt_str: by default False, if we want to return the time in string format this set this as string.`
         """
-        if isinstance(second,str):
+        if isinstance(second, str):
             second = int(second)
-            Min, Sec = second // 60 , second % 60
-            Hr, Min =  Min // 60 , Min % 60
+            Min, Sec = second // 60, second % 60
+            Hr, Min = Min // 60, Min % 60
 
         else:
             Min, Sec = second // 60, second % 60
@@ -71,8 +74,7 @@ class Time:
         if rt_str:
             return f"{Hr:02d}:{Min:02d}:{Sec:02d}"
         else:
-            return Hr,Min ,Sec
-
+            return Hr, Min, Sec
 
     @staticmethod
     def get_current_date():
@@ -108,27 +110,49 @@ class Time:
             self.Idle_Time += self.Idle_Time
             self.Idle_init_time = time.mktime(time.localtime())
 
-    def  get_month_number(self,month, abbr= False):
+    def get_month_number(self, month):
         """
         This will return the number of the month, in this we will provide the month name and it will give as the number
             of the month.
         :param month: str, This will be the full or short name of the month.
-        :param abbr: bool, if this option is True it means we are give an abbreviated name of the name  of the month.
         :return: int, this will return the number of the month.
         """
-        Months_Names = None
-        if abbr:
-            Months_Names = calendar.month_abbr
-        else:
-            Months_Names = calendar.month_name
+        self.months_Names = [(m1, m2) for m1, m2 in zip(calendar.month_name, calendar.month_abbr)]
 
-        for month_number , month_name in enumerate(Months_Names):
+        for month_number, month_name in enumerate(self.months_Names):
 
-            if month_name == month:
+            if month in month_name:
                 return month_number
 
+    def get_date_values(self, date):
+        """
+        This method will be used to get the date numbers in integer format form string format.
+        :param date:str, This is the date in string format.
+        :return:
+        """
+        self.date_n = date.split('-')
+        self.month = self.get_month_number(self.date_n[1])
+        self.date_n[1] = self.month
+        self.values = [int(i) for i in self.date_n]
+        return self.values[2], self.values[1], self.values[0]
+        # returning the values in order---> year, month, day
 
+    def get_present_date_values(self):
+        """
+        This method will return present date values in tuple format.
+        :return:tuple, (year, month, day)
+        """
+        self.cdate = self.get_current_date()
+        return self.get_date_values(self.cdate)
 
+    def day_changed(self, date):
+        """
+        This method will be used to send a True value when the day is changed.
+        if day is changed then it wil return True else it will return False.
+        
+        :return: 
+        """
+        next_date = self.get_date_values(self.get_current_date())
 
     class StopWatch:
 
@@ -166,7 +190,7 @@ class Time:
 
     class Countdown:
 
-        def __init__(self,seconds):
+        def __init__(self, seconds):
             self.Hour = int()
             self.Min = int()
             self.Sec = int()
@@ -182,30 +206,32 @@ class Time:
             # in this we will return the minutes and seconds
             # we used mod operator on the seconds to get the seconds
             # and we divided the seconds with 60 to get the minutes.
-            return self.seconds // 60 , self.seconds % 60
+            return self.seconds // 60, self.seconds % 60
 
         def _hour_(self):
             # in twe will return the hours and minutes , in this we need to use the _minutes_() method to get the minutes.
             minute, self.Sec = self._minutes_()
             # in this we need to divide the minute with 60 to get the time in hour and we need to use the % mod on the
             # minute to get the remaining minutes
-            return minute // 60 , minute % 60
+            return minute // 60, minute % 60
 
         def timer(self):
             # in this timer function we need to make to function one is for sec-to-min and another is for the min-to-hour
-            self.Hour , self.Min = self._hour_()
-            return self.Hour, self.Min , self.Sec
-#-----------------------------------------------------------------------------------------------------------------------#
-#-----------------------------------------------------------------------------------------------------------------------#
-class SaveTime:
+            self.Hour, self.Min = self._hour_()
+            return self.Hour, self.Min, self.Sec
 
+
+# -----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
+class SaveTime:
     """
     This class will be used to save the time on the local storage, local disk.
     """
+
     def __init__(self):
         pass
 
-    def save_countdown_time(self,fp, data=None):
+    def save_countdown_time(self, fp, data=None):
         """
         This function is used to save the time. This function will take single day data at once. if we are getting the
         data multiple times then it will store the data in same row but it will use different columns.
@@ -215,7 +241,7 @@ class SaveTime:
         :return: Nothing.
         """
         self.file = './data/Timer_Data.csv'
-        self.existing_fields =None
+        self.existing_fields = None
         self.existing_data = None
         self.New_fields = None
         temp_data = []
@@ -226,7 +252,7 @@ class SaveTime:
             # Now if we get the data then first we need to check old data if it exist.
             if os.path.isfile(self.file):
                 # now we will check is file empty or not
-                if os.path.getsize(self.file) != 0 :
+                if os.path.getsize(self.file) != 0:
                     # if file is not empty then we will need to retrieve old data
                     # Now in this condition first we will retrieve old data new we will merge this our new data into old
                     # data.
@@ -238,15 +264,15 @@ class SaveTime:
                             if len(self.input_fields) > len(self.existing_fields):
                                 for key in self.input_fields:
                                     if key not in self.existing_fields:
-                                        row.update({key:None})
+                                        row.update({key: None})
                                 self.New_fields = row.keys()
                             else:
-                                 for key in self.existing_fields:
-                                     if key not in self.input_fields:
-                                         data.update({key:None})
+                                for key in self.existing_fields:
+                                    if key not in self.input_fields:
+                                        data.update({key: None})
 
-                            # Now here we need to store the data for temporary
-                                 self.New_fields = data.keys()
+                                # Now here we need to store the data for temporary
+                                self.New_fields = data.keys()
 
                             temp_data.append(row)
                     # Now after getting all the data we need to write new data into file after
@@ -274,7 +300,7 @@ class SaveTime:
         else:
             print("No Countdown timer data to save...")
 
-    def save_today_target_time(self , data = None):
+    def save_today_target_time(self, data=None):
 
         """
         This function will be used to set the working time target on and it will be monitored by a progress bar.
@@ -294,12 +320,12 @@ class SaveTime:
                 if os.path.getsize(self.file) != 0:
                     # file no empty then we need to get current date data
 
-            ##=============================  FIRST GETTING THE EXISTING DATA===========================
+                    ##=============================  FIRST GETTING THE EXISTING DATA===========================
                     with open(self.file, 'r', newline='') as read:
                         reader = csv.DictReader(read)
                         self.today_fields = reader.fieldnames
                         for row in reader:
-                            if row['Date']== Time.get_current_date():
+                            if row['Date'] == Time.get_current_date():
                                 temp_data.append(data)  # modifying the current date time
                                 self._today_target = True  #
                             else:
@@ -309,8 +335,8 @@ class SaveTime:
                         # if dont found any entry indie the database then we will add new entry
                         temp_data.append(data)
 
-            ##=============================  UPDATING THE DATABASE WITH NEW ENTRY ===========================
-                    with open(self.file, 'w',newline = '') as write:
+                    ##=============================  UPDATING THE DATABASE WITH NEW ENTRY ===========================
+                    with open(self.file, 'w', newline='') as write:
                         writer = csv.DictWriter(write, fieldnames=self.today_fields)
                         writer.writeheader()
                         for row in temp_data:
@@ -326,7 +352,8 @@ class SaveTime:
                         writer.writerow(data)
 
         else:
-            messagebox.showerror(title="Save Error", message="Can't save the target time.\nwe got a None value to save the data.")
+            messagebox.showerror(title="Save Error",
+                                 message="Can't save the target time.\nwe got a None value to save the data.")
 
     def Save_data(self, file, data):
         """
@@ -339,18 +366,21 @@ class SaveTime:
             cols = data.keys()
             if os.path.isfile(file):
                 with open(file, 'a', newline='') as file:
-                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer = csv.DictWriter(file, delimiter=',', fieldnames=cols)
                     writer.writerow(data)
             else:
                 with open(file, 'a', newline='') as file:
-                    writer = csv.DictWriter(file, delimiter = ',', fieldnames = cols)
+                    writer = csv.DictWriter(file, delimiter=',', fieldnames=cols)
                     writer.writeheader()
                     writer.writerow(data)
 
         else:
-            messagebox.showerror(title="Save Error", message="Can't save the target time.\nwe got a None value to save the data.")
-#-----------------------------------------------------------------------------------------------------------------------#
-#-----------------------------------------------------------------------------------------------------------------------#
+            messagebox.showerror(title="Save Error",
+                                 message="Can't save the target time.\nwe got a None value to save the data.")
+
+
+# -----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
 class widget:
 
     def __init__(self):
@@ -367,7 +397,7 @@ class widget:
         # getting the widow geometry
         window_height = master.winfo_height()
         window_width = master.winfo_width()
-        #print("Screen Info: ", master.winfo_geometry())
+        # print("Screen Info: ", master.winfo_geometry())
         # now we will get the dpi and screen size
         dpi = int(master.winfo_fpixels('1i'))
         screen_width = master.winfo_screenwidth()
@@ -389,7 +419,7 @@ class widget:
         # cneter_width  = center_of_screen_width  - center_of_window_width
 
         Height_center = sc_y - wc_y
-        Width_center =  sc_x - wc_x  # Now we have got the center of the window.
+        Width_center = sc_x - wc_x  # Now we have got the center of the window.
 
         # Now we need to put this window at one position from (Top, Bottom, Left, Right,Center, TopLeft, TopRight, BottomLeft, BottomRight)
 
@@ -415,26 +445,28 @@ class widget:
                    "BottomLeft": (Width_center - _X_, Height_center + _Y_ - bmg),
                    "BottomRight": (Width_center + _X_, Height_center + _Y_ - bmg),
                    }
-        #print("Center is :", Width_center, Height_center)
+        # print("Center is :", Width_center, Height_center)
 
         return window_width, window_height, Positon[pos][0], Positon[pos][1]
 
-    def Label_config(self, label ):
+    def Label_config(self, label):
         pass
-#-----------------------------------------------------------------------------------------------------------------------#
-#-----------------------------------------------------------------------------------------------------------------------#
-class Tracks_Cards:
 
+
+# -----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
+class Tracks_Cards:
     """
     This class will contain all the functionality to manipulate cards and their information.
     like it will have add_card, del_card, get_card, get_card_info, get_card_address etc.
     """
-    def __init__(self, Card_key ="Topic" ):
 
-        self.card_key = Card_key # This is the key for the parent database in which we will put the new SubCard Data.
+    def __init__(self, Card_key="Topic"):
 
-    def SaveCard(self, CardName,Parent, Database, Subcard=None, FullName=None):
-         # we need to import the json to work on the json files
+        self.card_key = Card_key  # This is the key for the parent database in which we will put the new SubCard Data.
+
+    def SaveCard(self, CardName, Parent, Database, Subcard=None, FullName=None):
+        # we need to import the json to work on the json files
         """
         This function will be used to save the card detail in json format. if the card is root then will save a with typname and id.
             but if the card is subcard then it will be saved inside the existing card.
@@ -447,20 +479,20 @@ class Tracks_Cards:
         if Subcard:
             # if are saving the sub-cards then this section will be followed.
             filename = './Data/temp'
-            Database = self.Add_SubCard(Parent = Parent, Child=CardName,Data = Subcard, Database=Database)
+            Database = self.Add_SubCard(Parent=Parent, Child=CardName, Data=Subcard, Database=Database)
             with open(filename, 'w') as file:
-                json.dump(Database,file, indent=2)
+                json.dump(Database, file, indent=2)
 
         else:
-         # if we are saving the root-card then we will follow this section.
+            # if we are saving the root-card then we will follow this section.
             # To save a root card what we will need
-                # first the location and the name of the file on which we want to save the data
-                # Second, In which format we need to save the data.
+            # first the location and the name of the file on which we want to save the data
+            # Second, In which format we need to save the data.
             filename = './Data/temp'
             with open(filename, 'w') as file:
-                json.dump(Database,file, indent=2)
+                json.dump(Database, file, indent=2)
 
-    def Read_Cards_Database(self, fileName = './Data/temp'):
+    def Read_Cards_Database(self, fileName='./Data/temp'):
 
         if os.path.isfile(fileName):
             if os.path.getsize(fileName) != 0:
@@ -470,27 +502,27 @@ class Tracks_Cards:
                 return Database
             else:
                 print("File is empty")
-                return {'Root':{}}
+                return {'Root': {}}
         else:
             print("File Not found")
-            file = open('./Data/temp','w')
+            file = open('./Data/temp', 'w')
             file.close()
             return None
 
-    def Add_Root_Card(self,CardName, **Cardinfo):
+    def Add_Root_Card(self, CardName, **Cardinfo):
 
         # These are some standard card information there can be more info keys in future
-        RootCard = {"Root":{CardName:{'Type':'Project',
-                              'Name':CardName,
-                              'Date': time.strftime("%d-%b-%Y"),
-                              'Time':time.strftime("%I:%M:%S %p"),
-                              'Topic':{}, #
-                              'Target Hour':0,
-                              'Completed Hour':0,
-                              'Progress':0,
-                              'Parent':CardName,
-                              'FullPath':'RootCard',
-                              'Childs':0}}}
+        RootCard = {"Root": {CardName: {'Type': 'Project',
+                                        'Name': CardName,
+                                        'Date': time.strftime("%d-%b-%Y"),
+                                        'Time': time.strftime("%I:%M:%S %p"),
+                                        'Topic': {},  #
+                                        'Target Hour': 0,
+                                        'Completed Hour': 0,
+                                        'Progress': 0,
+                                        'Parent': CardName,
+                                        'FullPath': 'RootCard',
+                                        'Childs': 0}}}
 
         for InfoKey in Cardinfo:
             # Now we will update our default card information as it given.
@@ -511,12 +543,12 @@ class Tracks_Cards:
         """
         ParentList = Parent.split('.')
 
-        def deep_update(parentlist, child,data,database):
+        def deep_update(parentlist, child, data, database):
             self.database = database
             self.key = None
             if len(parentlist) == 0:
                 # if we are end of the parent list then we need to update the Databse
-                #print("Adding new card in databse:- ",list(self.database.keys())[0],self.database)
+                # print("Adding new card in databse:- ",list(self.database.keys())[0],self.database)
                 self.database[self.card_key].update(data)
                 return self.database
 
@@ -525,21 +557,21 @@ class Tracks_Cards:
             if isinstance(self.database.get(self.key, None), Mapping):
                 # Now if we are in Card dir then we need to remove used parent and return to the method again.
                 parentlist.pop(0)
-                self.database = deep_update(parentlist, child,data,self.database.get(self.key,None))
+                self.database = deep_update(parentlist, child, data, self.database.get(self.key, None))
 
             else:
 
                 if isinstance(self.database.get(self.card_key, None), Mapping):
                     self.database = deep_update(parentlist, child, data, self.database.get(self.card_key, None))
 
-
                 return self.database
-            #print("Database:",self.database)
-            #print(f"{'_'*100}\n{'_'*100}\n{'_'*100}")
+            # print("Database:",self.database)
+            # print(f"{'_'*100}\n{'_'*100}\n{'_'*100}")
             return database
+
         return deep_update(ParentList, Child, Data, Database)
 
-    def Get_Card(self,Parent, Child,Database):
+    def Get_Card(self, Parent, Child, Database):
         """
         This function will be used to get the details associated with a card.
         :param Parent: This will be the name/fullpath of the parent of the Child.
@@ -559,7 +591,7 @@ class Tracks_Cards:
         return data[Child]
         # by this line we will update our existing Database with a new Child/subcard.
 
-    def update_card(self,cardName,cardParent,carddata, Database):
+    def update_card(self, cardName, cardParent, carddata, Database):
         """
         This method will be used to update a card data.
         :param cardName: str,this is the card name which is need to update.
@@ -580,7 +612,7 @@ class Tracks_Cards:
         return Database
         # by this line we will update our existing Database with a new Child/subcard.
 
-    def Get_Card_Address(self,Parent, Child,Database):
+    def Get_Card_Address(self, Parent, Child, Database):
         """
                 This function will be used to get the details associated with a card.
                 :param Parent: This will be the name/fullpath of the parent of the Child.
@@ -594,7 +626,7 @@ class Tracks_Cards:
         # Now
         # by this line we will update our existing Database with a new Child/subcard.
 
-    def Delete_SubCard(self,Parent,Child,Database):
+    def Delete_SubCard(self, Parent, Child, Database):
         """
         This function will be used to delete a subcard which is placed inside a root card or in subcards, This function
             will only delete the SubCard which is passed in the child argument.
@@ -611,7 +643,7 @@ class Tracks_Cards:
             # Now after reaching at the direct parent of the child we need to return the Child Database.
         del Database[Child]
 
-    def Retrieve_Cards(self,Database):
+    def Retrieve_Cards(self, Database):
         """
         This method will be used to retrieve all the card information in a database and it will be use to make cards.
         :param Database: dict object, Database which contains all the card information.
@@ -623,24 +655,24 @@ class Tracks_Cards:
             if isinstance(Database.get(key, None), Mapping):
                 # this condition will check that an incoming object is a dict or not.
                 # Now we need to yield the key and values
-                yield (key, value) # This will return every sub dictionary in a dict.
+                yield (key, value)  # This will return every sub dictionary in a dict.
 
                 yield from self.Retrieve_Cards(Database.get(key, None))
                 # after yielding and object we need to recall the our method again so it can yield more values.
 
-    def Retrieve_Cards_Names(self,Database):
+    def Retrieve_Cards_Names(self, Database):
         """
         This method will only return the Card Names form the Database.
         :param Database: dict, Database from which we need cards.
         :return: list, it will return a list of tuples
         """
-        for key ,card in self.Retrieve_Cards(Database):
+        for key, card in self.Retrieve_Cards(Database):
 
             if key != 'Root':
                 if key != "Topic":
-                    yield key,card['FullPath']
+                    yield key, card['FullPath']
 
-    def Get_Card_Type(self,Database,parent,child):
+    def Get_Card_Type(self, Database, parent, child):
         """
         This method will be used to get the card type by using its parent.
         :param parent: parent card name of child card.
@@ -649,15 +681,15 @@ class Tracks_Cards:
         """
         db = Database.get('Root')
         if parent == 'Root':
-            return  db[child]['Type']
+            return db[child]['Type']
 
-        elif len(parent.split('.'))>=2:
+        elif len(parent.split('.')) >= 2:
 
             root_parent = parent.split('.')[:2][1]
-            print(f"parent to root_Parent:",parent,"\t",parent.split('.'))
+            print(f"parent to root_Parent:", parent, "\t", parent.split('.'))
             return db[root_parent]['Type']
 
-    def Insert_Key(self,key, value,Database):
+    def Insert_Key(self, key, value, Database):
         """
         This method will be used to insert a key in Track Card Database.
         :param key: str, Name of the key which need to be inserted in the database.
@@ -674,58 +706,57 @@ class Tracks_Cards:
 
         # Now we need to save the database.
         with open(file, 'w') as write:
-            json.dump(Database, write, indent = 2)
+            json.dump(Database, write, indent=2)
 
 
-#-----------------------------------------------------------------------------------------------------------------------#
-#-----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
 class Keep_Cards:
     """
     this class will be used to manage the logical functionality of the Keep section of the application.
     """
+
     def __init__(self):
         self.Unique_ids = None
         self.KeepCards_Data = None
 
-    def get_unique_id(self, file ='./data/KeepCards.json' ):
+    def get_unique_id(self, file='./data/KeepCards.json'):
 
         """
         This method will be used to retrieve the unique ids stored in a file.
         :return:
         """
-        self.card_data = {"Cards":{},
-                          "Card_ids":[]}
+        self.card_data = {"Cards": {},
+                          "Card_ids": []}
         # we will store all card inside the Cards and we will store all ids inside the Card_ids.
         if os.path.isfile(file):
             # then we need to check the file is empty or not.
             if os.path.getsize(file) != 0:
-                with open(file,'r') as f:
+                with open(file, 'r') as f:
                     read = json.load(f)
                     self.Unique_ids = read.get("Card_ids", None)
                     return self.Unique_ids
             else:
                 # file is empty then we need to create new file.
-                with open(file,'w') as f:
+                with open(file, 'w') as f:
                     json.dump(self.card_data)
                 return None
 
-
-    def retrieve_keep_card_data(self, file ='./data/KeepCards.json' ):
+    def retrieve_keep_card_data(self, file='./data/KeepCards.json'):
         """
         This function will be used to retrieve the card data if it exist.
         :return:
         """
         if os.path.isfile(file):
             if os.path.getsize(file) != 0:
-                with open(file,'r') as f:
+                with open(file, 'r') as f:
                     self.KeepCards_Data = json.load(f)
         else:
             print('Keep card Data file not found....')
 
         return self.KeepCards_Data['Cards'], self.KeepCards_Data['Card_ids']
 
-
-    def initiate_keep_card_data_storage(self, file= './data/KeepCards.json'):
+    def initiate_keep_card_data_storage(self, file='./data/KeepCards.json'):
         """
         This function will be used to initiate KeepCard data if there is no card data present in the file.
         :return:
@@ -736,16 +767,16 @@ class Keep_Cards:
             # if file is empty then we need to initiate the format of the card data.
             try:
                 with open(file, 'w') as f:
-                    json.dump(self.card_data,f, indent=2)
-                    #print("Card data initiated...")
+                    json.dump(self.card_data, f, indent=2)
+                    # print("Card data initiated...")
             except:
-                    print("Unable to initiate the KeepCard data file.")
+                print("Unable to initiate the KeepCard data file.")
         else:
             if os.path.getsize(file) == 0:
                 os.remove(file)
                 return self.initiate_keep_card_data_storage()
 
-    def save_keep_card_data(self,keepcarddata,keepcardids,update=0,**DataValues):
+    def save_keep_card_data(self, keepcarddata, keepcardids, update=0, **DataValues):
         """
         This class will be used to save the data of a card. Card data will be saved in two format, one is json and other is csv format.
         JSON: json format data will contain card attributes like date, time, title, marked, id etc.
@@ -757,15 +788,15 @@ class Keep_Cards:
         :param update: bool, this will be used to update a card.
         :param **DataValues: keyword argument to be saved in local storage.
         """
-        file = './data/KeepCards.json' # database file in which we will store all the data.
+        file = './data/KeepCards.json'  # database file in which we will store all the data.
 
-        #print("Need to save these data.")
-        #print(DataValues)
-        #print("keepcarddata: ",keepcarddata)
-        #print("keepcardids: ",keepcardids)
+        # print("Need to save these data.")
+        # print(DataValues)
+        # print("keepcarddata: ",keepcarddata)
+        # print("keepcardids: ",keepcardids)
 
         self.card_data = {"Cards": {},
-                       "Card_ids": []}
+                          "Card_ids": []}
 
         if update:
             # this section will be called when we are updating the card details.
@@ -774,31 +805,29 @@ class Keep_Cards:
             self.card_data["Card_ids"] = keepcardids
             try:
                 with open(file, 'w') as f:
-                    json.dump(self.card_data, f,indent=2)
+                    json.dump(self.card_data, f, indent=2)
             except:
                 print(f"Unable to update the card details.")
         else:
             # This section will be called when we are creating a new card.
 
-            card = {DataValues['title']:{'title':DataValues['title'],
-                                         'Id':DataValues['Id'][0],
-                                         'date':DataValues['date'],
-                                         'time':DataValues['time'],
-                                         'content':DataValues['content']}}
-            #print("new card data: ", card)
+            card = {DataValues['title']: {'title': DataValues['title'],
+                                          'Id': DataValues['Id'][0],
+                                          'date': DataValues['date'],
+                                          'time': DataValues['time'],
+                                          'content': DataValues['content']}}
+            # print("new card data: ", card)
             keepcarddata.update(card)
             keepcardids.append(DataValues['Id'][0])
             self.card_data["Cards"].update(keepcarddata)
             self.card_data["Card_ids"] = keepcardids
 
-            #print("Card data saved: ",self.card_data)
+            # print("Card data saved: ",self.card_data)
             if os.path.isfile(file):
-                with open(file,'w') as f:
-                    json.dump(self.card_data,f, indent=2)
-
+                with open(file, 'w') as f:
+                    json.dump(self.card_data, f, indent=2)
 
             return DataValues
-
 
     def load_keep_card_data(self):
         """
@@ -814,18 +843,22 @@ class Keep_Cards:
         self.KeepCards_Data, self.KeepCard_ids = self.retrieve_keep_card_data()
 
         return self.KeepCards_Data, self.KeepCard_ids
-#-----------------------------------------------------------------------------------------------------------------------#
-#-----------------------------------------------------------------------------------------------------------------------#
+
+
+# -----------------------------------------------------------------------------------------------------------------------#
+# -----------------------------------------------------------------------------------------------------------------------#
 class tth_progress:
     """
     This class will be used to update tth progress bar on the Dashboard.
     """
+
     def __init__(self):
         self.daily_target_file = "./data/daily_target.csv"
         self.data_fields = None
         self.file_data = None
         self.today_data = None
         self.today_date = Time.get_current_date()
+
     def get_today_target(self):
         """
         This method will be used to get the today target record from the csv file which is stored on a local storage.
@@ -833,8 +866,8 @@ class tth_progress:
         :return: list, this will return a list of tuple which will hold the time range for today or recent day.
         """
         if os.path.isfile(self.daily_target_file):
-            if os.path.getsize(self.daily_target_file) !=0:
-                with open(self.daily_target_file,'r', newline='') as file:
+            if os.path.getsize(self.daily_target_file) != 0:
+                with open(self.daily_target_file, 'r', newline='') as file:
                     reader = csv.DictReader(file)
                     self.data_fileds = next(reader)
                     for row in reader:
@@ -843,14 +876,16 @@ class tth_progress:
                             break
             else:
                 print("Daily target file has no data.")
-                #messagebox.showwarning(title='Error',message='No data' )
+                # messagebox.showwarning(title='Error',message='No data' )
 
         else:
             print("file not found.Creating a new file")
-            file = open(self.daily_target_file,'w')
+            file = open(self.daily_target_file, 'w')
             file.close()
 
-    def set_today_target(self,target):
+        return self.today_data
+
+    def set_today_target(self, target):
         """
         This method will be used to set the today_target time
         :param target: list, target will be a list of tuples.
@@ -876,15 +911,16 @@ class tth_progress:
                     today_present = True
                     break
             if not today_present:
-                self.today_data = {"Date":Time.get_current_date(),
-                                   "Time":Time.get_current_time(),
-                                    "l1l" : target[0][0],
-                                    'l1h' : target[0][1],
-                                    'l2l' : target[1][0],
-                                    'l2h' : target[1][1],
-                                    'l3l' : target[2][0],
-                                    'l3h' : target[2][1]
-                }
+                self.today_data = {"Date": Time.get_current_date(),
+                                   "Time": Time.get_current_time(),
+                                   "l1l": target[0][0],
+                                   'l1h': target[0][1],
+                                   'l2l': target[1][0],
+                                   'l2h': target[1][1],
+                                   'l3l': target[2][0],
+                                   'l3h': target[2][1]
+                                   }
+
 
 class Activity_Classes:
     """
@@ -897,6 +933,7 @@ class Activity_Classes:
         WatchActivity :[]
         NoWatchActivity :{}
     """
+
     def __init__(self):
         """
         This init method will initiate the activity record if there is no activity record with empty database. (self.init_activity_record())
@@ -906,16 +943,16 @@ class Activity_Classes:
             self.init_activity_record()
             self.retrieve_activities()
         """
-        self.COUNT_TIMER = [] # store all activities which need to watch.
-        self.IDLE_TIME_COUNT = [] # store all activities which need to remain in idle and store their time in background
+        self.COUNT_TIMER = []  # store all activities which need to watch.
+        self.IDLE_TIME_COUNT = []  # store all activities which need to remain in idle and store their time in background
 
         self.misc = Misc()
 
-        self.Activity_Database = None # store complete activity database.
+        self.Activity_Database = None  # store complete activity database.
         self.init_activity_record()  # init_activity_record will create a activity record file with not activity.
         self.retrieve_activities()
 
-    def add_activity(self,Type, Name):
+    def add_activity(self, Type, Name):
         """
         This method will be used to add new activity in the database.
         :param type: type of the activity.
@@ -942,12 +979,12 @@ class Activity_Classes:
                 content[Type] = [Name]
         else:
             # if it gives us false then it means the ActivityClasses are empty.
-            self.Activity_Database["ActivityClasses"].update({Type:[Name]})
+            self.Activity_Database["ActivityClasses"].update({Type: [Name]})
 
         # at last we will save our data.
         self.save_activities()
 
-    def delete_activity(self,_from_ = None , activity = None):
+    def delete_activity(self, _from_=None, activity=None):
         """
         This method will be used to delete an activity form the database.
         :param _from_: str, type of the activity from which we want to delete the activity.
@@ -964,7 +1001,7 @@ class Activity_Classes:
 
         """
 
-    def add_to_activityclasses(self,Database,Name,Parent=None):
+    def add_to_activityclasses(self, Database, Name, Parent=None):
         """
         This method will be used to add an activity in a activityclasses section.
         :param Database: Database of the activities.
@@ -973,14 +1010,14 @@ class Activity_Classes:
         :return: None
         """
         # A common information for any activity.
-        Activity = {Name:{"Name":Name,
-                    "Parent":Parent,
-                    'Activities':{}}}
+        Activity = {Name: {"Name": Name,
+                           "Parent": Parent,
+                           'Activities': {}}}
 
         # every activity will have this information in a Nested way.
         # So now we need to add new activity at their place.
         # if an activity has no parent then this will be added in Root address = ActivityClasses
-        data = Database # making another reference to add new activity.
+        data = Database  # making another reference to add new activity.
         if Parent:
             # if there is any parent then we need to split the parent and dive into them one by one.
             parents = Parent.split(".")
@@ -989,29 +1026,29 @@ class Activity_Classes:
                     data = data[parent]
                 else:
                     data = data[parent]
-                    if isinstance(data,dict) and data.get("Activities",None) !=None:
+                    if isinstance(data, dict) and data.get("Activities", None) != None:
                         data = data['Activities']
 
             data.update(Activity)
 
         else:
-            Database["ActivityClasses"].update(Activity) # just update the activity.
+            Database["ActivityClasses"].update(Activity)  # just update the activity.
 
         # Now we need to save the save database.
         self.Activity_Database = Database
         self.save_activities()
 
-    def save_activities(self, filepath = './data/activities.json'):
+    def save_activities(self, filepath='./data/activities.json'):
         """
         This method will be used to save all the activities in local storage database.
         :param Database: currently used database which holds all current saved activities.
         :param filepath: file path at which we will store the new things.
         :return:
         """
-        with open(filepath,'w') as write:
-            json.dump(self.Activity_Database,write, indent=2)
+        with open(filepath, 'w') as write:
+            json.dump(self.Activity_Database, write, indent=2)
 
-    def retrieve_activities(self, filepath = './data/activities.json'):
+    def retrieve_activities(self, filepath='./data/activities.json'):
         """
         This method will be used to retrieve all the activities from the locally saved database.
         :param filepath: file path at which the database is stored.
@@ -1025,7 +1062,7 @@ class Activity_Classes:
 
         return self.Activity_Database
 
-    def add_to_watchlist(self,Database, activity, filepath = './data/activities.json'):
+    def add_to_watchlist(self, Database, activity, filepath='./data/activities.json'):
         """
         This method will be used to config watchlist activities.
         :param Database:dict, Database of the activities in which all the kind of activities are placed.
@@ -1038,22 +1075,21 @@ class Activity_Classes:
 
         # after appending the activity in the WatchList  we need to update the database.
         with open(filepath, 'w') as write:
-            json.dump(Database,write)
+            json.dump(Database, write)
 
-    def add_activity_class(self,Database,activity_class, filepath = './data/activities.json' ):
+    def add_activity_class(self, Database, activity_class, filepath='./data/activities.json'):
         """
         This method will be used to add a new activity class in the activities.
         :return:
         """
         if activity_class not in Database["ActivityClasses"].keys():
             Activity = {activity_class: {"Name": activity_class,
-                               "Parent": "ActivityClasses",
-                               'Activities': {}}}
+                                         "Parent": "ActivityClasses",
+                                         'Activities': {}}}
 
             Database["ActivityClasses"].update(Activity)
             with open(filepath, 'w') as write:
                 json.dump(Database, write, indent=2)
-
 
     def retrieve_Watch_Activities(self):
         """
@@ -1064,20 +1100,19 @@ class Activity_Classes:
 
         if os.path.isfile(file):
             if os.path.getsize(file) != 0:
-                with open(file,'r') as read:
+                with open(file, 'r') as read:
                     data = json.load(read)
         return data['WatchActivity']
 
-    def retrieve_ActivityClasses(self,Database):
+    def retrieve_ActivityClasses(self, Database):
         """
         This method will be used to get all the activities from teh ActivityClasses.
         :param Database: Database in which all the activities are stored.
         :return: yield
         """
-         # Now we need to yield the data.
+        # Now we need to yield the data.
         for key, activity in Database.items():
             if isinstance(activity, dict):
-
                 yield key, activity
                 yield from self.retrieve_ActivityClasses(activity)
 
@@ -1091,35 +1126,36 @@ class Activity_Classes:
         """
         print("initiating the activity record")
         file = './data/activities.json'
-        Database = {"ActivityClasses":{},
-                    "TracksActivity":{},
-                    "WatchActivity":["Project",'Subject','Tracks'],
-                    "NoWatchActivity":{}}
+        Database = {"ActivityClasses": {},
+                    "TracksActivity": {},
+                    "WatchActivity": ["Project", 'Subject', 'Tracks'],
+                    "NoWatchActivity": {}}
 
         if not os.path.isfile(file):  # if file is not present
             with open(file, 'w') as write:
                 json.dump(Database, write, indent=2)
         else:
-            if os.path.getsize(file) == 0: # if file is empty
+            if os.path.getsize(file) == 0:  # if file is empty
                 with open(file, 'w') as write:
                     json.dump(Database, write, indent=2)
+
 
 class CheckFileStats:
     """
     This class will be used to check the stat_result of a file frequently.
     """
-    def __init__(self,file):
+
+    def __init__(self, file):
         """
         In this init method we will initiate the file stat results.
         :param file: path, file or file path for which we want the stat result.
         """
-        self.file = file # storing the file address for letter uses.
+        self.file = file  # storing the file address for letter uses.
         self.stat_result = os.stat(file)  # initiating the stat_result
-        self.file_size = self.stat_result.st_size # getting the file size
-        self.file_access_time = self.stat_result.st_atime # getting the last access time
-        self.file_modify_time = self.stat_result.st_mtime # getting the last modify time.
-        self.file_creation_time = self.stat_result.st_ctime # getting the creating time.
-
+        self.file_size = self.stat_result.st_size  # getting the file size
+        self.file_access_time = self.stat_result.st_atime  # getting the last access time
+        self.file_modify_time = self.stat_result.st_mtime  # getting the last modify time.
+        self.file_creation_time = self.stat_result.st_ctime  # getting the creating time.
 
     def checkupdate(self):
         """
@@ -1132,7 +1168,8 @@ class CheckFileStats:
             # checking if our last modify time and new modify time are same or not.
             # if they are not same it means there is some modification in the file
             return True
-        else: return False
+        else:
+            return False
 
     def modifytime(self):
         """
@@ -1143,3 +1180,232 @@ class CheckFileStats:
         return os.stat(self.file).st_mtime
 
 
+class DailyRoutine:
+    """
+    This method will be used to save all the data which is related to the DailyRoutine and its cards.
+    """
+    CSV_DATABASE = []    # in this we will store all the tasklist data with not filter
+    JSON_DATABASE = None   # Int this we will store our json formatted details of the TaskList
+    TASKLIST_DATABASE = {}  # in this we will store all of filtered task in their respective list.
+
+    def __init__(self):
+        self.dailyfile = './data/dailyroutine.csv'
+        self.daily_tasklist = './data/dailytasklist.json'
+        self.daily_routine_database_fields = None
+        self.is_dailyroutine = False
+        self.is_tasklist = False
+        self.TaskLists = []  # it will holds all the tasklist titles if
+        self.tasklist_ids = {}  # this will holds the task list ids
+        self.tasklist_fields = {"Task": None,
+                                "TaskId": None,
+                                "CheckTaskid": None,
+                                "TaskTitle": None,
+                                "Init Date":None,
+                                "Notify": None,
+                                "NotifyTime": None,
+                                "AlertTime": None,
+                                "StartTime": None,
+                                "EndTime": None,
+                                "NotifyDay": None,
+                                "TaskCompleted": None}
+
+    def filter_tasklist_items(self):
+        """
+        This method will retrieve all the tasks from the database and it will
+        :return:
+        """
+        if isinstance(DailyRoutine.JSON_DATABASE, dict):
+            # if our Json database is already loaded then we don't need to load this
+            if isinstance(DailyRoutine.CSV_DATABASE, list):
+
+                for row in DailyRoutine.CSV_DATABASE:
+                    if row["TaskId"] not in DailyRoutine.TASKLIST_DATABASE.keys():
+                        DailyRoutine.TASKLIST_DATABASE[row["TaskId"]] = [row]
+                    else:
+                        DailyRoutine.TASKLIST_DATABASE[row["TaskId"]].append(row)
+            else:
+                self.retrieve_dailyroutine()
+                return self.filter_tasklist_items()
+
+        else:
+            # if our json database is not loaded then we need to load the database.
+            self.retrieve_tasklists()
+            return self.filter_tasklist_items()
+
+
+    def save_dailyroutine(self, data):
+        """
+        This method will be used to save daily routine data on the local storage.
+        :return:
+        """
+        temp_data = []
+        if os.path.isfile(self.dailyfile):
+            if os.path.getsize(self.dailyfile) != 0:
+                # Now we need to save the data, which
+                fields = data.keys()
+                if self.is_task_present(data):
+                    # if task is already is present inside the data then we need to resave the data.
+                    with open(self.dailyfile, 'r', newline='') as readfile:
+                        reader = csv.DictReader(readfile, fieldnames=fields)
+                        for row in reader:
+                            if row["Task"] == data["Task"] and row["TaskTitle"] == data["TaskTitle"] and row[
+                                'TaskIdId'] == data["TaskIdId"]:
+                                for key, value in row.items():
+                                    row[key] = data[key]
+                                temp_data.append(row)
+                            else:
+                                temp_data.append(row)
+
+                    # NOw we need to write down all the data which is stored inside the temp_data variable
+                    with open(self.dailyfile, 'w', newline='') as writefile:
+                        writer = csv.DictWriter(writefile, fieldnames=fields)
+                        writer.writeheader()
+                        writer.writerows(temp_data)
+                else:
+                    with open(self.dailyfile, 'a', newline='') as file:
+                        writer = csv.DictWriter(file, fieldnames=self.tasklist_fields.keys())
+                        # writer.writeheader()
+                        writer.writerow(data)
+        else:
+            print("Daily Routine database was not initiated.\nInitiating daily routing database.")
+            self.init_dailyroutine()
+            return self.save_dailyroutine(data)
+
+    def save_tasklist_database(self):
+        """
+        This method will be used to save database.
+        :return:
+        """
+        with open(self.daily_tasklist, 'w') as file:
+            json.dump(DailyRoutine.JSON_DATABASE, file, indent=2)
+
+    def retrieve_dailyroutine(self):
+        """
+        This method will be used to get the daily routine database and it will load in to attributes.
+        :return:
+        """
+        if os.path.isfile(self.dailyfile):
+            if os.path.getsize(self.dailyfile) != 0:
+                with open(self.dailyfile, 'r', newline='') as readfile:
+                    data = csv.DictReader(readfile)
+                    for row in data:
+                        if row not in DailyRoutine.CSV_DATABASE:
+                            DailyRoutine.CSV_DATABASE.append(row)
+                    self.daily_routine_database_fields = data.fieldnames
+
+    def get_tasklist_ids(self):
+        """
+        This method will retrieve the task list ids from the csv database.
+        :return:
+        """
+        if DailyRoutine.CSV_DATABASE:
+            for row in DailyRoutine.CSV_DATABASE:
+                self.tasklist_ids.update({row["TaskId"]: row["TaskTitle"]})
+        else:
+            self.retrieve_dailyroutine()
+            return self.get_tasklist_ids()
+
+    def get_tasklist_ids2(self):
+        """
+        This method will be used to retrieve the database from the json database.
+        :return:
+        """
+        if isinstance(DailyRoutine.JSON_DATABASE, dict):
+            if bool(DailyRoutine.JSON_DATABASE):
+                for key, value in DailyRoutine.JSON_DATABASE.items():
+                    self.tasklist_ids[key] = value.get("Name", None)
+            # else:
+            #     return 0
+        else:
+            self.retrieve_tasklists()
+            return self.get_tasklist_ids2()
+
+    def gen_tasklist_id(self, tasktitle):
+        """
+        This method will be used to gen a unique id for each individual tasklist.
+        :param tasktitle: this is the title name of the task for which we are generating the new id.
+        :return:
+        """
+        ids = self.tasklist_ids.keys()
+
+        while True:
+            new_id = random.randint(1000, 9999)
+            if new_id not in ids:
+                self.tasklist_ids[new_id] = tasktitle
+                return new_id
+
+    def is_task_present(self, data):
+        """
+        This method will be used to find that a task is present in the database.
+        :return:
+        """
+        if os.path.isfile(self.dailyfile):
+            if os.path.getsize(self.dailyfile) != 0:
+
+                with open(self.dailyfile, 'r', newline='') as file:
+                    read = csv.DictReader(file)
+                    for row in read:
+                        if row["Task"] == data["Task"] and row["TaskTitle"] == data["TaskTitle"]:
+                            return True
+                    return False
+
+    def add_daily_tasklist(self, data, _id):
+        """
+        This method will be used to add a new task list in the database.
+        :return:
+        """
+        DailyRoutine.JSON_DATABASE.update({_id: data})
+        with open(self.daily_tasklist, 'w') as file:
+            json.dump(DailyRoutine.JSON_DATABASE, file, indent=2)
+
+    def retrieve_tasklists(self):
+        """
+        This method will be used to retrieve all the saved tasklist in the json format.
+        :return:
+        """
+        if os.path.isfile(self.daily_tasklist):
+            if os.path.getsize(self.daily_tasklist) != 0:
+
+                with open(self.daily_tasklist, 'r') as file:
+                    DailyRoutine.JSON_DATABASE = json.load(file)
+            else:
+                print("file dailytasklist.json is empty")
+                self.init_daily_tasklist()
+        else:
+            print("file dailytasklist.json was not initialized\n initializing database.")
+            self.init_daily_tasklist()
+
+    def init_dailyroutine(self):
+        """
+        This method will be used to initiate a formatted file for daily routine data. it will have all the column
+        key for a csv file to save and put that desired data in right column and row.
+        :return:
+        """
+        if os.path.isfile(self.dailyfile):
+            if os.path.getsize(self.dailyfile) == 0:
+
+                fields = self.tasklist_fields.keys()
+                with open(self.dailyfile, 'w', newline='') as initfile:
+                    writer = csv.DictWriter(initfile, fieldnames=fields)
+                    writer.writeheader()
+                    # Now we will only write key because initially we will not have any kind of data.
+
+        else:
+            file = open(self.dailyfile, 'w')
+            file.close()
+            return self.init_dailyroutine()
+
+    def init_daily_tasklist(self):
+        """
+        This method will be used to init daily routine tasks formatted file in the application directory.
+        :return:
+        """
+        if os.path.isfile(self.daily_tasklist):
+            if os.path.getsize(self.daily_tasklist) == 0:
+                data = {}
+                with open(self.daily_tasklist, 'w') as file:
+                    json.dump(data, file, indent=2)
+        else:
+            file = open(self.daily_tasklist, 'w')
+            file.close()
+            return self.init_daily_tasklist()

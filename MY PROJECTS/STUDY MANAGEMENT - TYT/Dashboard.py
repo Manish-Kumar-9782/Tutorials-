@@ -3,6 +3,7 @@
 from tkinter import Frame,Label, Button
 from tkinter import TOP, BOTTOM,LEFT,RIGHT,BOTH,X,Y
 from Frame_Section import Sections, Frames
+from ExWid import ScrollFrame
 import Widgets
 
 class Dashboard:
@@ -97,18 +98,17 @@ class Dashboard:
             # here will use the Widgets class Create_Notebook to create a notebook and this will need a master.
             notebook = self.wid.Create_Notebook()
 
-            nb = notebook.Notebook(app_menu_section, 400, 400 , tabposition='wn')
+            nb = notebook.Notebook(app_menu_section, 400, 400, tabposition='wn')
             # Now we need to add some frames into this
             frames = Frames()
+
             tracks_frame = frames.Tracks_Frame(nb)
             keeps_frame = frames.Keeps_Frame(nb)
+            daily_routine = frames.DailyRoutineFrame(nb)
 
-            notebook.Add_Tab(tracks_frame , tabName="Tracks" )
-            notebook.Add_Tab(keeps_frame,tabName="Keeps")
-
-
-
-
+            notebook.Add_Tab(tracks_frame, tabName="Tracks" )
+            notebook.Add_Tab(keeps_frame, tabName="Keeps")
+            notebook.Add_Tab(daily_routine, tabName="Routine")
 
         def AppContentSection(self ,master=None):
             

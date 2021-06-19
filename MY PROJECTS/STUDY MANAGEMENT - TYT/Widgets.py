@@ -3,8 +3,8 @@ import csv
 import os
 from tkinter import (Tk, Frame, Label, Button, StringVar,
                      IntVar, Spinbox, Toplevel, Entry, Text,
-                     Menu, Menubutton, messagebox)
-from tkinter import ttk
+                     Menu, Menubutton, messagebox, PhotoImage)
+from tkinter import ttk, font
 from random import randint
 import time, json
 import Apps_func as apps
@@ -264,7 +264,7 @@ class Widgets:
 
                 # Now we need to show this increment in the prefix label
                 prefix_label.config(
-                    text=f"{a:.2f} " + prefix)  # this formatting is to show two digits after decimal point.
+                    text=f"{a:.2f} %" + prefix)  # this formatting is to show two digits after decimal point.
                 # now we need to make a .after() loop to update the progress bar in a time interval
 
                 if a >= 100:
@@ -328,6 +328,7 @@ class Widgets:
         WATCH_TYPE = None
         TODAY_COUNTDOWN_TIME = None
         SAVE_UPDATES = False
+        TTH_BAR_RESET = False
 
         def __init__(self, master=None, time=None):
             """
@@ -342,6 +343,7 @@ class Widgets:
             self.style = ttk.Style()
             self.Today_Total_Elapsed_Time = 0
             self.current_date = self.Time.get_current_date()
+            self.tth_bar_reset = Widgets.TTH_ProgressBar.TTH_BAR_RESET
             if not time:
                 # self.today_target = [(1,3),(3,6),(6,8)]
                 self.retrieve_today_target()
@@ -467,9 +469,7 @@ class Widgets:
                 will retrieve the saved time from the Countdown timer data and we will
             :return:
             """
-            # self.new_date = datetime.date(*self.Time.get_present_date_values())
-            if self.CURRENT_COUNTDOWN_TIME_ELAPSED > 60 * 5:
-                self.new_date = datetime.date(2021, 6, 10)
+            self.new_date = datetime.date(*self.Time.get_present_date_values())  # getting new date
 
             if self.new_date > self.today_date:
                 print("Day changed resetting TTH Progressbar.")
@@ -479,7 +479,7 @@ class Widgets:
                 self.COUNTDOWN_TIME = 0  # making all Countdown time to 0 for new day.
                 self.CURRENT_COUNTDOWN_TIME_ELAPSED = 0
                 self.set_bar_values(0)  # setting bar to 0
-                self.current_date = '10-Jun-2021'
+                self.current_date = self.Time.get_current_date()
                 self.retrieve_today_target()  # retrieving new day data.
 
             if Widgets.TTH_ProgressBar.COUNTDOWN_STATUS == True:
@@ -512,7 +512,7 @@ class Widgets:
                         Widgets.TTH_ProgressBar.SAVE_UPDATES = False
 
                 update_result = self.db_update.checkupdate()
-                if update_result:
+                if update_result or self.tth_bar_reset:
                     self.COUNTDOWN_TIME = self.get_today_working_time2()
                     self.set_bar_values(self.COUNTDOWN_TIME)
                     self.db_update.file_modify_time = self.db_update.modifytime()
@@ -657,10 +657,10 @@ class Widgets:
             level2 = self.level1_seconds + self.level2_seconds
             level3 = self.level1_seconds + self.level2_seconds + self.level3_seconds
 
-            # print("bar seconds levels:")
-            # print("level1: \t", level1)
-            # print("level2: \t", level2)
-            # print("level3: \t", level3)
+            if seconds == 0:
+                self.t1_var.set(0)
+                self.t2_var.set(0)
+                self.t3_var.set(0)
 
             if seconds <= self.level1_seconds:
                 # if this happens then we need to update only level1 progress bar.
@@ -703,12 +703,14 @@ class Widgets:
             style = ttk.Style()
 
             style.theme_create("NewNotebook", parent="clam", settings={
-                "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0], 'tabposition': 'wn', 'background': '#3e4c63'}},
+                "TNotebook": {
+                    "configure": {"tabmargins": [2, 5, 2, 0], 'tabposition': 'wn', 'background': '#3e4c63'}, },
 
                 "TNotebook.Tab": {
                     "configure": {"padding": [15, 15], "background": mygreen, 'font': ('sarif', 10, 'bold'),
-                                  'foreground': 'blue'},
-                    "map": {"background": [("selected", '#7d7f82')],
+                                  'foreground': '#e6e8ff'},
+                    "map": {"background": [("selected", '#f7cde7'), ("disabled", "#e6e8ff")],
+                            "foreground": [("selected", "#101438")],
                             "expand": [("selected", [2, 1, 1, 0])]}},
 
                 "TCheckbutton": {
@@ -822,6 +824,9 @@ class Widgets:
             self.SubCard_Parent = None
             self.SubCard_Name = None
             self.SubCard_FullName = None
+            self.delete_image = PhotoImage(file='./Resources/icons/icons8_remove2_16.png')
+            self.add_image = PhotoImage(file='./Resources/icons/icons8_add_16.png')
+            self.Timer_image = PhotoImage(file='./Resources/icons/icons8_timer_16.png')
             self.Tcards = apps.Tracks_Cards()
 
             # Save location
@@ -855,7 +860,7 @@ class Widgets:
                 print("unknown key error")
 
             self.Root_Card_Frame = Frame(master, width=800, height=30, bg='#7d7f82')
-            self.Root_Card_Frame.pack(fill='x', expand=1, anchor='n', padx=50, pady=10)
+            self.Root_Card_Frame.pack(fill='x', anchor='n', padx=50, pady=10)
             self.Root_Card_Frame.pack_propagate(True)
 
             self.head_frame = Frame(self.Root_Card_Frame, width=800, height=30, bg='#f06d22')
@@ -886,8 +891,8 @@ class Widgets:
 
             Thour_label = Label(self.head_frame, text=Data['Target Hour'])
             EndDate_label = Label(self.head_frame, text=Data['EndDate'])
-            AddButton = Button(self.head_frame, text='+', font=('sarif', 10, 'bold'))
-            DeleteButton = Button(self.head_frame, text='x', font=('sarif', 10, 'bold'))
+            AddButton = Button(self.head_frame, text='+', font=('sarif', 10, 'bold'), image=self.add_image)
+            DeleteButton = Button(self.head_frame, text='x', font=('sarif', 10, 'bold'), image=self.delete_image)
 
             # Now its time to pack all the widgets.
 
@@ -998,8 +1003,8 @@ class Widgets:
 
             Thour_label = Label(SubHead, text=Data['Target Hour'])
             EndDate_label = Label(SubHead, text=Data['EndDate'])
-            AddButton = Button(SubHead, text='+', font=('sarif', 10, 'bold'))
-            DeleteButton = Button(SubHead, text='x', font=('sarif', 10, 'bold'))
+            AddButton = Button(SubHead, text='+', font=('sarif', 10, 'bold'), image=self.add_image)
+            DeleteButton = Button(SubHead, text='x', font=('sarif', 10, 'bold'), image=self.delete_image)
 
             # Now its time to pack all the widgets.
             DeleteButton.pack(side='right', anchor='ne', padx=(50, 0))
@@ -1337,7 +1342,7 @@ class Widgets:
                 countdown.Ask_Countdown_Time(root, data, Track_card_bar=Track_card_bar)
                 root.mainloop()
 
-            Timer_Button = Button(master, text='Timer', command=start_timer)
+            Timer_Button = Button(master, text='Timer', command=start_timer, image=self.Timer_image)
 
             if pack:
                 Timer_Button.pack(**pack)
@@ -1449,6 +1454,1047 @@ class Widgets:
                 cls.Tracks_Cards_DbUpdate.file_modify_time = cls.Tracks_Cards_DbUpdate.modifytime()
                 # Now database is update
 
+    # ======================================================================================================================#
+    # ======================================================================================================================#
+    class Keeps_Card:
+        """
+        This class will be used to create a new keep card in a Keeps Notebook section.
+
+        Create_Keep_Card: This a subclass of the Keep_Card in this we can create a keep card which can hold the KeepChecks.
+        """
+        Keep_Cards_List = []  # This will hold the all card with their data.
+        Keep_Card_Data = None  # this will hold the all card information.
+        Keep_Card_Ids = None  # this will hold the all cards ids.
+        Keep_Card_Container = None  # this is the common container in which all the card will be placed.
+        Keep_Card_Object = []  # This will hold all card objects.
+
+        # SOME GLOABLE ATTRIBUTE FOR THEME AND COLOR
+        KEEP_CARD_HEAD_COLOR = None
+        KEEP_CARD_CONTENT_COLOR = None
+        KEEP_CARD_HEAD_TEXT_COLOR = None
+        KEEP_CARD_CONTENT_TEXT_COLOR = None
+        KEEP_NEW_CHECK_TEXTBOX = None
+        KEEP_CARD_TITLE_BAR = None
+
+        class CreateKeepsCard(Frame):
+            """
+            This Class will be used to create create a new keep card , this keep card will hold all the information
+            in its attributes.
+            """
+
+            def __init__(self, master=None, title=None):
+                super().__init__(master)
+                self.master = master
+                self.title = title
+                self.id = None
+                self.init_date = None
+                self.init_time = None
+                self.Next_Check_Position = (1, 0)
+                self.Next_AddButton_Position = (1, 1)
+                self.CheckList = []
+                self.CheckContent = []
+                self.add_button_holder = None  # this attribute will be used to identify pressed button holder
+
+                # self.init_check = None
+
+                self.Create_Keep_Card(self.master, self.title)
+                # Create the Keep card when the object is created.
+                # print("keep init method called")
+
+            def Create_Keep_Card(self, master, title=None, data=None, cfg={}, **kw):
+                """
+                This method will be used to Create a new card with some extra additional ability.
+                this method will allow us to add new to-do list records.
+                :param master: We will place our cards data in this Frame.
+                :param title: str, this will be the  title of the keep Card.
+                :return:
+
+                Note: Note that card will be packed inside the Keeps Frame section not here. we will use grid layout-management
+                        system.
+                """
+
+                self.CardMainFrame = Frame(master, height=100, width=20, bg='green', highlightbackground='black',
+                                           highlightcolor='black', highlightthickness=2)
+                # Now we need to add a title Label on the CardMainFrame
+                if title != None:
+                    self.HeadFrame = Frame(self.CardMainFrame, bg='red')
+                    self.HeadFrame.pack(fill='x')
+
+                    self.TitleLabel = Label(self.HeadFrame, text=title)
+                    self.TitleLabel.pack(side='left', anchor='nw')
+                    # now in this card we will make another fame which we will add all the to-do list record.
+
+                self.CardContentFrame = Frame(self.CardMainFrame, bg='white')
+                self.CardContentFrame.pack(fill='both')
+
+                # This CardContentFrame will hold all the checks using a grid layout system.
+                # Now in this we need to put a text box inside This CardContentFrame
+
+                # This text box will help us to get the text during save time.
+                self.Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame)
+                self.Textbox.grid(row=0, column=0)
+
+                # now we will add a button to add new check label
+                self.AddCheckbutton = Button(self.CardContentFrame, text='+', font=('sarif', 10, 'bold'))
+                self.AddCheckbutton.grid(row=0, column=1, sticky='se')
+                self.AddCheckbutton.config(command=lambda x=self.CardContentFrame,
+                                                          y=self.AddCheckbutton,
+                                                          z=None
+                : self.Add_Keep_Check(master=x, bt=y))
+
+            def Create_Keep_Card2(self, master, position, data, cfg={}, **kw):
+                """
+                This method will be used to crete the final Keep Card and it will place that card on the Keep Frame,
+                    also this method will be used to create the keep card from saved data.
+                :param master: This is the master window in which we will  place over keep card.
+                :param position:tuple, if we are using grid then we will use this to define the position of the card.
+                :param data: dict, this will be our data and this data will be passed to the object attributes.
+                :param cfg: config attribute for the container frame of the keep card.
+                :param kw: Additional keyword for the container frame.
+                :return: None
+                """
+                # Now we need to define our card (object) data
+                # NOte that data will be our dictionary of the data base.
+
+                self.title = data['title']
+                self.id = data['Id']
+                self.init_date = data['date']
+                self.init_time = data['time']
+                self.checklist = data['content']  # This check list don't holds the object it holds the text data
+                # and the mark value.
+                # print("Card title: ", self.title)
+                # print("Card id: ", self.id)
+                # print("Card date: ",self.init_date)
+                # print("Card time: ", self.init_time)
+                # print("Card CheckList: ",self.checklist)
+
+                self.CardMainFrame2 = Frame(master, height=100, width=20, bg='green', highlightbackground='black',
+                                            highlightcolor='black', highlightthickness=2)
+                # Now we need to add a title Label on the CardMainFrame
+
+                self.HeadFrame2 = Frame(self.CardMainFrame2, bg='red')
+                self.HeadFrame2.pack(fill='x')
+
+                self.TitleLabel2_var = StringVar()
+                self.TitleLabel2_var.set(self.title)
+                self.TitleLabel2 = Label(self.HeadFrame2, textvariable=self.TitleLabel2_var)
+                self.TitleLabel2.pack(side='left', anchor='nw')
+                # now in this card we will make another fame which we will add all the to-do list record.
+
+                self.CardContentFrame2 = Frame(self.CardMainFrame2, bg='white')
+                self.CardContentFrame2.pack(fill='both')
+
+                # This CardContentFrame2 will hold all the checks using a grid layout system.
+                # Now in this we need to put all the check which are made.
+                self.AddCheckbutton2 = Button(self.CardContentFrame2, text='+', font=('sarif', 10, 'bold'),
+                                              )
+                self.AddCheckbutton2.grid(row=0, column=1,
+                                          sticky='se')
+                self.Next_Check_Position = (0, 0)
+                self.Next_AddButton_Position = (0, 1)
+                for check_text, check_mark in self.checklist:
+                    Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame2)
+                    Textbox.text.insert(1.0, check_text)
+                    Textbox.check_var.set(check_mark)
+                    Textbox.set_check_status(check_text)
+                    # after creating the checkbox inside the Keep Card we need to store the Textbox in the self.CheckList
+                    # and also we need to store the text content and check mark in the self.CheckContent list.
+                    self.CheckList.append(Textbox)
+                    self.CheckContent.append((check_text, check_mark))
+
+                    Textbox.grid(row=self.Next_Check_Position[0], column=self.Next_Check_Position[1])
+
+                    # now we will add a button to add new check label
+
+                    self.AddCheckbutton2.grid_configure(row=self.Next_AddButton_Position[0],
+                                                        column=self.Next_AddButton_Position[1])
+
+                    # now increase the position of the Check and button
+                    self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
+                    self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
+                r, c = position
+                # print("Keep Card position: ", position)
+                self.AddCheckbutton2.config(command=lambda x=self.CardContentFrame2,
+                                                           y=self.AddCheckbutton2:
+                self.Add_Keep_Check(master=x, bt=y))
+
+                # Now we will add a save button on the to title frame to update the card
+                self.update_image = PhotoImage(file='./Resources/icons/icons8_save_16.png')
+                self.Update_Button = Button(self.HeadFrame2, text='save', image=self.update_image,
+                                            command=self.Update_Keep_Card)
+                self.Update_Button.pack(side='right', anchor='e')
+
+                # Now we will add a delete button which wil be used to delete the card from the database.
+                self.delete_image = PhotoImage(file='./Resources/icons/icons8_remove2_16.png')
+                self.DeleteCheckButton = Button(self.HeadFrame2, text='delete', image=self.delete_image,
+                                                command=lambda x=self: self.Delete_Keep_Card(x))
+                self.DeleteCheckButton.pack(side='right', anchor='e')
+
+                self.CardMainFrame2.grid(row=r, column=c, sticky='n', padx=5, pady=10)
+                # print("In Create_Keep_Card2 self.CheckList: ", self.CheckList)
+
+                # at last we will reconfigure the theme of the Card
+                self.theme_configure()  # this self.theme_configure method can only be used in in this method only.
+
+            def Retrieve_Keep_Cards(self, master, keepcarddata):  # @ This method is not used yet.
+                """
+                This method will initiate the keep card from saved data. this method will be called during the initializing/opening
+                the application.
+                :param master: This will be the master in which we will place our keep cards.
+                :param keepcarddata: This is the cara data which will be used to create initiate saved cards.
+                :return:
+                """
+                # now we will pass a dummy list into the get_keep_card_position
+                # this will give us the all position for our cards.
+                List = [i for i in range(len(keepcarddata))]
+                keepbar = Widgets.Keeps_Card.KeepCardBar(master)
+
+                # get_keep_card_position will return two things
+                # all card position and the recent card position.
+                # we need all card position not the recent one.
+                Pos, _ = keepbar.get_keep_card_position(List)
+                for card, pos in zip(keepcarddata.items(), Pos):
+                    _, card_detail = card
+                    # print("retrieved card detail: ", card_detail)
+                    Widgets.Keeps_Card.Keep_Cards_List.append(card)
+                    self.Create_Keep_Card2(master, pos, card_detail)
+                # Now we need to iterate through all the cards.
+
+            def Delete_Keep_Card(self, card_id):
+                # print("delete keep card called.")
+                """
+                This method will be used to delete a card from a database, and it will reconfigure all the cards.
+                :param card_id: This is the card which is need to be deleted after pressing the delete button.
+                :return: None
+                """
+                '''
+                Steps to delete a card:
+                    1. first of all we need to check that card_id (card) is present in the Keep_Card_object
+                    2. if it is present then we need to destroy it using the tkinter w.destroy() method.
+                    3. after this we need remove the data which is associate to that card.
+                    4. and then we need to update the database with remaining card details.
+                    5. save the card database.
+                '''
+                CardsFrame = Widgets.Keeps_Card.Keep_Card_Object  # this holds all the keepcardFrames.
+                if card_id in CardsFrame:
+                    # now if card_id present inside the card list then we need to delete that card.
+                    # Now we will try to delete and refresh our database.
+                    id_index = CardsFrame.index(card_id)  # getting the card id index
+                    del Widgets.Keeps_Card.Keep_Card_Ids[id_index]  # deleting the card id by using its index.
+
+                    CardsFrame.remove(card_id)  # 2. removing the card Card_Object lIst
+                    # card_id.destroy() # removing the card from the Card_Container frame.
+                    # Now we need to remove the data also.
+                    del Widgets.Keeps_Card.Keep_Card_Data[card_id.title]  # removing the card data.
+                    # Now we need to save the data into database locally.
+                    file = './data/KeepCards.json'
+                    card_data = {"Cards": {},
+                                 "Card_ids": []}
+                    List = [i for i in CardsFrame]
+                    position, _ = misc.get_keep_card_position(List)
+
+                    for child in Widgets.Keeps_Card.Keep_Card_Container.winfo_children():
+                        # print("child going to destroy: ",child, child.winfo_ismapped())
+                        child.destroy()
+
+                    # Now we need to recreate cards
+                    self.Reload_Keep_Card()
+
+                    # Now we will save our new updated data.
+                    card_data['Cards'].update(Widgets.Keeps_Card.Keep_Card_Data)
+                    card_data['Card_ids'] = Widgets.Keeps_Card.Keep_Card_Ids
+                    # Now we need to reconfigure the cards
+
+                    with open(file, 'w') as f:
+                        json.dump(card_data, f, indent=2)
+
+                    # Now updating the card Container.
+                    Widgets.Keeps_Card.Keep_Card_Container.update_idletasks()
+
+                else:
+                    print("No card found...")
+
+            def theme_configure(self, head_bg_color='#4f485e', content_bg_color='#488231',
+                                head_text_color='white', content_text_color='white'):
+                """
+                This method will be used to configure the look of the Keep_Card object, in this we will change background,
+                foreground, text size, font style, colors, active and disabled state.
+                :return:
+                """
+                Widgets.Keeps_Card.KEEP_CARD_HEAD_COLOR = head_bg_color
+                Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR = content_bg_color
+                Widgets.Keeps_Card.KEEP_CARD_HEAD_TEXT_COLOR = head_text_color
+                Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR = content_text_color
+                # first of all removing the default border
+                self.CardMainFrame2.config(highlightbackground=None, highlightcolor=None, highlightthickness=0)
+
+                # common
+                hc_cfg = {'bg': head_bg_color, 'font': ('sarif', 12, 'bold'), 'fg': head_text_color,
+                          'relief': 'flat', 'takefocus': 0}
+
+                # first of all we will configure the HeadFrame of the Keep_Card.
+                self.HeadFrame2.config(bg=head_bg_color)
+                for child in self.HeadFrame2.winfo_children():
+                    child.config(cnf=hc_cfg)
+
+                # Now we will work on the CardContentFrame
+                self.CardContentFrame2.config(bg=content_bg_color)
+                for child in self.CardContentFrame2.winfo_children():
+                    if isinstance(child, Button):
+                        child.config(bg=content_bg_color, takefocus=0, relief='flat', fg=content_text_color,
+                                     font=('sarif', 11, 'bold'))
+                    else:
+                        child.config(bg=content_bg_color, takefocus=0, relief='flat')
+
+                # Now we need to config every checkbox, for that we need to config Textbox.
+                style = ttk.Style()
+                style.configure('KeepCard.TCheckbutton', background=content_bg_color,
+                                indicatorbackground=content_bg_color,
+                                indicatorcolor=content_bg_color)
+                for Textbox in self.CheckList:
+                    Textbox.text.config(bg=content_bg_color, fg=content_text_color, takefocus=0, relief='flat',
+                                        state='disabled', font=('sarif', 12), pady=5)
+                    Textbox.check.config(style='KeepCard.TCheckbutton', takefocus=0)
+
+            def pack(self, cfg={}, **kw):
+                """
+                Put the card widget on the Frame using the pack layout management system.
+                :return: None
+                """
+                self.CardMainFrame.pack(cfg, **kw)
+
+            def grid(self, cfg={}, **kw):
+                """
+                put the card widget on the Frame using the grid layout management system.
+                :return: None
+                """
+                self.CardMainFrame.grid(cfg, **kw)
+
+            def Add_Keep_Check(self, master, bt=None, _class=None, row=None, column=None):
+                # print("Add keep check called")
+                """
+                This method will be used to create a new Text box inside the Keep card.
+                :param master:tk.Frame, parent window frame in which this new keep check will be placed.
+                :param bt: tk.Button, a common button for each CreateKeepCard object
+                :return:
+                """
+                # Now in this we will be need to the position of the text box since we are using the grid
+                # layout management so we need to track the row and column in a variable.
+                # for that we will use the self.Next_Check_Position and self.Next_AddButton_Position
+                if len(self.CheckList) == 0:
+                    self.CheckList.append(self.Textbox)
+
+                elif len(self.CheckList) > 0:
+                    self.CheckList[-1].bind_Return(event=None)
+                    # here bind return is used to perform the same task as it performed when enter is pressed.
+                Trow, Tcol = self.Next_Check_Position
+                Brow, Bcol = self.Next_AddButton_Position
+                # here we need to put the Frame according to need
+                Textbox = Widgets.Keeps_Card.KeepCardCheck(master)
+                Textbox.grid(row=Trow, column=Tcol)
+                Textbox.focus_set()
+
+                if self.add_button_holder == "KeepCardBar":  # this condition is used to use different theme for new check
+                    Textbox.title_theme_configure(Widgets.Keeps_Card.KEEP_CARD_TITLE_BAR.Content,
+                                                  content_bg_color='#1b4875',
+                                                  content_text_color='#a28cff',
+                                                  outmouse_bg='#1b4875', outmouse_fg='white',
+                                                  infocus_bg='#1b4875', infocus_fg='white',
+                                                  outfocus_bg='#1b4875', outfocus_fg='white')
+                else:
+                    Textbox.theme_configure(content_bg_color='#488231')
+
+                bt.grid_configure(row=Brow, column=Bcol)
+                # Now we need to update the next Position for the Textbox and Add button.
+                self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
+                self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
+
+                self.CheckList.append(
+                    Textbox)  # this will append the new Textbox in the self.CheckList which contains all the check for self.
+                self.CheckContent = [(check.text.get(1.0, 'end'), check.check_var.get()) for check in self.CheckList]
+
+            def gen_card_unique_id(self, rng=(1000, 9999), idlist=None):
+                """
+                This function will be used to generate a
+                :param rng:
+                :param idlist:
+                :return:
+                """
+                if idlist == None:
+                    # then we will create new id list.
+                    idlist = []
+                    self.id = randint(rng[0], rng[1])
+                    idlist.append(self.id)
+                else:
+                    while (1):
+                        Id = randint(rng[0], rng[1])
+                        if Id not in idlist:
+                            idlist.append(Id)
+                            self.id = Id
+                            break
+                return idlist
+
+            def Update_Keep_Card(self):
+                """
+                This function will be used to resave the keep card when the save button is pressed. This will update the
+                    keep database.
+                :return:
+                """
+                keep_data = []
+                for obj in self.CheckList:
+                    check_text = obj.text.get(1.0, 'end')
+                    check_text = check_text.splitlines()[0]
+                    check_var = obj.check_var.get()
+                    keep_data.append((check_text, check_var))
+
+                Card = {self.title: {'title': self.title,
+                                     'Id': self.id,
+                                     'date': self.init_date,
+                                     'time': self.init_time,
+                                     'content': keep_data}}
+                # Now if we want to resave an edited or modified keep then we need,
+                # card title, Keep Card Database,
+                # Now we will update the card detail
+                Widgets.Keeps_Card.Keep_Card_Data.update(Card)
+
+                # Now we need to save the card. for that we will use the save_keep_card from the Apps_func.Keep_Card class
+                apps_func_keep_card.save_keep_card_data(Widgets.Keeps_Card.Keep_Card_Data,
+                                                        Widgets.Keeps_Card.Keep_Card_Ids,
+                                                        update=1)
+
+            def Reload_Keep_Card(self):
+                """
+                This method will be used to used to reload the all cards.
+                :return:
+                """
+                if bool(Widgets.Keeps_Card.Keep_Card_Data):
+                    # if we have some keep in Keep_Card_Data then we need to make them and place them in Card Container.
+
+                    # Now we need a dummy list whihc is equale in length with Keep_Card_Object.
+                    List = [i for i in range(len(Widgets.Keeps_Card.Keep_Card_Data))]
+
+                    # Now we have length so we need to get all the position for the keep card.
+                    Pos, _ = misc.get_keep_card_position(List)
+
+                    # Now we need to recreate all the available card.
+                    # Now before making any appending we need to reset the Keep_Card_object
+                    Widgets.Keeps_Card.Keep_Card_Object = []
+                    Widgets.Keeps_Card.Keep_Cards_List = []
+                    for card, pos in zip(Widgets.Keeps_Card.Keep_Card_Data.items(), Pos):
+                        _, card_detail = card
+                        Widgets.Keeps_Card.Keep_Cards_List.append(card)
+
+                        # Now after getting the card detail and position we need to create object for each individual card.
+                        # This card will be need to put in the Keep_Card_Container frame.
+                        add_keep = Widgets.Keeps_Card.CreateKeepsCard(Widgets.Keeps_Card.Keep_Card_Container)
+                        add_keep.Create_Keep_Card2(Widgets.Keeps_Card.Keep_Card_Container, pos, card_detail)
+                        # Now we will append the card in Widgets.Keep_Card.Keep_Card_Objects list
+                        Widgets.Keeps_Card.Keep_Card_Object.append(add_keep)
+
+        # --------------------------------------------------------------------------------------------------------------------
+
+        class KeepCardCheck(Frame):
+            """
+            This class will be used to create a check in a checklist. it will contain a checkbox and a Text widget, checkbox will be
+            linked to the Text widget.
+            """
+
+            def __init__(self, master=None, cnf=None):
+                super().__init__(master)
+                self.lines = 1  # This will be used to increase the line of the Text widget.
+                self.bg_color = 'white'
+                self.keep_data = None
+                # Now we will use the init constructor to create KeepCardCheck
+                # we need a Frame which can hold both checkbox and Text widget
+                self.MainFrame = Frame(master, width=40, cnf=cnf)
+                # this will be the main frame in which we will put the checkbox and the Text widget
+                self.check_var = IntVar()
+                self.OverStrike = False  # This will be used to track the strike on the text.
+                self.check_var.set(0)
+                # making the checkbox
+                self.check = ttk.Checkbutton(self.MainFrame, variable=self.check_var, text='',
+                                             command=self.update_checkbutton_states)
+                self.check.pack(side='left', anchor='nw')
+
+                # now we need to put the text box
+                self.text = Text(self.MainFrame, height=1, width=40, wrap='word', insertontime=700, insertofftime=500)
+                self.text.pack(side='left', anchor='nw')
+                self.event_binding()
+                # print("keep initiated")
+
+            def pack(self, cnf={}, **packvalues):
+                """
+                put the card widget on the Frame using the pack layout management system.
+                :return: None
+                """
+                self.MainFrame.pack(cnf, **packvalues)
+
+            def grid(self, cnf={}, **packvalues):
+                """
+                Put the card widget on the Frame using the grid layout management system.
+                :return: None
+                """
+                self.MainFrame.grid(cnf, **packvalues)
+
+            def update_textheight(self, event):
+                """
+                This method will be used to update the height of the Textbox according to the check box current lines
+                :return: None
+                """
+                if event.char != 'Return':
+                    self.text_len = None
+                    lchar = self.text.cget('width')
+                    line = self.text.get(1.0, 'end')
+                    lines = len(line) // lchar + 1
+                    if self.lines + 1 == lines:
+                        # print("line increased:", self.lines, lines)
+                        self.text.config(height=lines)
+                        self.lines += 1
+
+                # self.text_after_id = self.MainFrame.after(700, self.update_textheight)
+
+            def Check_Completed(self):
+                """
+                This method will be used to mark a check check as completed and it will cut the check by making a through-line or over-line
+                    on a check text.
+                :return:
+                """
+                self.text.tag_add("Completed", '1.0',
+                                  'end')  # a tag will be added from starting to end of the content in the text box.
+                # This will define that how much text should be cut.
+                # To add a through-line or a over-strike property on a text we need to use overstrike=1 in a tag_config.
+                self.text.tag_config("Completed", overstrike=1)
+                # print("Text overstriked.")
+
+            def Check_UnCompleted(self):
+                """
+                This will be used to remove the strikeline or throughline property form a text.
+                :return:
+                """
+                self.text.tag_config("Completed", overstrike=0)
+                # By setting overstrike as 0 we can remove the over line from the text.
+
+            # After making Check_Completed and Check_UnCompleted method we need to bind them with checkbutton
+
+            def update_checkbutton_states(self):
+                """
+                This function will be used to get the checkbutton current valuee and according to the values we will set the event.
+                :return:
+                """
+                # Now first of all we need to get the value of the check_var
+                Check_states = self.check_var.get()  # 0 means deselected and 1 means selected.
+                # print("check_states",Check_states, type(Check_states))
+
+                if Check_states:
+                    # This condition shows that we have selected the check button.
+                    # Now if we selected the button then we need to strike the text and stop the text update.
+                    # print("Check button is selected.")
+                    self.Check_Completed()
+                    self.OverStrike = True
+                else:
+                    # This condition shows that we have deselected the check button.
+                    # if the button is deselected then we need to remove the strike if it done.
+                    if self.OverStrike:
+                        # Now if we have made the overstrike on the text then we need to remove the over strike
+                        # if the checkbutton is unchecked.
+                        self.Check_UnCompleted()
+                        self.OverStrike = False
+
+            def set_check_status(self, check_status):
+                """
+                This method will set the status of the check, if the check is marked then it will make overstrike on the text,
+                if the check is not marked then it will leave the text.
+                :param check_status: bool, it is a boolean value, set it 0 or False for False, or 1 or True for True.
+                :return:
+                """
+                if check_status:
+                    # if check_status is true it means we have to make overstrike on the text.
+                    self.update_checkbutton_states()
+
+            def bind_Return(self, event):
+                # print(event)
+                """
+                This method will be execute when the Return button is pressed.
+                :return:
+                """
+                self.text.config(state='disabled', relief='flat', bg=self.MainFrame.cget('bg'), takefocus=0)
+                self.keep_data = (self.text.get(1.0, 'end'), self.check_var.get())
+                self.MainFrame.focus_set()
+
+            def InFocus(self, event, background=None, foreground=None):
+                """
+                This is a event method which will be invoked when focus is set to the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
+                :return:
+                """
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground, takefocus=0)
+
+            def OutFocus(self, event, background=None, foreground=None):
+                """
+                This is an event method which will be invoked when focus out from the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
+                :return:
+                """
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
+
+            def MouseEnter(self, event, background=None, foreground=None):
+                """
+                This is a event method which will be invoked when a mouse is Enters over the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
+                :return:
+                """
+                # default state color:  Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+                # Mouse enter background color: #d8dbe8
+                # Mouse enter foreground color: #1b2e85
+                if not background:
+                    background = '#d8dbe8'
+
+                if not foreground:
+                    foreground = '#1b2e85'
+
+                self.text.config(state='disabled', relief='ridge', bg=background, fg=foreground, takefocus=0)
+
+            def MouseLeave(self, event, background=None, foreground=None):
+                """
+                This is a event method when the mouse leave the widget.
+                :param event:
+                :param background: color, background color when widget is in focus.
+                :param foreground: color, foreground color when widget is not in focus.
+                :return:
+                """
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
+
+            def bind_bt_1(self, event, background=None, foreground=None):
+                """
+                This method will be used to bind the event to the mouse button-1
+                :param foreground:
+                :param background:
+                :param event:
+                :return:
+                """
+                if not background:
+                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
+
+                if not foreground:
+                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
+
+                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground)
+
+            def event_binding(self):
+                """
+                This function will have all the event binding.
+                :return:
+                """
+                self.text.bind("<Return>", self.bind_Return)
+                self.text.bind("<Button-1>", self.bind_bt_1)
+                self.text.bind("<KeyPress>", self.update_textheight)
+                self.text.bind("<FocusIn>", self.InFocus)
+                self.text.bind("<FocusOut>", self.OutFocus)
+                self.text.bind("<Enter>", self.MouseEnter)
+                self.text.bind("<Leave>", self.MouseLeave)
+
+            def theme_configure(self, content_bg_color='#a267c7',
+                                content_text_color='#a28cff', **colors):
+                """
+                This method will be used to set the theme color for the Textbox class widgets.
+                :param head_bg_color: Heading widgets color.
+                :param head_text_color:  Heading widgets text color
+                :param content_bg_color:  content widgets background color.
+                :param content_text_color: content widgets text color.
+                :return:
+
+                colors: this is wid keyword argument which will give us some more color keys:
+
+                        check_hover_effect  = 'defalut'
+
+                """
+                self.check_bg_color = None
+                self.text_bg_color = content_bg_color
+                self.text_fg_color = content_text_color
+
+                # Textbox container frame
+                self.MainFrame.config(bg=content_bg_color)
+
+                # Textbox text color
+                self.text.config(bg=content_bg_color, fg=content_text_color, font=('sarif', 12))
+
+                self.check.configure(style='KeepCard.TCheckbutton')
+
+            def title_theme_configure(self, container, content_bg_color='#a267c7',
+                                      content_text_color='#a28cff', **colors):
+                """
+                This method will be used to set the theme color for the Textbox class widgets for KeepCheckbar.
+                :param container: This container will hold the all the widgets of KeepCard.
+                :param head_bg_color: Heading widgets color.
+                :param head_text_color:  Heading widgets text color
+                :param content_bg_color:  content widgets background color.
+                :param content_text_color: content widgets text color.
+                :return:
+
+                colors: this is wid keyword argument which will give us some more color keys:
+
+                        {'inmouse_bg': color,
+                          'inmouse_fg': color,
+                          'outmouse_bg': color,
+                          'outmouse_fg': color,
+                          'infocus_bg': color,
+                          'infocus_fg': color,
+                          'outfocus_bg': color,
+                          'outfocus_fg': color}
+                """
+                self.check_bg_color = None
+                self.text_bg_color = content_bg_color
+                self.text_fg_color = content_text_color
+
+                color_options = ["inmouse_bg", "inmouse_fg", "outmouse_bg", "outmouse_fg",
+                                 "infocus_bg", "infocus_fg", "outfocus_bg", "outfocus_fg"]
+
+                color_dict = {'inmouse_bg': None,
+                              'inmouse_fg': None,
+                              'outmouse_bg': None,
+                              'outmouse_fg': None,
+                              'infocus_bg': None,
+                              'infocus_fg': None,
+                              'outfocus_bg': None,
+                              'outfocus_fg': None}
+
+                if colors:
+                    for key, value in colors.items():
+                        if key not in color_options:
+                            raise KeyError(f"BadKey: {key} key should be {color_options}")
+                        else:
+                            color_dict[key] = value
+
+                self.text.bind("<FocusIn>", lambda event: self.InFocus(event, background=color_dict['infocus_bg'],
+                                                                       foreground=color_dict['infocus_fg']))
+                self.text.bind("<FocusOut>", lambda event: self.OutFocus(event, background=color_dict['outfocus_bg'],
+                                                                         foreground=color_dict['outfocus_fg']))
+                self.text.bind("<Enter>", lambda event: self.MouseEnter(event, background=color_dict['inmouse_bg'],
+                                                                        foreground=color_dict['inmouse_fg']))
+                self.text.bind("<Leave>", lambda event: self.MouseLeave(event, background=color_dict['outmouse_bg'],
+                                                                        foreground=color_dict['outmouse_fg']))
+                self.text.bind("<Button-1>", lambda event: self.bind_bt_1(event, background=color_dict['infocus_bg'],
+                                                                          foreground=color_dict['infocus_fg']))
+
+                # Now we need to set the container's theme configuration.
+                for child in misc.get_children(container.CardMainFrame):
+                    # getting all children from CardMainFrame.
+                    if isinstance(child, Frame):
+                        child.config(bg=content_bg_color)
+                    elif isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12, 'bold'))
+
+                # Textbox container frame
+                self.MainFrame.config(bg=content_bg_color)
+
+                # Textbox text color
+                self.text.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12))
+
+                # Textbox check color
+                style = ttk.Style()
+                style.configure('TitleCheck.TCheckbutton', background=content_bg_color,
+                                indicatorbackground=content_bg_color,
+                                indicatorcolor='white', padding=3, indicatormargin=5)
+                self.check.configure(style='TitleCheck.TCheckbutton')
+
+        class KeepCardBar(Frame):
+            """
+            This Keep card bar class will be used to create a bar in a Keeps tab and it will be used to create  a new KeepCard,
+            It will be initiated with a Title and a single check.
+            """
+
+            def __init__(self, master=None, container_frame=None, cfg={}, **kw):
+
+                super().__init__(master=master, cnf=cfg, **kw)
+                self.master = master
+                self.cfg = cfg
+                self.kw = kw
+
+                self.Create_Frame(master=self.master, cfg=self.cfg, **self.kw)
+                # Now we need to initiate the Frame and other things.
+                self.bind_envents()  # This method to initiate the binding of the events.
+                self.Content = None
+                self.KeepCardContainer = container_frame  # In this we will place over created Cards.
+                self.BarActive = False
+                # print("Focused widget: ", self.MainFrame.focus_get())
+
+            def Create_Frame(self, master, cfg, **kw):
+                """
+                This function will be used to create the Keep Bar which will be used to create new Keep Card.
+                :param master: This is the master Frame or window in which the Bar will be placed.
+                :param cfg: config parameters for the Frame.
+                :param kw: other config keyword which will be passed through the wild parameter.
+                :return: None
+                """
+
+                self.MainFrame = Frame(master=master, cnf=cfg, **kw)
+
+                # Now we need to put a Entry box inside it
+                self.Title_var = StringVar()
+                self.Title_var.set("Title")
+                self.Entry = Entry(self.MainFrame, textvariable=self.Title_var, font=("sarif", 15, 'bold'),
+                                   relief='flat',
+                                   fg="#e08e46", takefocus=0, )
+                self.Entry.pack(fill='y', anchor='nw')
+
+                self.ChecksFrame = Frame(self.MainFrame, bg='red')
+                self.ChecksFrame.pack(fill='y', anchor='nw')
+
+                self.BottomFrame = Frame(self.MainFrame, bg='green')
+                self.BottomFrame.pack(fill='y', anchor='se', side='bottom')
+
+                self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
+                                     head_text_color='#827c91', content_bg_color='#1b4875',
+                                     content_text_color='#a28cff')
+
+            def pack(self, cnf={}, **packvalues):
+                """
+                put the card widget on the Frame using the pack layout management system.
+                :return: None
+                """
+                self.MainFrame.pack(cnf, **packvalues)
+
+            def grid(self, cnf={}, **packvalues):
+                """
+                Put the card widget on the Frame using the grid layout management system.
+                :return: None
+                """
+                self.MainFrame.grid(cnf, **packvalues)
+
+            def bt1_active_state(self, event):
+                """
+                This method of the class will be bind to the mouse button-1. This method will be used to initiate the
+                Keep card.
+                :return:
+                """
+                # print("Entry event responded")
+                # print("Focused widget: ", self.MainFrame.focus_get())
+                if self.Entry.focus_get() != self.Entry and self.BarActive == False:
+                    # Now since Bar has been activated so we need to make self.BarActive == True
+                    self.BarActive = True
+                    # Now if self.BarActive is True then it will be not recreated when we press again.
+
+                    self.Title_var.set("")
+                    self.Entry.config(fg='black')
+                    self.Entry.pack_configure(fill='x', pady=10, padx=10)
+                    self.MainFrame.pack_configure(pady=10)
+                    # Now we need to initiate a Keep check
+                    self.Content = Widgets.Keeps_Card.CreateKeepsCard(self.ChecksFrame, title=None)
+                    self.Content.add_button_holder = "KeepCardBar"
+                    self.Content.CardMainFrame.config(highlightbackground=None, highlightcolor=None,
+                                                      highlightthickness=0)
+                    self.Content.pack(pady=10)
+                    self.Content.CheckList.append(self.Content.Textbox)
+                    # Now we need to put two button one for save the card and another for cancel the save of card
+                    # delete all the card data.
+
+                    self.save_button = Button(self.BottomFrame, text='Save')
+                    self.save_button.pack(side='right', anchor='ne')
+
+                    self.cancel_button = Button(self.BottomFrame, text='Cancel')
+                    self.cancel_button.pack(side='right', anchor='ne')
+
+                    self.cancel_button.config(command=self.reset_card_bar)
+                    self.save_button.config(command=self.save_card)
+
+                    # Here after all packing we need to configure theme of the title bar.
+
+                    self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
+                                         head_text_color='#827c91', content_bg_color='#1b4875',
+                                         content_text_color='#a28cff')
+
+                    self.Content.Textbox.title_theme_configure(self.Content, content_bg_color='#1b4875',
+                                                               content_text_color='#a28cff',
+                                                               outmouse_bg='#1b4875', outmouse_fg='white',
+                                                               infocus_bg='#1b4875', infocus_fg='white',
+                                                               outfocus_bg='#1b4875', outfocus_fg='white')
+                    self.Content.AddCheckbutton.config(bg='#1b4875', fg='white', relief='flat',
+                                                       activebackground='#1b4875', activeforeground='white',
+                                                       font=('MS Serif', 12, 'bold'))
+
+            def bind_envents(self):
+                self.Entry.bind("<Button-1>", self.bt1_active_state)
+
+            def save_card(self):
+                """
+                This function will be used to store the card details and create a new card from those details and put it
+                in the CardContainer frame, this process will reset the keepcardbar and recreate a new card to put it in
+                the CardContainer frame.
+                :return:
+                """
+                # CardList = Widgets.Keeps_Card.Keep_Cards_List
+                # CardList will have all the cards , it will be used to get the all card by their index
+                # and we will get the
+                # apps_func_keep_card = apps.Keep_Cards()
+                ts = apps.Time()
+                # ts form apps_func to give time.
+
+                CKC2 = Widgets.Keeps_Card.CreateKeepsCard(self.KeepCardContainer)
+                # Now we will create an object of CreateKeepCard class to create a new card.
+                # this card will be placed in the KeepCardContainer frame.
+
+                idlist = apps_func_keep_card.get_unique_id()
+                # This idlist will holds the all unique id of all the cards.
+
+                self.Content.CardTitle = self.Title_var.get()  # # storing the card title
+                self.id = self.Content.gen_card_unique_id(idlist=idlist)  # # storing the card id
+                self.Content.init_date = ts.get_current_date()  # storing card init date
+                self.Content.init_time = ts.get_current_time()  # storing card init time
+
+                keep_data = self.unpack_card_text(
+                    self.Content.CheckList)  # getting the content of the card and its states.(0 or 1)
+
+                # saving the card detail and getting the full data of the card in a dict format.
+                data = apps_func_keep_card.save_keep_card_data(Widgets.Keeps_Card.Keep_Card_Data,
+                                                               Widgets.Keeps_Card.Keep_Card_Ids,
+                                                               title=self.Content.CardTitle, Id=self.id,
+                                                               time=self.Content.init_time, date=self.Content.init_date,
+                                                               content=keep_data, idlist=idlist)
+                # appending a new card in the CardList
+                Widgets.Keeps_Card.Keep_Cards_List.append(CKC2)
+                Widgets.Keeps_Card.Keep_Card_Object.append(CKC2)
+                # Now we will get position for our new keep card
+                # print("In KeepCardBar: ")
+                # print("\t\t ", Widgets.Keeps_Card.Keep_Cards_List)
+
+                # Now we will put the newly created card on the container frame, for this we need to get the position for
+                # new card this will be done with get_keep_card_position() method.
+                _, newpos = self.get_keep_card_position(Widgets.Keeps_Card.Keep_Cards_List)
+
+                # Now we will save the keep card and put it in the KeepCardContainer frame.
+                CKC2.Create_Keep_Card2(self.KeepCardContainer, position=newpos, data=data)
+
+                # Updating the display and idle task.
+                CKC2.CardContentFrame2.update_idletasks()
+                # resetting the card bar.
+                self.reset_card_bar()
+
+            def reset_card_bar(self):
+                """
+                This method will be used to reset the Keep Card bar when we will cancel or reject to create a new card.
+                :return:
+                """
+                self.BarActive = False
+                self.MainFrame.destroy()
+                self.Create_Frame(master=self.master, cfg=self.cfg, **self.kw)
+                self.pack(pady=20)
+                # Now we need to initiate the Frame and other things.
+                self.bind_envents()  # This method to initiate the binding of the events.
+                self.Content = None
+                self.MainFrame.update_idletasks()
+
+            def unpack_card_text(self, objList):
+                """
+                This method will be used to unpack the card text from object. object will an instance of the KeepCardCheck
+                class which will have the text widget and its control variable.
+                :return:
+                """
+                content = []
+
+                for obj in objList:
+                    check_text = obj.text.get(1.0, 'end')
+                    check_text = check_text.splitlines()[0]
+                    check_var = obj.check_var.get()
+                    content.append((check_text, check_var))
+
+                return content
+
+            def get_keep_card_position(self, KCL, columns=3):
+                """
+                This method will be used to define the position for new widget.
+                :param KCL: Keep_Card_List we will hold all the Cards.
+                :return: tuple, it will return new position.
+                """
+                row = 0
+                col = 0
+                poslist = []
+                # print("length of KCL: ", len(KCL))
+                if len(KCL) > 0:
+                    for cp in range(len(KCL)):
+                        # print("length of cp: ",cp)
+                        cp += 1  # card position.
+                        # print("length of cp: ", cp)
+                        poslist.append((row, col))
+                        if cp % columns == 0:
+                            row += 1
+                            col = 0
+                        else:
+                            col += 1
+
+                newest = poslist[-1]
+                return poslist, newest
+
+            def theme_configure(self, Mainbody_color=None, head_bg_color=None, head_text_color=None,
+                                content_bg_color=None, content_text_color=None):
+                """
+                This is a color configuration of the Creating new card title bar, in which title bar section will act as a
+                    head of the Frame and below part will act as a content section of the Frame.
+                :param head_bg_color: background color of the title bar.
+                :param head_text_color: text color of the title bar.
+                :param content_bg_color: background color of the content section.
+                :param content_text_color: text color of the content section.
+                :return:
+                """
+
+                # NOw first we need configure Main body which is also a container of the title bar.
+                self.MainFrame.config(bg=Mainbody_color)
+
+                # Now we will configure the title bar.
+                self.Entry.config(bg=head_bg_color, fg=head_text_color)
+
+                # Now we need to configure the Text box color
+                self.ChecksFrame.config(bg=content_bg_color)
+                # Now we will configure the CheckFrame child color (text, checkbutton)
+                style = ttk.Style()
+                style.configure('Check.TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
+                                indicatorcolor=content_bg_color)
+                for child in self.ChecksFrame.winfo_children():
+
+                    if isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
+                                     activebackground=content_bg_color, activeforeground=content_text_color)
+                    elif isinstance(child, ttk.Checkbutton):
+                        child.configure(style='Check.TCheckbutton')
+                    elif isinstance(child, Text):
+                        child.config(bg=content_bg_color, fg=content_text_color)
+
+                    elif isinstance(child, Frame):
+                        child.config(bg=content_bg_color)
+
+                # Now we will config the bottom section in which buttons are placed.
+                self.BottomFrame.config(bg=content_bg_color)
+
+                # Now we will set buttons config.
+                for child in self.BottomFrame.winfo_children():
+                    if isinstance(child, Button):
+                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
+                                     activebackground=content_bg_color, activeforeground=content_text_color)
+
+    # ======================================================================================================================#
+    # ======================================================================================================================#
     class Activities(Frame):
         """
         This class will be used to manage activities and their functions, it will be also used to manage all the activities
@@ -1864,7 +2910,7 @@ class Widgets:
                             self.Class_Frame.destroy()
                     elif self.Entry_box_var.get() in self.ActivityClasses.keys():
                         message = f"""{self.Entry_box_var.get()} key already exist in the ActivityClasses
-    Please try again."""
+       Please try again."""
                         result = messagebox.askretrycancel(title='Key Error', message=message)
                         if not result:
                             self.Class_Frame.destroy()
@@ -1946,1044 +2992,66 @@ class Widgets:
 
     # ======================================================================================================================#
     # ======================================================================================================================#
-    class Keeps_Card:
+    class Statistics(Frame):
         """
-        This class will be used to create a new keep card in a Keeps Notebook section.
-
-        Create_Keep_Card: This a subclass of the Keep_Card in this we can create a keep card which can hold the KeepChecks.
+        This class will be used to show the statistics result of the Database.
         """
-        Keep_Cards_List = []  # This will hold the all card with their data.
-        Keep_Card_Data = None  # this will hold the all card information.
-        Keep_Card_Ids = None  # this will hold the all cards ids.
-        Keep_Card_Container = None  # this is the common container in which all the card will be placed.
-        Keep_Card_Object = []  # This will hold all card objects.
 
-        # SOME GLOABLE ATTRIBUTE FOR THEME AND COLOR
-        KEEP_CARD_HEAD_COLOR = None
-        KEEP_CARD_CONTENT_COLOR = None
-        KEEP_CARD_HEAD_TEXT_COLOR = None
-        KEEP_CARD_CONTENT_TEXT_COLOR = None
-        KEEP_NEW_CHECK_TEXTBOX = None
-        KEEP_CARD_TITLE_BAR = None
-
-        class CreateKeepsCard(Frame):
-            """
-            This Class will be used to create create a new keep card , this keep card will hold all the information
-            in its attributes.
-            """
-
-            def __init__(self, master=None, title=None):
+        def __init__(self, master=None):
+            if master:
                 super().__init__(master)
-                self.master = master
-                self.title = title
-                self.id = None
-                self.init_date = None
-                self.init_time = None
-                self.Next_Check_Position = (1, 0)
-                self.Next_AddButton_Position = (1, 1)
-                self.CheckList = []
-                self.CheckContent = []
-                self.add_button_holder = None  # this attribute will be used to identify pressed button holder
-                # self.init_check = None
 
-                self.Create_Keep_Card(self.master, self.title)
-                # Create the Keep card when the object is created.
-                # print("keep init method called")
-
-            def Create_Keep_Card(self, master, title=None, data=None, cfg={}, **kw):
-                """
-                This method will be used to Create a new card with some extra additional ability.
-                this method will allow us to add new to-do list records.
-                :param master: We will place our cards data in this Frame.
-                :param title: str, this will be the  title of the keep Card.
-                :return:
-
-                Note: Note that card will be packed inside the Keeps Frame section not here. we will use grid layout-management
-                        system.
-                """
-
-                self.CardMainFrame = Frame(master, height=100, width=20, bg='green', highlightbackground='black',
-                                           highlightcolor='black', highlightthickness=2)
-                # Now we need to add a title Label on the CardMainFrame
-                if title != None:
-                    self.HeadFrame = Frame(self.CardMainFrame, bg='red')
-                    self.HeadFrame.pack(fill='x')
-
-                    self.TitleLabel = Label(self.HeadFrame, text=title)
-                    self.TitleLabel.pack(side='left', anchor='nw')
-                    # now in this card we will make another fame which we will add all the to-do list record.
-
-                self.CardContentFrame = Frame(self.CardMainFrame, bg='white')
-                self.CardContentFrame.pack(fill='both')
-
-                # This CardContentFrame will hold all the checks using a grid layout system.
-                # Now in this we need to put a text box inside This CardContentFrame
-
-                # This text box will help us to get the text during save time.
-                self.Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame)
-                self.Textbox.grid(row=0, column=0)
-
-                # now we will add a button to add new check label
-                self.AddCheckbutton = Button(self.CardContentFrame, text='+', font=('sarif', 10, 'bold'))
-                self.AddCheckbutton.grid(row=0, column=1, sticky='se')
-                self.AddCheckbutton.config(command=lambda x=self.CardContentFrame,
-                                                          y=self.AddCheckbutton,
-                                                          z=None
-                : self.Add_Keep_Check(master=x, bt=y))
-
-            def Create_Keep_Card2(self, master, position, data, cfg={}, **kw):
-                """
-                This method will be used to crete the final Keep Card and it will place that card on the Keep Frame,
-                    also this method will be used to create the keep card from saved data.
-                :param master: This is the master window in which we will  place over keep card.
-                :param position:tuple, if we are using grid then we will use this to define the position of the card.
-                :param data: dict, this will be our data and this data will be passed to the object attributes.
-                :param cfg: config attribute for the container frame of the keep card.
-                :param kw: Additional keyword for the container frame.
-                :return: None
-                """
-                # Now we need to define our card (object) data
-                # NOte that data will be our dictionary of the data base.
-
-                self.title = data['title']
-                self.id = data['Id']
-                self.init_date = data['date']
-                self.init_time = data['time']
-                self.checklist = data['content']  # This check list don't holds the object it holds the text data
-                # and the mark value.
-                # print("Card title: ", self.title)
-                # print("Card id: ", self.id)
-                # print("Card date: ",self.init_date)
-                # print("Card time: ", self.init_time)
-                # print("Card CheckList: ",self.checklist)
-
-                self.CardMainFrame2 = Frame(master, height=100, width=20, bg='green', highlightbackground='black',
-                                            highlightcolor='black', highlightthickness=2)
-                # Now we need to add a title Label on the CardMainFrame
-
-                self.HeadFrame2 = Frame(self.CardMainFrame2, bg='red')
-                self.HeadFrame2.pack(fill='x')
-
-                self.TitleLabel2_var = StringVar()
-                self.TitleLabel2_var.set(self.title)
-                self.TitleLabel2 = Label(self.HeadFrame2, textvariable=self.TitleLabel2_var)
-                self.TitleLabel2.pack(side='left', anchor='nw')
-                # now in this card we will make another fame which we will add all the to-do list record.
-
-                self.CardContentFrame2 = Frame(self.CardMainFrame2, bg='white')
-                self.CardContentFrame2.pack(fill='both')
-
-                # This CardContentFrame2 will hold all the checks using a grid layout system.
-                # Now in this we need to put all the check which are made.
-                self.AddCheckbutton2 = Button(self.CardContentFrame2, text='+', font=('sarif', 10, 'bold'),
-                                              )
-                self.AddCheckbutton2.grid(row=0, column=1,
-                                          sticky='se')
-                self.Next_Check_Position = (0, 0)
-                self.Next_AddButton_Position = (0, 1)
-                for check_text, check_mark in self.checklist:
-                    Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame2)
-                    Textbox.text.insert(1.0, check_text)
-                    Textbox.check_var.set(check_mark)
-                    Textbox.set_check_status(check_text)
-                    # after creating the checkbox inside the Keep Card we need to store the Textbox in the self.CheckList
-                    # and also we need to store the text content and check mark in the self.CheckContent list.
-                    self.CheckList.append(Textbox)
-                    self.CheckContent.append((check_text, check_mark))
-
-                    Textbox.grid(row=self.Next_Check_Position[0], column=self.Next_Check_Position[1])
-
-                    # now we will add a button to add new check label
-
-                    self.AddCheckbutton2.grid_configure(row=self.Next_AddButton_Position[0],
-                                                        column=self.Next_AddButton_Position[1])
-
-                    # now increase the position of the Check and button
-                    self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
-                    self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
-                r, c = position
-                # print("Keep Card position: ", position)
-                self.AddCheckbutton2.config(command=lambda x=self.CardContentFrame2,
-                                                           y=self.AddCheckbutton2:
-                self.Add_Keep_Check(master=x, bt=y))
-
-                # Now we will add a save button on the to title frame to update the card
-                self.Update_Button = Button(self.HeadFrame2, text='save', command=self.Update_Keep_Card)
-                self.Update_Button.pack(side='right', anchor='e')
-
-                # Now we will add a delete button which wil be used to delete the card from the database.
-                self.DeleteCheckButton = Button(self.HeadFrame2, text='delete',
-                                                command=lambda x=self: self.Delete_Keep_Card(x))
-                self.DeleteCheckButton.pack(side='right', anchor='e')
-
-                self.CardMainFrame2.grid(row=r, column=c, sticky='n', padx=5, pady=10)
-                # print("In Create_Keep_Card2 self.CheckList: ", self.CheckList)
-
-                # at last we will reconfigure the theme of the Card
-                self.theme_configure()
-
-            def Retrieve_Keep_Cards(self, master, keepcarddata):  # @ This method is not used yet.
-                """
-                This method will initiate the keep card from saved data. this method will be called during the initializing/opening
-                the application.
-                :param master: This will be the master in which we will place our keep cards.
-                :param keepcarddata: This is the cara data which will be used to create initiate saved cards.
-                :return:
-                """
-                # now we will pass a dummy list into the get_keep_card_position
-                # this will give us the all position for our cards.
-                List = [i for i in range(len(keepcarddata))]
-                keepbar = Widgets.Keeps_Card.KeepCardBar(master)
-
-                # get_keep_card_position will return two things
-                # all card position and the recent card position.
-                # we need all card position not the recent one.
-                Pos, _ = keepbar.get_keep_card_position(List)
-                for card, pos in zip(keepcarddata.items(), Pos):
-                    _, card_detail = card
-                    # print("retrieved card detail: ", card_detail)
-                    Widgets.Keeps_Card.Keep_Cards_List.append(card)
-                    self.Create_Keep_Card2(master, pos, card_detail)
-                # Now we need to iterate through all the cards.
-
-            def Delete_Keep_Card(self, card_id):
-                # print("delete keep card called.")
-                """
-                This method will be used to delete a card from a database, and it will reconfigure all the cards.
-                :param card_id: This is the card which is need to be deleted after pressing the delete button.
-                :return: None
-                """
-                '''
-                Steps to delete a card:
-                    1. first of all we need to check that card_id (card) is present in the Keep_Card_object
-                    2. if it is present then we need to destroy it using the tkinter w.destroy() method.
-                    3. after this we need remove the data which is associate to that card.
-                    4. and then we need to update the database with remaining card details.
-                    5. save the card database.
-                '''
-                CardsFrame = Widgets.Keeps_Card.Keep_Card_Object  # this holds all the keepcardFrames.
-                if card_id in CardsFrame:
-                    # now if card_id present inside the card list then we need to delete that card.
-                    # Now we will try to delete and refresh our database.
-                    id_index = CardsFrame.index(card_id)  # getting the card id index
-                    del Widgets.Keeps_Card.Keep_Card_Ids[id_index]  # deleting the card id by using its index.
-
-                    CardsFrame.remove(card_id)  # 2. removing the card Card_Object lIst
-                    # card_id.destroy() # removing the card from the Card_Container frame.
-                    # Now we need to remove the data also.
-                    del Widgets.Keeps_Card.Keep_Card_Data[card_id.title]  # removing the card data.
-                    # Now we need to save the data into database locally.
-                    file = './data/KeepCards.json'
-                    card_data = {"Cards": {},
-                                 "Card_ids": []}
-                    List = [i for i in CardsFrame]
-                    position, _ = misc.get_keep_card_position(List)
-
-                    for child in Widgets.Keeps_Card.Keep_Card_Container.winfo_children():
-                        # print("child going to destroy: ",child, child.winfo_ismapped())
-                        child.destroy()
-
-                    # Now we need to recreate cards
-                    self.Reload_Keep_Card()
-
-                    # Now we will save our new updated data.
-                    card_data['Cards'].update(Widgets.Keeps_Card.Keep_Card_Data)
-                    card_data['Card_ids'] = Widgets.Keeps_Card.Keep_Card_Ids
-                    # Now we need to reconfigure the cards
-
-                    with open(file, 'w') as f:
-                        json.dump(card_data, f, indent=2)
-
-                    # Now updating the card Container.
-                    Widgets.Keeps_Card.Keep_Card_Container.update_idletasks()
-
-                else:
-                    print("No card found...")
-
-            def theme_configure(self, head_bg_color='#4f485e', content_bg_color='#488231',
-                                head_text_color='white', content_text_color='white'):
-                """
-                This method will be used to configure the look of the Keep_Card object, in this we will change background,
-                foreground, text size, font style, colors, active and disabled state.
-                :return:
-                """
-                Widgets.Keeps_Card.KEEP_CARD_HEAD_COLOR = head_bg_color
-                Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR = content_bg_color
-                Widgets.Keeps_Card.KEEP_CARD_HEAD_TEXT_COLOR = head_text_color
-                Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR = content_text_color
-                # first of all removing the default border
-                self.CardMainFrame2.config(highlightbackground=None, highlightcolor=None, highlightthickness=0)
-
-                # common
-                hc_cfg = {'bg': head_bg_color, 'font': ('snas-sarif', 15, 'bold'), 'fg': head_text_color,
-                          'relief': 'flat', 'takefocus': 0}
-                hb_cfg = {}
-
-                # first of all we will configure the HeadFrame of the Keep_Card.
-                self.HeadFrame2.config(bg=head_bg_color)
-                for child in self.HeadFrame2.winfo_children():
-                    child.config(cnf=hc_cfg)
-
-                # Now we will work on the CardContentFrame
-                self.CardContentFrame2.config(bg=content_bg_color)
-                for child in self.CardContentFrame2.winfo_children():
-                    if isinstance(child, Button):
-                        child.config(bg=content_bg_color, takefocus=0, relief='flat', fg=content_text_color,
-                                     font=('sarif', 11, 'bold'))
-                    else:
-                        child.config(bg=content_bg_color, takefocus=0, relief='flat')
-
-                # Now we need to config every checkbox, for that we need to config Textbox.
-                style = ttk.Style()
-                style.configure('KeepCard.TCheckbutton', background=content_bg_color,
-                                indicatorbackground=content_bg_color,
-                                indicatorcolor=content_bg_color)
-                for Textbox in self.CheckList:
-                    Textbox.text.config(bg=content_bg_color, fg=content_text_color, takefocus=0, relief='flat',
-                                        state='disabled', font=('MS Sans Serif', 12), pady=5)
-                    Textbox.check.config(style='KeepCard.TCheckbutton', takefocus=0)
-
-            def pack(self, cfg={}, **kw):
-                """
-                Put the card widget on the Frame using the pack layout management system.
-                :return: None
-                """
-                self.CardMainFrame.pack(cfg, **kw)
-
-            def grid(self, cfg={}, **kw):
-                """
-                put the card widget on the Frame using the grid layout management system.
-                :return: None
-                """
-                self.CardMainFrame.grid(cfg, **kw)
-
-            def Add_Keep_Check(self, master, bt=None, _class=None, row=None, column=None):
-                # print("Add keep check called")
-                """
-                This method will be used to create a new Text box inside the Keep card.
-                :param master:tk.Frame, parent window frame in which this new keep check will be placed.
-                :param bt: tk.Button, a common button for each CreateKeepCard object
-                :return:
-                """
-                # Now in this we will be need to the position of the text box since we are using the grid
-                # layout management so we need to track the row and column in a variable.
-                # for that we will use the self.Next_Check_Position and self.Next_AddButton_Position
-                if len(self.CheckList) == 0:
-                    self.CheckList.append(self.Textbox)
-
-                elif len(self.CheckList) > 0:
-                    self.CheckList[-1].bind_Return(event=None)
-                    # here bind return is used to perform the same task as it performed when enter is pressed.
-                Trow, Tcol = self.Next_Check_Position
-                Brow, Bcol = self.Next_AddButton_Position
-                # here we need to put the Frame according to need
-                Textbox = Widgets.Keeps_Card.KeepCardCheck(master)
-                Textbox.grid(row=Trow, column=Tcol)
-                Textbox.focus_set()
-
-                if self.add_button_holder == "KeepCardBar":  # this condition is used to use different theme for new check
-                    Textbox.title_theme_configure(Widgets.Keeps_Card.KEEP_CARD_TITLE_BAR.Content,
-                                                  content_bg_color='#1b4875',
-                                                  content_text_color='#a28cff',
-                                                  outmouse_bg='#1b4875', outmouse_fg='white',
-                                                  infocus_bg='#1b4875', infocus_fg='white',
-                                                  outfocus_bg='#1b4875', outfocus_fg='white')
-                else:
-                    Textbox.theme_configure()
-
-                bt.grid_configure(row=Brow, column=Bcol)
-                # Now we need to update the next Position for the Textbox and Add button.
-                self.Next_Check_Position = (self.Next_Check_Position[0] + 1, 0)
-                self.Next_AddButton_Position = (self.Next_AddButton_Position[0] + 1, 1)
-
-                self.CheckList.append(
-                    Textbox)  # this will append the new Textbox in the self.CheckList which contains all the check for self.
-                self.CheckContent = [(check.text.get(1.0, 'end'), check.check_var.get()) for check in self.CheckList]
-
-            def gen_card_unique_id(self, rng=(1000, 9999), idlist=None):
-                """
-                This function will be used to generate a
-                :param rng:
-                :param idlist:
-                :return:
-                """
-                if idlist == None:
-                    # then we will create new id list.
-                    idlist = []
-                    self.id = randint(rng[0], rng[1])
-                    idlist.append(self.id)
-                else:
-                    while (1):
-                        Id = randint(rng[0], rng[1])
-                        if Id not in idlist:
-                            idlist.append(Id)
-                            self.id = Id
-                            break
-                return idlist
-
-            def Update_Keep_Card(self):
-                """
-                This function will be used to resave the keep card when the save button is pressed. This will update the
-                    keep database.
-                :return:
-                """
-                keep_data = []
-                for obj in self.CheckList:
-                    check_text = obj.text.get(1.0, 'end')
-                    check_text = check_text.splitlines()[0]
-                    check_var = obj.check_var.get()
-                    keep_data.append((check_text, check_var))
-
-                Card = {self.title: {'title': self.title,
-                                     'Id': self.id,
-                                     'date': self.init_date,
-                                     'time': self.init_time,
-                                     'content': keep_data}}
-                # Now if we want to resave an edited or modified keep then we need,
-                # card title, Keep Card Database,
-                # Now we will update the card detail
-                Widgets.Keeps_Card.Keep_Card_Data.update(Card)
-
-                # Now we need to save the card. for that we will use the save_keep_card from the Apps_func.Keep_Card class
-                apps_func_keep_card.save_keep_card_data(Widgets.Keeps_Card.Keep_Card_Data,
-                                                        Widgets.Keeps_Card.Keep_Card_Ids,
-                                                        update=1)
-
-            def Reload_Keep_Card(self):
-                """
-                This method will be used to used to reload the all cards.
-                :return:
-                """
-                if bool(Widgets.Keeps_Card.Keep_Card_Data):
-                    # if we have some keep in Keep_Card_Data then we need to make them and place them in Card Container.
-
-                    # Now we need a dummy list whihc is equale in length with Keep_Card_Object.
-                    List = [i for i in range(len(Widgets.Keeps_Card.Keep_Card_Data))]
-
-                    # Now we have length so we need to get all the position for the keep card.
-                    Pos, _ = misc.get_keep_card_position(List)
-
-                    # Now we need to recreate all the available card.
-                    # Now before making any appending we need to reset the Keep_Card_object
-                    Widgets.Keeps_Card.Keep_Card_Object = []
-                    Widgets.Keeps_Card.Keep_Cards_List = []
-                    for card, pos in zip(Widgets.Keeps_Card.Keep_Card_Data.items(), Pos):
-                        _, card_detail = card
-                        Widgets.Keeps_Card.Keep_Cards_List.append(card)
-
-                        # Now after getting the card detail and position we need to create object for each individual card.
-                        # This card will be need to put in the Keep_Card_Container frame.
-                        add_keep = Widgets.Keeps_Card.CreateKeepsCard(Widgets.Keeps_Card.Keep_Card_Container)
-                        add_keep.Create_Keep_Card2(Widgets.Keeps_Card.Keep_Card_Container, pos, card_detail)
-                        # Now we will append the card in Widgets.Keep_Card.Keep_Card_Objects list
-                        Widgets.Keeps_Card.Keep_Card_Object.append(add_keep)
-
-        # --------------------------------------------------------------------------------------------------------------------
-
-        class KeepCardCheck(Frame):
+        class Tracks(Frame):
             """
-            This class will be used to create a check in a checklist. it will contain a checkbox and a Text widget, checkbox will be
-            linked to the Text widget.
+            This class will be used to show the statistics of Tracks records.
             """
 
-            def __init__(self, master=None, cnf=None):
+            def __init__(self, master=None):
                 super().__init__(master)
-                self.lines = 1  # This will be used to increase the line of the Text widget.
-                self.bg_color = 'white'
-                self.keep_data = None
-                # Now we will use the init constructor to create KeepCardCheck
-                # we need a Frame which can hold both checkbox and Text widget
-                self.MainFrame = Frame(master, width=40, cnf=cnf)
-                # this will be the main frame in which we will put the checkbox and the Text widget
-                self.check_var = IntVar()
-                self.OverStrike = False  # This will be used to track the strike on the text.
-                self.check_var.set(0)
-                # making the checkbox
-                self.check = ttk.Checkbutton(self.MainFrame, variable=self.check_var, text='',
-                                             command=self.update_checkbutton_states)
-                self.check.pack(side='left', anchor='nw')
 
-                # now we need to put the text box
-                self.text = Text(self.MainFrame, height=1, width=40, wrap='word', insertontime=700, insertofftime=500)
-                self.text.pack(side='left', anchor='nw')
-                self.event_binding()
-                # print("keep initiated")
+    # ======================================================================================================================#
+    # ======================================================================================================================#
+    class DailyRoutine(Frame):
+        """
+        This class will be used to define and manage of all classes and functionality of Daily Routine tab. it will be
+        a Frame object which will be placed inside the tab.
+        """
 
-            def pack(self, cnf={}, **packvalues):
-                """
-                put the card widget on the Frame using the pack layout management system.
-                :return: None
-                """
-                self.MainFrame.pack(cnf, **packvalues)
+        def __init__(self, master=None):
+            super().__init__(master)
 
-            def grid(self, cnf={}, **packvalues):
-                """
-                Put the card widget on the Frame using the grid layout management system.
-                :return: None
-                """
-                self.MainFrame.grid(cnf, **packvalues)
-
-            def update_textheight(self, event):
-                """
-                This method will be used to update the height of the Textbox according to the check box current lines
-                :return: None
-                """
-                if event.char != 'Return':
-                    self.text_len = None
-                    lchar = self.text.cget('width')
-                    line = self.text.get(1.0, 'end')
-                    lines = len(line) // lchar + 1
-                    if self.lines + 1 == lines:
-                        # print("line increased:", self.lines, lines)
-                        self.text.config(height=lines)
-                        self.lines += 1
-
-                # self.text_after_id = self.MainFrame.after(700, self.update_textheight)
-
-            def Check_Completed(self):
-                """
-                This method will be used to mark a check check as completed and it will cut the check by making a through-line or over-line
-                    on a check text.
-                :return:
-                """
-                self.text.tag_add("Completed", '1.0',
-                                  'end')  # a tag will be added from starting to end of the content in the text box.
-                # This will define that how much text should be cut.
-                # To add a through-line or a over-strike property on a text we need to use overstrike=1 in a tag_config.
-                self.text.tag_config("Completed", overstrike=1)
-                # print("Text overstriked.")
-
-            def Check_UnCompleted(self):
-                """
-                This will be used to remove the strikeline or throughline property form a text.
-                :return:
-                """
-                self.text.tag_config("Completed", overstrike=0)
-                # By setting overstrike as 0 we can remove the over line from the text.
-
-            # After making Check_Completed and Check_UnCompleted method we need to bind them with checkbutton
-
-            def update_checkbutton_states(self):
-                """
-                This function will be used to get the checkbutton current valuee and according to the values we will set the event.
-                :return:
-                """
-                # Now first of all we need to get the value of the check_var
-                Check_states = self.check_var.get()  # 0 means deselected and 1 means selected.
-                # print("check_states",Check_states, type(Check_states))
-
-                if Check_states:
-                    # This condition shows that we have selected the check button.
-                    # Now if we selected the button then we need to strike the text and stop the text update.
-                    # print("Check button is selected.")
-                    self.Check_Completed()
-                    self.OverStrike = True
-                else:
-                    # This condition shows that we have deselected the check button.
-                    # if the button is deselected then we need to remove the strike if it done.
-                    if self.OverStrike:
-                        # Now if we have made the overstrike on the text then we need to remove the over strike
-                        # if the checkbutton is unchecked.
-                        self.Check_UnCompleted()
-                        self.OverStrike = False
-
-            def set_check_status(self, check_status):
-                """
-                This method will set the status of the check, if the check is marked then it will make overstrike on the text,
-                if the check is not marked then it will leave the text.
-                :param check_status: bool, it is a boolean value, set it 0 or False for False, or 1 or True for True.
-                :return:
-                """
-                if check_status:
-                    # if check_status is true it means we have to make overstrike on the text.
-                    self.update_checkbutton_states()
-
-            def bind_Return(self, event):
-                # print(event)
-                """
-                This method will be execute when the Return button is pressed.
-                :return:
-                """
-                self.text.config(state='disabled', relief='flat', bg=self.MainFrame.cget('bg'), takefocus=0)
-                self.keep_data = (self.text.get(1.0, 'end'), self.check_var.get())
-                self.MainFrame.focus_set()
-
-            def InFocus(self, event, background=None, foreground=None):
-                """
-                This is a event method which will be invoked when focus is set to the widget.
-                :param event:
-                :param background: color, background color when widget is in focus.
-                :param foreground: color, foreground color when widget is not in focus.
-                :return:
-                """
-                if not background:
-                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
-
-                if not foreground:
-                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
-
-                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground, takefocus=0)
-
-            def OutFocus(self, event, background=None, foreground=None):
-                """
-                This is an event method which will be invoked when focus out from the widget.
-                :param event:
-                :param background: color, background color when widget is in focus.
-                :param foreground: color, foreground color when widget is not in focus.
-                :return:
-                """
-                if not background:
-                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
-
-                if not foreground:
-                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
-                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
-
-            def MouseEnter(self, event, background=None, foreground=None):
-                """
-                This is a event method which will be invoked when a mouse is Enters over the widget.
-                :param event:
-                :param background: color, background color when widget is in focus.
-                :param foreground: color, foreground color when widget is not in focus.
-                :return:
-                """
-                # default state color:  Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
-                # Mouse enter background color: #d8dbe8
-                # Mouse enter foreground color: #1b2e85
-                if not background:
-                    background = '#d8dbe8'
-
-                if not foreground:
-                    foreground = '#1b2e85'
-
-                self.text.config(state='disabled', relief='ridge', bg=background, fg=foreground, takefocus=0)
-
-            def MouseLeave(self, event, background=None, foreground=None):
-                """
-                This is a event method when the mouse leave the widget.
-                :param event:
-                :param background: color, background color when widget is in focus.
-                :param foreground: color, foreground color when widget is not in focus.
-                :return:
-                """
-                if not background:
-                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
-
-                if not foreground:
-                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
-
-                self.text.config(state='disabled', relief='flat', bg=background, fg=foreground, takefocus=0)
-
-            def bind_bt_1(self, event, background=None, foreground=None):
-                """
-                This method will be used to bind the event to the mouse button-1
-                :param foreground:
-                :param background:
-                :param event:
-                :return:
-                """
-                if not background:
-                    background = Widgets.Keeps_Card.KEEP_CARD_CONTENT_COLOR
-
-                if not foreground:
-                    foreground = Widgets.Keeps_Card.KEEP_CARD_CONTENT_TEXT_COLOR
-
-                self.text.config(state='normal', relief='sunken', bg=background, fg=foreground)
-
-            def event_binding(self):
-                """
-                This function will have all the event binding.
-                :return:
-                """
-                self.text.bind("<Return>", self.bind_Return)
-                self.text.bind("<Button-1>", self.bind_bt_1)
-                self.text.bind("<KeyPress>", self.update_textheight)
-                self.text.bind("<FocusIn>", self.InFocus)
-                self.text.bind("<FocusOut>", self.OutFocus)
-                self.text.bind("<Enter>", self.MouseEnter)
-                self.text.bind("<Leave>", self.MouseLeave)
-
-            def theme_configure(self, content_bg_color='#a267c7',
-                                content_text_color='#a28cff', **colors):
-                """
-                This method will be used to set the theme color for the Textbox class widgets.
-                :param head_bg_color: Heading widgets color.
-                :param head_text_color:  Heading widgets text color
-                :param content_bg_color:  content widgets background color.
-                :param content_text_color: content widgets text color.
-                :return:
-
-                colors: this is wid keyword argument which will give us some more color keys:
-
-                        check_hover_effect  = 'defalut'
-
-                """
-                self.check_bg_color = None
-                self.text_bg_color = content_bg_color
-                self.text_fg_color = content_text_color
-
-                if colors:
-                    self.check_hover_effect = colors['check_hover_effect']
-
-                # Textbox container frame
-                self.MainFrame.config(bg=content_bg_color)
-
-                # Textbox text color
-                self.text.config(bg=content_bg_color, fg=content_text_color)
-
-                # Textbox check color
-                style = ttk.Style()
-                style.configure('KeepCheck.TCheckbutton', background=content_bg_color,
-                                indicatorbackground=content_bg_color,
-                                indicatorcolor=content_bg_color)
-                self.check.configure(style='KeepCheck.TCheckbutton')
-
-            def title_theme_configure(self, container, content_bg_color='#a267c7',
-                                      content_text_color='#a28cff', **colors):
-                """
-                This method will be used to set the theme color for the Textbox class widgets for KeepCheckbar.
-                :param container: This container will hold the all the widgets of KeepCard.
-                :param head_bg_color: Heading widgets color.
-                :param head_text_color:  Heading widgets text color
-                :param content_bg_color:  content widgets background color.
-                :param content_text_color: content widgets text color.
-                :return:
-
-                colors: this is wid keyword argument which will give us some more color keys:
-
-                        {'inmouse_bg': color,
-                          'inmouse_fg': color,
-                          'outmouse_bg': color,
-                          'outmouse_fg': color,
-                          'infocus_bg': color,
-                          'infocus_fg': color,
-                          'outfocus_bg': color,
-                          'outfocus_fg': color}
-                """
-                self.check_bg_color = None
-                self.text_bg_color = content_bg_color
-                self.text_fg_color = content_text_color
-
-                color_options = ["inmouse_bg", "inmouse_fg", "outmouse_bg", "outmouse_fg",
-                                 "infocus_bg", "infocus_fg", "outfocus_bg", "outfocus_fg"]
-
-                color_dict = {'inmouse_bg': None,
-                              'inmouse_fg': None,
-                              'outmouse_bg': None,
-                              'outmouse_fg': None,
-                              'infocus_bg': None,
-                              'infocus_fg': None,
-                              'outfocus_bg': None,
-                              'outfocus_fg': None}
-
-                if colors:
-                    for key, value in colors.items():
-                        if key not in color_options:
-                            raise KeyError(f"BadKey: {key} key should be {color_options}")
-                        else:
-                            color_dict[key] = value
-
-                self.text.bind("<FocusIn>", lambda event: self.InFocus(event, background=color_dict['infocus_bg'],
-                                                                       foreground=color_dict['infocus_fg']))
-                self.text.bind("<FocusOut>", lambda event: self.OutFocus(event, background=color_dict['outfocus_bg'],
-                                                                         foreground=color_dict['outfocus_fg']))
-                self.text.bind("<Enter>", lambda event: self.MouseEnter(event, background=color_dict['inmouse_bg'],
-                                                                        foreground=color_dict['inmouse_fg']))
-                self.text.bind("<Leave>", lambda event: self.MouseLeave(event, background=color_dict['outmouse_bg'],
-                                                                        foreground=color_dict['outmouse_fg']))
-                self.text.bind("<Button-1>", lambda event: self.bind_bt_1(event, background=color_dict['infocus_bg'],
-                                                                       foreground=color_dict['infocus_fg']))
-
-                # Now we need to set the container's theme configuration.
-                for child in misc.get_children(container.CardMainFrame):
-                    # getting all children from CardMainFrame.
-                    if isinstance(child, Frame):
-                        child.config(bg=content_bg_color)
-                    elif isinstance(child, Button):
-                        child.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12,'bold'))
-
-                # Textbox container frame
-                self.MainFrame.config(bg=content_bg_color)
-
-                # Textbox text color
-                self.text.config(bg=content_bg_color, fg=content_text_color, font=('MS Serif', 12))
-
-                # Textbox check color
-                style = ttk.Style()
-                style.configure('TitleCheck.TCheckbutton', background=content_bg_color,
-                                indicatorbackground=content_bg_color,
-                                indicatorcolor='white', padding=3, indicatormargin=5)
-                self.check.configure(style='TitleCheck.TCheckbutton')
-
-        class KeepCardBar(Frame):
+        class Checkbutton(ttk.Checkbutton):
             """
-            This Keep card bar class will be used to create a bar in a Keeps tab and it will be used to create  a new KeepCard,
-            It will be initiated with a Title and a single check.
+            This class will be used to inherit the ttk.Checkbutton class it will modify some functionlaity in it. this
+            Checkbutton will be used to check our daily routine activity.
+
+
+            init attribute:
+                style : To set the style for Checkbutton and its member widgets.
+                variable : control variable to control onvalue, offvalue of checkbutton.
+                textvariable : control variable to set text for checkbutton label.
+                normal_font : normal font style with specified font attributes for checkbutton's text label.
+                striked_font : overstriked font style with specified font attributes for checkbutton's text label.
+                notify : To show notification for some specific task.
+                notify_time :
+
+
             """
 
-            def __init__(self, master=None, container_frame=None, cfg={}, **kw):
+            def __init__(self, master=None):
+                super().__init__(master)
+                self.style = ttk.Style()
+                self.variable = IntVar()
+                self.textvariable = StringVar()
+                self.normal_font = font.Font(family='Sarif', size=12)
+                self.striked_font = font.Font(family='Sarif', size=12, overstrike=1)
+                self.notify = False
+                self.notify_time = None
 
-                super().__init__(master=master, cnf=cfg, **kw)
-                self.master = master
-                self.cfg = cfg
-                self.kw = kw
-
-                self.Create_Frame(master=self.master, cfg=self.cfg, **self.kw)
-                # Now we need to initiate the Frame and other things.
-                self.bind_envents()  # This method to initiate the binding of the events.
-                self.Content = None
-                self.KeepCardContainer = container_frame  # In this we will place over created Cards.
-                self.BarActive = False
-                # print("Focused widget: ", self.MainFrame.focus_get())
-
-            def Create_Frame(self, master, cfg, **kw):
+            def oncheck(self, event):
                 """
-                This function will be used to create the Keep Bar which will be used to create new Keep Card.
-                :param master: This is the master Frame or window in which the Bar will be placed.
-                :param cfg: config parameters for the Frame.
-                :param kw: other config keyword which will be passed through the wild parameter.
-                :return: None
-                """
-
-                self.MainFrame = Frame(master=master, cnf=cfg, **kw)
-
-                # Now we need to put a Entry box inside it
-                self.Title_var = StringVar()
-                self.Title_var.set("Title")
-                self.Entry = Entry(self.MainFrame, textvariable=self.Title_var, font=("sarif", 15, 'bold'),
-                                   relief='flat',
-                                   fg="#e08e46", takefocus=0, )
-                self.Entry.pack(fill='y', anchor='nw')
-
-                self.ChecksFrame = Frame(self.MainFrame, bg='red')
-                self.ChecksFrame.pack(fill='y', anchor='nw')
-
-                self.BottomFrame = Frame(self.MainFrame, bg='green')
-                self.BottomFrame.pack(fill='y', anchor='se', side='bottom')
-
-                self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
-                                     head_text_color='#827c91', content_bg_color='#1b4875',
-                                     content_text_color='#a28cff')
-
-            def pack(self, cnf={}, **packvalues):
-                """
-                put the card widget on the Frame using the pack layout management system.
-                :return: None
-                """
-                self.MainFrame.pack(cnf, **packvalues)
-
-            def grid(self, cnf={}, **packvalues):
-                """
-                Put the card widget on the Frame using the grid layout management system.
-                :return: None
-                """
-                self.MainFrame.grid(cnf, **packvalues)
-
-            def bt1_active_state(self, event):
-                """
-                This method of the class will be bind to the mouse button-1. This method will be used to initiate the
-                Keep card.
+                This method is a handler method which will be used to handle the event of Button-1 click on the Checkbutton.
+                This method will perform text overstrike operation on the selected check.
+                :param event:
                 :return:
                 """
-                # print("Entry event responded")
-                # print("Focused widget: ", self.MainFrame.focus_get())
-                if self.Entry.focus_get() != self.Entry and self.BarActive == False:
-                    # Now since Bar has been activated so we need to make self.BarActive == True
-                    self.BarActive = True
-                    # Now if self.BarActive is True then it will be not recreated when we press again.
-
-                    self.Title_var.set("")
-                    self.Entry.config(fg='black')
-                    self.Entry.pack_configure(fill='x', pady=10, padx=10)
-                    self.MainFrame.pack_configure(pady=10)
-                    # Now we need to initiate a Keep check
-                    self.Content = Widgets.Keeps_Card.CreateKeepsCard(self.ChecksFrame, title=None)
-                    self.Content.add_button_holder = "KeepCardBar"
-                    self.Content.CardMainFrame.config(highlightbackground=None, highlightcolor=None,
-                                                      highlightthickness=0)
-                    self.Content.pack(pady=10)
-                    self.Content.CheckList.append(self.Content.Textbox)
-                    # Now we need to put two button one for save the card and another for cancel the save of card
-                    # delete all the card data.
-
-                    self.save_button = Button(self.BottomFrame, text='Save')
-                    self.save_button.pack(side='right', anchor='ne')
-
-                    self.cancel_button = Button(self.BottomFrame, text='Cancel')
-                    self.cancel_button.pack(side='right', anchor='ne')
-
-                    self.cancel_button.config(command=self.reset_card_bar)
-                    self.save_button.config(command=self.save_card)
-
-                    # Here after all packing we need to configure theme of the title bar.
-
-                    self.theme_configure(Mainbody_color="#1b4875", head_bg_color='#1b4875',
-                                         head_text_color='#827c91', content_bg_color='#1b4875',
-                                         content_text_color='#a28cff')
-
-                    self.Content.Textbox.title_theme_configure(self.Content, content_bg_color='#1b4875',
-                                                               content_text_color='#a28cff',
-                                                               outmouse_bg='#1b4875', outmouse_fg='white',
-                                                               infocus_bg='#1b4875', infocus_fg='white',
-                                                               outfocus_bg='#1b4875', outfocus_fg='white')
-                    self.Content.AddCheckbutton.config(bg='#1b4875', fg='white', relief='flat',
-                                                       activebackground='#1b4875', activeforeground='white',
-                                                       font=('MS Serif', 12,'bold'))
-
-            def bind_envents(self):
-                self.Entry.bind("<Button-1>", self.bt1_active_state)
-
-            def save_card(self):
-                """
-                This function will be used to store the card details and create a new card from those details and put it
-                in the CardContainer frame, this process will reset the keepcardbar and recreate a new card to put it in
-                the CardContainer frame.
-                :return:
-                """
-                # CardList = Widgets.Keeps_Card.Keep_Cards_List
-                # CardList will have all the cards , it will be used to get the all card by their index
-                # and we will get the
-                # apps_func_keep_card = apps.Keep_Cards()
-                ts = apps.Time()
-                # ts form apps_func to give time.
-
-                CKC2 = Widgets.Keeps_Card.CreateKeepsCard(self.KeepCardContainer)
-                # Now we will create an object of CreateKeepCard class to create a new card.
-                # this card will be placed in the KeepCardContainer frame.
-
-                idlist = apps_func_keep_card.get_unique_id()
-                # This idlist will holds the all unique id of all the cards.
-
-                self.Content.CardTitle = self.Title_var.get()  # # storing the card title
-                self.id = self.Content.gen_card_unique_id(idlist=idlist)  # # storing the card id
-                self.Content.init_date = ts.get_current_date()  # storing card init date
-                self.Content.init_time = ts.get_current_time()  # storing card init time
-
-                keep_data = self.unpack_card_text(
-                    self.Content.CheckList)  # getting the content of the card and its states.(0 or 1)
-
-                # saving the card detail and getting the full data of the card in a dict format.
-                data = apps_func_keep_card.save_keep_card_data(Widgets.Keeps_Card.Keep_Card_Data,
-                                                               Widgets.Keeps_Card.Keep_Card_Ids,
-                                                               title=self.Content.CardTitle, Id=self.id,
-                                                               time=self.Content.init_time, date=self.Content.init_date,
-                                                               content=keep_data, idlist=idlist)
-                # appending a new card in the CardList
-                Widgets.Keeps_Card.Keep_Cards_List.append(CKC2)
-                Widgets.Keeps_Card.Keep_Card_Object.append(CKC2)
-                # Now we will get position for our new keep card
-                # print("In KeepCardBar: ")
-                # print("\t\t ", Widgets.Keeps_Card.Keep_Cards_List)
-
-                # Now we will put the newly created card on the container frame, for this we need to get the position for
-                # new card this will be done with get_keep_card_position() method.
-                _, newpos = self.get_keep_card_position(Widgets.Keeps_Card.Keep_Cards_List)
-
-                # Now we will save the keep card and put it in the KeepCardContainer frame.
-                CKC2.Create_Keep_Card2(self.KeepCardContainer, position=newpos, data=data)
-
-                # Updating the display and idle task.
-                CKC2.CardContentFrame2.update_idletasks()
-                # resetting the card bar.
-                self.reset_card_bar()
-
-            def reset_card_bar(self):
-                """
-                This method will be used to reset the Keep Card bar when we will cancel or reject to create a new card.
-                :return:
-                """
-                self.BarActive = False
-                self.MainFrame.destroy()
-                self.Create_Frame(master=self.master, cfg=self.cfg, **self.kw)
-                self.pack(pady=20)
-                # Now we need to initiate the Frame and other things.
-                self.bind_envents()  # This method to initiate the binding of the events.
-                self.Content = None
-                self.MainFrame.update_idletasks()
-
-            def unpack_card_text(self, objList):
-                """
-                This method will be used to unpack the card text from object. object will an instance of the KeepCardCheck
-                class which will have the text widget and its control variable.
-                :return:
-                """
-                content = []
-
-                for obj in objList:
-                    check_text = obj.text.get(1.0, 'end')
-                    check_text = check_text.splitlines()[0]
-                    check_var = obj.check_var.get()
-                    content.append((check_text, check_var))
-
-                return content
-
-            def get_keep_card_position(self, KCL, columns=3):
-                """
-                This method will be used to define the position for new widget.
-                :param KCL: Keep_Card_List we will hold all the Cards.
-                :return: tuple, it will return new position.
-                """
-                row = 0
-                col = 0
-                poslist = []
-                # print("length of KCL: ", len(KCL))
-                if len(KCL) > 0:
-                    for cp in range(len(KCL)):
-                        # print("length of cp: ",cp)
-                        cp += 1  # card position.
-                        # print("length of cp: ", cp)
-                        poslist.append((row, col))
-                        if cp % columns == 0:
-                            row += 1
-                            col = 0
-                        else:
-                            col += 1
-
-                newest = poslist[-1]
-                return poslist, newest
-
-            def theme_configure(self, Mainbody_color=None, head_bg_color=None, head_text_color=None,
-                                content_bg_color=None, content_text_color=None):
-                """
-                This is a color configuration of the Creating new card title bar, in which title bar section will act as a
-                    head of the Frame and below part will act as a content section of the Frame.
-                :param head_bg_color: background color of the title bar.
-                :param head_text_color: text color of the title bar.
-                :param content_bg_color: background color of the content section.
-                :param content_text_color: text color of the content section.
-                :return:
-                """
-
-                # NOw first we need configure Main body which is also a container of the title bar.
-                self.MainFrame.config(bg=Mainbody_color)
-
-                # Now we will configure the title bar.
-                self.Entry.config(bg=head_bg_color, fg=head_text_color)
-
-                # Now we need to configure the Text box color
-                self.ChecksFrame.config(bg=content_bg_color)
-                # Now we will configure the CheckFrame child color (text, checkbutton)
-                style = ttk.Style()
-                style.configure('Check.TCheckbutton', background=content_bg_color, indicatorbackground=content_bg_color,
-                                indicatorcolor=content_bg_color)
-                for child in self.ChecksFrame.winfo_children():
-
-                    if isinstance(child, Button):
-                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
-                                     activebackground=content_bg_color, activeforeground=content_text_color)
-                    elif isinstance(child, ttk.Checkbutton):
-                        child.configure(style='Check.TCheckbutton')
-                    elif isinstance(child, Text):
-                        child.config(bg=content_bg_color, fg=content_text_color)
-
-                    elif isinstance(child, Frame):
-                        child.config(bg=content_bg_color)
-
-                # Now we will config the bottom section in which buttons are placed.
-                self.BottomFrame.config(bg=content_bg_color)
-
-                # Now we will set buttons config.
-                for child in self.BottomFrame.winfo_children():
-                    if isinstance(child, Button):
-                        child.config(bg=content_bg_color, fg=content_text_color, relief='flat',
-                                     activebackground=content_bg_color, activeforeground=content_text_color)
