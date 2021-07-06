@@ -13,6 +13,7 @@ import datetime
 
 apps_func_keep_card = apps.Keep_Cards()
 
+global CREATE_CARD
 
 class Misc:
 
@@ -482,7 +483,7 @@ class Widgets:
                 self.current_date = self.Time.get_current_date()
                 self.retrieve_today_target()  # retrieving new day data.
 
-            if Widgets.TTH_ProgressBar.COUNTDOWN_STATUS == True:
+            if Widgets.TTH_ProgressBar.COUNTDOWN_STATUS:
                 # if this condition is true then it means that countdown is running
                 # if we are running the timer then we will update the timer in every 5 minutes.
                 # self.Delay_Minutes = 1
@@ -573,8 +574,8 @@ class Widgets:
                     if row['Date'] == apps.Time.get_current_date():
                         # if we get any data of current day then we need to calculate the total time of the day.
                         # print("Total Time values: ", row["Total Time"], type(row['Total Time']))
-                        if row[
-                            'Record Type'] in self.WatchList:  # our row belongs to in watch list then we will count it.
+                        if row['Record Type'] in self.WatchList:
+                            # our row belongs to in watch list then we will count it.
                             today_time.append(int(row["Total Time"]))
             # and at last we need to sum all the times.
             # [int(i) for i in today_time]
@@ -701,7 +702,6 @@ class Widgets:
             white = "white"
 
             style = ttk.Style()
-
             style.theme_create("NewNotebook", parent="clam", settings={
                 "TNotebook": {
                     "configure": {"tabmargins": [2, 5, 2, 0], 'tabposition': 'wn', 'background': '#3e4c63'}, },
@@ -727,7 +727,21 @@ class Widgets:
                 "TCombobox": {
                     "configure": {'background': 'black', 'foreground': 'black', 'bordercolor': 'black',
                                   'darkcolor': 'red', 'lightcolor': 'yellow', 'fieldbackground': 'red'},
-                    "map": {"background": [("selected", '#4fbd9d')]}}
+                    "map": {"background": [("selected", '#4fbd9d')]}},
+
+                "TFrame": {
+                    "configure": {'background': 'white'}},
+
+                "TLabel": {
+                    "configure": {'background': 'white', 'foreground': 'black', 'bordercolor': 'black',
+                                  'darkcolor': 'red', 'lightcolor': 'yellow', 'fieldbackground': 'red'}},
+
+                "TButton": {
+                    "configure": {'background': 'white', 'foreground': 'black', 'bordercolor': 'black',
+                                  'darkcolor': 'black', 'lightcolor': 'white'},
+
+                    "map": {"background": [("selected", '#4fbd9d'), ('hover', '#b1c2e0')],
+                            'relief': [('hover', 'groove')]}},
 
             })
 
@@ -912,11 +926,18 @@ class Widgets:
 
             # Now we need to configure the AddButton
             def add_subcard(button):
-                # print("add record button pressed")
+                global CREATE_CARD
+                CREATE_CARD = True
+
+                def on_cardclose():
+                    global CREATE_CARD
+                    root.destroy()
+                    CREATE_CARD = False
                 # Ok so when we press the button then we need to ask for new record data.
                 # New record or sub record also need a Parent Name, its own Name (card name)
-                root = Toplevel()
 
+                root = Toplevel()
+                root.protocol("WM_DELETE_WINDOW", on_cardclose)
                 # When we press the Add SubCard button then it wil make a top level window
                 # and it will call the self.Add_SubRecord
                 self.Add_SubRecord(root, Parent=self.Tracks_Cards_AddButton_Mapping[button])
@@ -925,20 +946,18 @@ class Widgets:
 
                 # Data.update(self.SubDictData) # This self.SubDictData Contains the SubCard information.
                 # print("Subcard Detail using self.SubDictData: ", self.SubDictData, )
-                self.Cards = Data
-                one_card_height = 70
+                if CREATE_CARD:
+                    self.Cards = Data
+                    one_card_height = 70
+                    current_height = self.Root_Card_Frame.cget('height')
+                    self.Root_Card_Frame.config(height=current_height + one_card_height)
+                    self.Create_Track_Record_Sub_Card(self.content_frame,
+                                                      Parent=self.SubCard_Parent,
+                                                      CardName=self.SubCard_Name,
+                                                      FullName=self.SubCard_FullName, Data=self.SubDictData)
 
-                current_height = self.Root_Card_Frame.cget('height')
-
-                self.Root_Card_Frame.config(height=current_height + one_card_height)
-
-                self.Create_Track_Record_Sub_Card(self.content_frame,
-                                                  Parent=self.SubCard_Parent,
-                                                  CardName=self.SubCard_Name,
-                                                  FullName=self.SubCard_FullName, Data=self.SubDictData)
-
-                self.Root_Card_Frame.update_idletasks()
-                # print(Data)
+                    self.Root_Card_Frame.update_idletasks()
+                    # print(Data)
 
             AddButton.config(command=lambda x=AddButton: add_subcard(x))
             DeleteButton.config(command=lambda x=Data["Name"],
@@ -1020,39 +1039,43 @@ class Widgets:
             self.Tracks_Cards_Frames.update({Data['FullPath']: SubContent})
 
             def add_subcard(button):
-                # This method will be called from a subcard button
-                # print("add record button pressed")
-                one_card_height = 80
-                sub_current_height = Subcard.cget('height')  # height of the sub card
-                root_current_height = self.Root_Card_Frame.cget('height')  # height of Root card
-
-                SubContent.config(height=sub_current_height + one_card_height)
-
-                self.Root_Card_Frame.config(height=root_current_height + 70)
+                global CREATE_CARD
+                CREATE_CARD = True
 
                 # Now here after increasing the height of the subcard we need to call Add_SubCard function
                 # This Add_SubCard metod need a top level window
+                def on_cardclose():
+                    global CREATE_CARD
+                    root.destroy()
+                    CREATE_CARD = False
+
                 root = Toplevel()
                 self.Add_SubRecord(root, self.Tracks_Cards_AddButton_Mapping[button])
+                root.protocol("WM_DELETE_WINDOW", on_cardclose)
                 # Parent = self.Tracks_Cards_AddButton_Mapping[button]
                 # Tracks_Cards_AddButton_Mapping stores all the Card full name and map them to the button id.
                 # Now when we will press the button then it will pick the full name of the selected Subcard Full name.
                 Subcard.wait_window(root)  # this will wait window until end of the Add_SubCard process
 
-                # Now we need to access self.SubDictData , which will be updated by the Add_SubCard method.
-                # also self.SubDictData will update
-                # self.SubCard_Parent , self.SubCard_Name, self.SubCard_FullName
+                if CREATE_CARD:
+                    one_card_height = 80
+                    sub_current_height = Subcard.cget('height')  # height of the sub card
+                    root_current_height = self.Root_Card_Frame.cget('height')  # height of Root card
+                    SubContent.config(height=sub_current_height + one_card_height)
+                    self.Root_Card_Frame.config(height=root_current_height + 70)
+                    # Now we need to access self.SubDictData , which will be updated by the Add_SubCard method.
+                    # also self.SubDictData will update
+                    # self.SubCard_Parent , self.SubCard_Name, self.SubCard_FullName
 
-                # Now we need to call the self.Create_Track_Record_Sub_Card
-                # ok now tis Add_SubCard will update our self.
-                self.Create_Track_Record_Sub_Card(SubContent, Parent=self.SubCard_Parent, CardName=self.SubCard_Name,
-                                                  FullName=self.SubCard_FullName, Data=self.SubDictData)
-                SubContent.update_idletasks()
-
-                # Now we need to save the Data
-                self.Tcards.SaveCard(CardName=self.SubCard_Name, Parent=self.SubCard_Parent,
-                                     Database=Widgets.Track_Card.Tracks_Cards_Database, Subcard=self.SubDictData,
-                                     FullName=self.SubCard_FullName)
+                    # Now we need to call the self.Create_Track_Record_Sub_Card
+                    # ok now tis Add_SubCard will update our self.
+                    self.Create_Track_Record_Sub_Card(SubContent, Parent=self.SubCard_Parent, CardName=self.SubCard_Name,
+                                                      FullName=self.SubCard_FullName, Data=self.SubDictData)
+                    SubContent.update_idletasks()
+                    # Now we need to save the Data
+                    self.Tcards.SaveCard(CardName=self.SubCard_Name, Parent=self.SubCard_Parent,
+                                         Database=Widgets.Track_Card.Tracks_Cards_Database, Subcard=self.SubDictData,
+                                         FullName=self.SubCard_FullName)
 
             # Now we need to track every new sub card with the help of the button.
             AddButton.config(command=lambda x=AddButton: add_subcard(x))
@@ -1236,40 +1259,47 @@ class Widgets:
                 # print("Save data Button:",button)
                 # Note that subtopic can be manipulated by a Subtopic_frame object.
                 # subtopic_frame object will contain the subtopics
+                save_confirm = False
                 Hr_var, Min_var, Sec_var = wid.Hr_var.get(), wid.Min_var.get(), wid.Sec_var.get()
                 # These time values are taken from the Time_Frame function which is defined in the Widgets class.
 
-                SubCardData = {SubCard_entry.get(): {'Name': SubCard_entry.get(),
-                                                     'Date': Current_Date,
-                                                     'Time': Current_Time,
-                                                     'Topic': {},
-                                                     'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
-                                                     'Completed Hour': 0,
-                                                     'EndDate': wid2.Date,  # here we need to pass a end date of the
-                                                     'Progress': 0,
-                                                     'Parent': Parent,
-                                                     'FullPath': '.'.join([Parent, SubCard_entry.get()]),
-                                                     'Childs': 0}}
+                # Now we need to check for the inserted data
+                if self.Time.time_to_seconds(f"{Hr_var}:{Min_var}:{Sec_var}") == 0:
+                    result = messagebox.showwarning(title="Invalid Entry", message="Target Hour can't be zero")
 
-                # data_dict['FullName'] = ".".join([Parent,data_dict['Topic']])
-                # defining the Subcard detail
-                self.SubCard_Parent = Parent
-                # print("Sub card Parent in widgets.Create_Tracks.Add_SubCard: ", self.SubCard_Parent)
-                self.SubCard_Name = SubCard_entry.get()
-                self.SubCard_FullName = '.'.join([Parent, SubCard_entry.get()])
+                else:
 
-                self.NextParentTopic = SubCardData[self.SubCard_Name]
-                self.SubDictData = SubCardData
-                # print("self.SubDictData =>", self.SubDictData)
-                # Now after Sucessfully save and create a new NTR Card we need to close this root window
-                # Now after saving the data we need to retrieve the data
-                save = apps.Tracks_Cards()
-                save.SaveCard(CardName=self.SubCard_Name, Parent=Parent,
-                              Database=Widgets.Track_Card.Tracks_Cards_Database,
-                              Subcard=SubCardData, FullName=self.SubCard_FullName)
-                master.destroy()
-                # print(".".join([parent_topic,data_dict['Topic']]))
-                # print(f"{'_' * 30}")
+                    SubCardData = {SubCard_entry.get(): {'Name': SubCard_entry.get(),
+                                                         'Date': Current_Date,
+                                                         'Time': Current_Time,
+                                                         'Topic': {},
+                                                         'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
+                                                         'Completed Hour': 0,
+                                                         'EndDate': wid2.Date,  # here we need to pass a end date of the
+                                                         'Progress': 0,
+                                                         'Parent': Parent,
+                                                         'FullPath': '.'.join([Parent, SubCard_entry.get()]),
+                                                         'Childs': 0}}
+
+                    # data_dict['FullName'] = ".".join([Parent,data_dict['Topic']])
+                    # defining the Subcard detail
+                    self.SubCard_Parent = Parent
+                    # print("Sub card Parent in widgets.Create_Tracks.Add_SubCard: ", self.SubCard_Parent)
+                    self.SubCard_Name = SubCard_entry.get()
+                    self.SubCard_FullName = '.'.join([Parent, SubCard_entry.get()])
+
+                    self.NextParentTopic = SubCardData[self.SubCard_Name]
+                    self.SubDictData = SubCardData
+                    # print("self.SubDictData =>", self.SubDictData)
+                    # Now after Sucessfully save and create a new NTR Card we need to close this root window
+                    # Now after saving the data we need to retrieve the data
+                    save = apps.Tracks_Cards()
+                    save.SaveCard(CardName=self.SubCard_Name, Parent=Parent,
+                                  Database=Widgets.Track_Card.Tracks_Cards_Database,
+                                  Subcard=SubCardData, FullName=self.SubCard_FullName)
+                    master.destroy()
+                    # print(".".join([parent_topic,data_dict['Topic']]))
+                    # print(f"{'_' * 30}")
 
             Set_button.config(command=lambda x=Set_button: save_data(x))
 
@@ -1596,6 +1626,7 @@ class Widgets:
                     Textbox = Widgets.Keeps_Card.KeepCardCheck(self.CardContentFrame2)
                     Textbox.text.insert(1.0, check_text)
                     Textbox.check_var.set(check_mark)
+                    Textbox.update_height()
                     Textbox.set_check_status(check_text)
                     # after creating the checkbox inside the Keep Card we need to store the Textbox in the self.CheckList
                     # and also we need to store the text content and check mark in the self.CheckContent list.
@@ -1901,6 +1932,7 @@ class Widgets:
 
             def __init__(self, master=None, cnf=None):
                 super().__init__(master)
+                self.text_len = None
                 self.lines = 1  # This will be used to increase the line of the Text widget.
                 self.bg_color = 'white'
                 self.keep_data = None
@@ -1942,16 +1974,20 @@ class Widgets:
                 :return: None
                 """
                 if event.char != 'Return':
-                    self.text_len = None
-                    lchar = self.text.cget('width')
-                    line = self.text.get(1.0, 'end')
-                    lines = len(line) // lchar + 1
-                    if self.lines + 1 == lines:
-                        # print("line increased:", self.lines, lines)
-                        self.text.config(height=lines)
-                        self.lines += 1
+                    self.update_height()
 
-                # self.text_after_id = self.MainFrame.after(700, self.update_textheight)
+            def update_height(self):
+                """
+                This method will be used to update the text height when the text is not fit in one line.
+                :return:
+                """
+                l_char = self.text.cget('width')
+                line = self.text.get(1.0, 'end')
+                lines = len(line) // l_char + 1
+                if self.lines + 1 == lines:
+                    # print("line increased:", self.lines, lines)
+                    self.text.config(height=lines)
+                    self.lines += 1
 
             def Check_Completed(self):
                 """
@@ -2137,9 +2173,8 @@ class Widgets:
 
                 # Textbox container frame
                 self.MainFrame.config(bg=content_bg_color)
-
                 # Textbox text color
-                self.text.config(bg=content_bg_color, fg=content_text_color, font=('sarif', 12))
+                self.text.config(bg=content_bg_color, fg=content_text_color, font=('sans-sarif', 13), width=40)
 
                 self.check.configure(style='KeepCard.TCheckbutton')
 

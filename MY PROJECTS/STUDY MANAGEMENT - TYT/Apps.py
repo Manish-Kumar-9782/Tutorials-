@@ -7,6 +7,8 @@ from tkinter import (Frame, Label, Button, Spinbox, Toplevel, Tk,
 from tkinter import GROOVE, RAISED, SUNKEN, FLAT
 from tkinter import TOP, LEFT, RIGHT, BOTTOM, W, S, SW, SE, E, EW, X, Y, BOTH
 from tkinter import ttk
+
+import Apps_func
 import Apps_func as apps
 import time as ttime
 from tkinter import messagebox
@@ -136,7 +138,7 @@ class Timer():
             self.Countdown_Time = time  # this is the Countdown time which will be set to TTime.
             # print("Countdown Time: ",self.Countdown_Time)
             count_time = apps.Time.Countdown(seconds)  # initiating the countdown timer object.
-            # this object will hold the all countdown timer functionallity.
+            # this object will hold the all countdown timer functionality.
 
             # after that we will display the countdown time.
             master.overrideredirect(True)
@@ -145,9 +147,9 @@ class Timer():
             master.attributes("-topmost", True)
             master.update()
 
-            # setting the position of the Contdown timer.
-            ww, wh, x, y = Pos.Position_Timer(master,
-                                              "Bottom")  # getting the x,y coordinate of the main screen to set the Countdown timer.
+            # setting the position of the Countdown timer.
+            ww, wh, x, y = Pos.Position_Timer(master, "BottomRight")
+            # getting the x,y coordinate of the main screen to set the Countdown timer.
             print(f"{ww}x{wh}+{x}+{y + 30}")
             master.geometry(f"{ww}x{wh}+{x}+{y + 30}")
 
@@ -249,7 +251,7 @@ class Timer():
                     # This section will run if we have completed our countdown time,
                     # This run after CTime and gives us ETime.
                     delay = 1000
-                    if self.Stopwatch == None:
+                    if self.Stopwatch is None:
                         # initiate the stopwatch
                         self.Stopwatch = self.Start_Stopwatch()
                         # here self.Stopwatch is just an instance which holds the Start_Stopwatch object
@@ -983,33 +985,46 @@ class Tracks(Frame):
             # with their parents in nested way.
             # For this card we need the CardName
             Root = {"Root": {}}
-            RootCard = {Name_entry.get(): {'Type': Type_option_var.get(),
-                                           'Name': Name_entry.get(),
-                                           'Date': ttime.strftime("%d-%b-%Y"),
-                                           'Time': ttime.strftime("%I:%M:%S %p"),
-                                           'Topic': {},
-                                           'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
-                                           'Completed Hour': 0,
-                                           'EndDate': endDate,  # here we need to pass a end date of the
-                                           'Progress': 0,
-                                           'Parent': "Root",
-                                           'FullPath': f"Root.{Name_entry.get()}",
-                                           'Childs': 0}}
 
-            self.Add_Record_Card_Name = Name_entry.get()
-            card = wid.Track_Card()
+            if ts.time_to_seconds(f"{Hr_var}:{Min_var}:{Sec_var}") == 0:
+                messagebox.showwarning(title='Invalid Entry',
+                                                message="Target Hour can't be zero!")
 
-            # Root['Root'].update(RootCard)# updating the Root section of the card database
-            card.Tracks_Cards_Database['Root'].update(RootCard)  # updating our old database.
-            print('Database after updating: ', card.Tracks_Cards_Database)
-            # print("Tracks_Cards_Database", card.Tracks_Cards_Database)
-            self.Add_Record_Data = card.Tracks_Cards_Database
-            # Now after Successfully save and create a new NTR Card we need to close this root window
-            # Now after saving the data we need to retrieve the data
-            save = apps.Tracks_Cards()
-            save.SaveCard(CardName=Name_entry.get(), Parent="Root", Database=card.Tracks_Cards_Database)
-            master.destroy()
-            print("self.Add_Record_Data: ", self.Add_Record_Data)
+            elif Type_option_var.get() not in Type_option_List:
+                messagebox.showwarning(title='Invalid Selection',
+                                       message="Please select a Type!")
+
+            elif Name_entry.get() is None or Name_entry.get() == '':
+                messagebox.showwarning(title='Topic Name',
+                                       message="Topic Name can't be empty!")
+            else:
+                RootCard = {Name_entry.get(): {'Type': Type_option_var.get(),
+                                               'Name': Name_entry.get(),
+                                               'Date': ttime.strftime("%d-%b-%Y"),
+                                               'Time': ttime.strftime("%I:%M:%S %p"),
+                                               'Topic': {},
+                                               'Target Hour': f"{Hr_var}:{Min_var}:{Sec_var}",
+                                               'Completed Hour': 0,
+                                               'EndDate': endDate,  # here we need to pass a end date of the
+                                               'Progress': 0,
+                                               'Parent': "Root",
+                                               'FullPath': f"Root.{Name_entry.get()}",
+                                               'Childs': 0}}
+
+                self.Add_Record_Card_Name = Name_entry.get()
+                card = wid.Track_Card()
+
+                # Root['Root'].update(RootCard)# updating the Root section of the card database
+                card.Tracks_Cards_Database['Root'].update(RootCard)  # updating our old database.
+                print('Database after updating: ', card.Tracks_Cards_Database)
+                # print("Tracks_Cards_Database", card.Tracks_Cards_Database)
+                self.Add_Record_Data = card.Tracks_Cards_Database
+                # Now after Successfully save and create a new NTR Card we need to close this root window
+                # Now after saving the data we need to retrieve the data
+                save = apps.Tracks_Cards()
+                save.SaveCard(CardName=Name_entry.get(), Parent="Root", Database=card.Tracks_Cards_Database)
+                master.destroy()
+                print("self.Add_Record_Data: ", self.Add_Record_Data)
 
         Set_button.config(command=save_data)
 
