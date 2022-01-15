@@ -8,13 +8,13 @@
 #include<stdio.h>
 
 
-	// Note: Here we need to define a static or global variable.
-	// because after execution of this fucntion location will wipe out form the stack memory.
-	// So for this solution we need to make a static or global varaible so our address memory will not wipr.
-	// we can alos declare a pointer to stor the address of created memory.
-	// function space is allocated in the stack memory area.
-	// while pointer variable is stroed  in the heap area. 
-	// in both cases we will have a read only values we can not modify them or we can say that they are immutable.
+	// -> Note: Here we need to define a static or global variable.
+	// -> because after execution of this fucntion location will wipe out form the stack memory.
+	// -> So for this solution we need to make a static or global varaible so our address memory will not wipr.
+	// -> we can alos declare a pointer to stor the address of created memory.
+	// -> function space is allocated in the stack memory area.
+	// -> while pointer variable is stroed  in the heap area. 
+	// -> In both cases we will have a read only values we can not modify them or we can say that they are immutable.
 	// -> if we try to modify them they will not give any compile error.
 	
 char* SetString1(){
@@ -45,19 +45,28 @@ void main(){
 	String1= SetString1();
 	String2 = SetString2();
 	String3 = SetString3();
+	
+	// Modifing the static char string.
+	String1[0] = 'D';
+	
 	printf("String1: %s\n", String1);
 	
 	// try to modifying the string2;
 	// this modification will not give us any compile time error but it will not show the result as we desired.
 	// to get the comile time error we need to use const variable.
-	String2[0] = 's';
+	//String2[0] = 's';
 	printf("String2: %s\n", String2);
 	
 	// trying to modifying the const string from SetString3 funciton.
 	
-	String3[1] = 't';
-	printf("String3: %s\n");
+	//String3[1] = 't';
+	// assignment t in String3[0] will give us a compile error;
+	printf("String3: %s\n", String3);
 	
+	
+	printf("Address of the String1: %p\n",&String1 );
+	
+	printf("Size of the String1 Pointer: %d", sizeof(String1));
 	
 	}
 
