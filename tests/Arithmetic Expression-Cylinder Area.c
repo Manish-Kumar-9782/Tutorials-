@@ -30,9 +30,5 @@ void main(){
 }
 
 
-/*  a: acceleration
-	h: hight of the body (object)
-	v: velocity of the moving object
-	m: mass of the moving object
-	*/
+
 
