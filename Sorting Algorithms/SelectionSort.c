@@ -30,7 +30,7 @@ void swap(int *a , int *b){
 }
 
 // Bubble Sort function will tak an array and the size of the array.
-void SelectionSort2(int arr[], int size){
+void SelectionSort(int arr[], int size){
     /*
         int arr[]: This should be an array (integer type array which holds int values.)
         int size: size of the array which is passed in the first argument. 
@@ -48,7 +48,7 @@ void SelectionSort2(int arr[], int size){
        // Now we need to make another loop which will run upto the size of the array.
 
        min_idx=i; // initially we are assuming that ith position is the min_idx;
-        for(j = i+1; j<size; j++){
+        for(j = i+1; j<size; j++)
          // finding the minimum element position.
             if(arr[j]<arr[min_idx])
                 min_idx = j; // if we found new value which is minimum to the min_idx value then we will
@@ -96,7 +96,7 @@ int main(){
     printf("Array before Sorting: ");
     printarray(arr, 10);
 
-    selectionSort(arr, 10);
+    SelectionSort(arr,10);
 
     printf("Array after Sorting: ");
     printarray(arr, 10);  
