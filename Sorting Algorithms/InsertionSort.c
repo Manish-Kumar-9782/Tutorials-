@@ -58,6 +58,32 @@ void InsertionSort(int arr[], int size){
         (Since in this function we are not calculating the size of the array) 
     */
 
+    // First we will make a loop for a sorted that starts from the zero position and increase as values are in accending order.
+    int i,j, key;
+    // key:  this will hold one of the swap value.
+    
+    // we will starts the loop from the second element of the loop.
+    for(i=1; i<size; i++){
+
+        // Now we are taking the ith value as key.
+        key = arr[i];  // Note: if we are not using the swap function then only this key will be used.
+        
+        //Now we will initiate the j from i-1 value.
+        j = i-1; // in the begining j will be zero which is the last index of sorted array. 
+        
+        // Now we need to check that ith and (i+1)th values
+        // if i+1 value is smaller than ith value then we will swap. 
+         /* Move elements of arr[0..i-1], that are
+          greater than key, to one position ahead
+          of their current position */
+        
+        while(j >=0 && arr[j] > key){
+            //arr[j+1] = arr[j];  // swaping the two consecutive values.
+            swap(&arr[j], &arr[j+1]);
+            j--; // going left in the sorted array.
+        }
+        //arr[j+1] = key;
+    }
    
 
 }
@@ -71,13 +97,13 @@ void InsertionSort(int arr[], int size){
 
 int main(){
 
-    system("cls");
-    int arr[10] = {19, 29,44, 28, 90, 87,45,68,33,10};
+    system("cls");  // This is used to clear the screen.
+    int arr[10] = {4,3,2,10,12,1,5,6,9,8};
 
     printf("Array before Sorting: ");
     printarray(arr, 10);
 
-    selectionSort(arr, 10);
+    InsertionSort(arr, 10);
 
     printf("Array after Sorting: ");
     printarray(arr, 10);  
