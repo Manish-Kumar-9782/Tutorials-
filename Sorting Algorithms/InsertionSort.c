@@ -1,10 +1,10 @@
-// In this section we will sort an array by using the Insertion Sorting algorithm.
+// In this section we will sort an array by using the insert Sorting algorithm.
 
 
-// Insertion Sorting 
+// insert Sorting 
 
 /*
-    Insertion sort is a simple sorting algorithm that works similar to the way you sort 
+    insert sort is a simple sorting algorithm that works similar to the way you sort 
     playing cards in your hands. The array is virtually split into a sorted and an unsorted part. 
     Values from the unsorted part are picked and placed at the correct position in the sorted part.
     Algorithm To sort an array of size n in ascending order: 
@@ -51,7 +51,7 @@ void printarray(int arr[], int size){
 
 }
 
-void InsertionSort(int arr[], int size){
+void insertSort(int arr[], int size){
     /*
         int arr[]: This should be an array (integer type array which holds int values.)
         int size: size of the array which is passed in the first argument. 
@@ -103,7 +103,7 @@ int main(){
     printf("Array before Sorting: ");
     printarray(arr, 10);
 
-    InsertionSort(arr, 10);
+    insertSort(arr, 10);
 
     printf("Array after Sorting: ");
     printarray(arr, 10);  
