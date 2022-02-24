@@ -42,8 +42,21 @@ struct LinkedList{
     // 6. A function pointer to delete i-th position node of the linked list.
     void (* Delete)(struct LinkedList*, int);
 
+    // 7. A function pointer to count the length of the linked list.
+    int (* GetLength)(struct LinkedList*);
 };
 
+int GetLength(struct LinkedList *list){
+
+    struct Node *temp = list->head;
+    int count=0;
+    while(temp != 0){
+        temp = temp->next;
+        count++;
+    }
+
+    return count;
+}
 
 // 0. A function which will display the linked list.
 
@@ -312,6 +325,7 @@ struct LinkedList *CreateList(int value){
    List->Delete = Delete;
    List->DeleteFirst = DeleteFirst;
    List->Deletelast = Deletelast;
+   List->GetLength = GetLength;
 
 
    return List;
@@ -345,6 +359,9 @@ void main(){
     List->Append(List, 12);
     List->display(List);
 
+    // Getting the length of the linked list.
+    printf("\nTotal elment in Linked List: %d\n", List->GetLength(List));
+
     // Now we will delete the first element.
     List->DeleteFirst(List);
     List->display(List);
@@ -367,5 +384,5 @@ void main(){
     List->Deletelast(List);
     List->display(List);
     
-    
+    printf("\nTotal elment in Linked List: %d\n", List->GetLength(List));
 }
