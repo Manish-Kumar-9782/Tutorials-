@@ -1,5 +1,4 @@
-List->Delete(List,3);
-    //    List->Display(List);
-
-    //    List->Delete(List,5);
-    //    List->Display(List);
+  // if(current == list->head && pos > i+1){
+            //     printf("\nError: Invalid Position..\n");
+            //     return;
+            // }
