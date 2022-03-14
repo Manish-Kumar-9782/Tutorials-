@@ -45,7 +45,9 @@ int MissingNumber(int arr[], int n){
     }
 
     // 2. Now we will decrease the sum by arr[i] value.
-    for(i=0; i<n; i++){
+    // Since there will be always 1 number missing so in the array there are only n-1 numbers are presented.
+    // So Now we will only sbtract n-1 numbers from Missing Value.
+    for(i=0; i<n-1; i++){
 
         Missing -= arr[i];
     }

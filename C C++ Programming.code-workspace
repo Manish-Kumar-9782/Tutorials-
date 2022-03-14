@@ -4,5 +4,11 @@
 			"path": "I:\\WorkData\\Programming\\C"
 		}
 	],
-	"settings": {}
+	"settings": {
+		"files.associations": {
+			"ostream": "cpp",
+			"iostream": "cpp",
+			"xutility": "cpp"
+		}
+	}
 }
