@@ -48,3 +48,6 @@ int main(){
 
     return 0;
 }
+
+// Conclusion: Now we have created the template function which can perform the addition operation on any type either
+// it can be integer, float or double.

@@ -4,7 +4,8 @@
 // "Software - Principles and Practice using C++" by Bjarne Stroustrup
 //
 
-#include "../std_lib_facilities.h"
+#include<iostream>
+using namespace std;
 
 //------------------------------------------------------------------------------
 
@@ -40,7 +41,7 @@ Token get_token()    // read a token from cin
         return Token('8', val);   // let '8' represent "a number"
     }
     default:
-        error("Bad token");
+        throw("Bad token");
     }
 }
 
@@ -62,13 +63,13 @@ double primary()     // read and evaluate a Primary
     {
         double d = expression();
         t = get_token();
-        if (t.kind != ')') error("')' expected");
+        if (t.kind != ')') throw("')' expected");
         return d;
     }
     case '8':            // we use '8' to represent a number
         return t.value;  // return the number's value
     default:
-        error("primary expected");
+        throw("primary expected");
     }
 }
 //------------------------------------------------------------------------------
@@ -77,16 +78,16 @@ int main()
 try {
     while (cin)
         cout << expression() << '\n';
-    keep_window_open("~0");
+    
 }
 catch (exception& e) {
     cerr << e.what() << endl;
-    keep_window_open("~1");
+   
     return 1;
 }
 catch (...) {
     cerr << "exception \n";
-    keep_window_open("~2");
+ 
     return 2;
 }
 
@@ -128,7 +129,7 @@ double term()
         case '/':
         {
             double d = primary();
-            if (d == 0) error("divide by zero");
+            if (d == 0) throw("divide by zero");
             left /= d;
             t = get_token();
             break;
