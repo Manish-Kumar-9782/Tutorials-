@@ -59,3 +59,5 @@ int main(){
 
     return 0;
 }
+
+// Colclusing: Overloading a function template is same as the overloading a simple funciton.
