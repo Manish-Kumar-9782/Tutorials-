@@ -1,5 +1,0 @@
-Hello this file working on the binary mode.
-Hello this is joni
-Hello this is Moni.
-Hello this is a test file.
-this is line one.
