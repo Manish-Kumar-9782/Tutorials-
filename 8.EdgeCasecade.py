@@ -23,5 +23,4 @@ cv.waitKey(0)
 
 # Canny edge full documentation:
 # https://docs.opencv.org/4.6.0/dd/d1a/group__imgproc__feature.html#ga04723e007ed888ddf11d9ba04e2232de
-# In this article we will found the Feature Detection documention also
-
+# In this article we will found the Feature Detection documentation also
