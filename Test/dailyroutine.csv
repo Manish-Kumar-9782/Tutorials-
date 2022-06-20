@@ -1,0 +1,11 @@
+Task,TaskId,CheckTaskid,TaskTitle,Init Date,Notify,NotifyTime,AlertTime,StartTime,EndTime,NotifyDay,TaskCompleted,TaskStatus
+Water refill in Pot.,9211,,DailyRoutine,,True,"(18, 0, 0)",[],"(17, 0, 0)","(19, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+Bathing,9211,,DailyRoutine,,True,"(11, 0, 0)",[],"(10, 0, 0)","(14, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+2 hour of study in a day,9211,,DailyRoutine,,True,"(10, 0, 0)",[],"(10, 0, 0)","(23, 59, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+4 hour of study in a day,9211,,DailyRoutine,,True,"(12, 0, 0)",[],"(10, 0, 0)","(23, 59, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+6 hour of study in a day,9211,,DailyRoutine,,True,"(20, 0, 0)",[],"(11, 0, 0)","(23, 41, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+Go for lunch,9211,,DailyRoutine,,True,"(11, 0, 0)",[],"(10, 0, 0)","(14, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+Go for Dinner,9211,,DailyRoutine,,True,"(19, 30, 0)",[],"(0, 0, 0)","(20, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+Workout,9211,,DailyRoutine,,True,"(12, 0, 0)",[],"(11, 0, 0)","(14, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,[]
+Item one of TaskList,7997,,Test List,25-Jun-2021,False,,,,,,,[]
+Go for Dinner,9211,,DailyRoutine,,True,"(19, 30, 0)",[],"(0, 0, 0)","(20, 0, 0)","['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']",False,['notified']
