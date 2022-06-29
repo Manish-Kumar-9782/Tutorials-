@@ -5,24 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0f207ab0-b2f0-4083-b302-f613a7bb1e94" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/../../Projects/Regular Projects/Intermidiate/LIbrabyManagement/DeleteBook.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Projects/Regular Projects/Intermidiate/LIbrabyManagement/Main.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../../Projects/Regular Projects/Intermidiate/LIbrabyManagement/ViewBooks.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Projects" beforeDir="false" afterPath="$PROJECT_DIR$/../Projects" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Apps_func.py" beforeDir="false" afterPath="$PROJECT_DIR$/Apps_func.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DailyRoutine.py" beforeDir="false" afterPath="$PROJECT_DIR$/DailyRoutine.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/Dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ExWid.py" beforeDir="false" afterPath="$PROJECT_DIR$/ExWid.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Frame_Section.py" beforeDir="false" afterPath="$PROJECT_DIR$/Frame_Section.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Misc.py" beforeDir="false" afterPath="$PROJECT_DIR$/Misc.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Notifucation.py" beforeDir="false" afterPath="$PROJECT_DIR$/Notifucation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ShortBar.py" beforeDir="false" afterPath="$PROJECT_DIR$/ShortBar.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Statistics.py" beforeDir="false" afterPath="$PROJECT_DIR$/Statistics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Test.py" beforeDir="false" afterPath="$PROJECT_DIR$/Test.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Test Codes Debugging/Generators Data Pipelines.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Test Codes Debugging/Generators Data Pipelines.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Test Codes Debugging/Validator.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Test Codes Debugging/Validator.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Test Codes Debugging/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/../Test Codes Debugging/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Tkinter/Scrollbar Widget.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/../../Tkinter/Scrollbar Widget.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../../Tutorials-" beforeDir="false" afterPath="$PROJECT_DIR$/../../Tutorials-" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -315,21 +299,6 @@
           <url>file://$PROJECT_DIR$/DailyRoutine.py</url>
           <line>695</line>
           <option name="timeStamp" value="73" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Widgets.py</url>
-          <line>1266</line>
-          <option name="timeStamp" value="84" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Widgets.py</url>
-          <line>1256</line>
-          <option name="timeStamp" value="85" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/Apps.py</url>
-          <line>988</line>
-          <option name="timeStamp" value="86" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/Statistics.py</url>
