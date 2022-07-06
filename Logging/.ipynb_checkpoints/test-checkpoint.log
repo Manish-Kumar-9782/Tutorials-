@@ -1,0 +1,4 @@
+DEBUG:root:Add: 10 + 5 = 15
+DEBUG:root:Sub: 10 - 5 = 5
+DEBUG:root:Mul: 10 * 5 = 50
+DEBUG:root:Div: 10 / 5 = 2.0
