@@ -1,0 +1,84 @@
+// In this section we will learn about the Constructor.
+// in this we will learn that what is the difference in the non-parameterized
+// and parameterized constructor.
+// and also we will see the Constructor Overloading concept
+
+// Creating the student class.
+
+class Student{
+
+	int id;
+	String name;
+	int age;
+
+	// Creating a non args constructor, 
+	// it will be called when we don't pass any argument while creating 
+	// a new instance.
+
+	//Note: Here non parameterised constructor act as a default constructor.
+	Student(){
+		// this will do nothing
+	}
+
+	// Now here we will make one more constructor with parameters
+	// hense it will be called parameterised constructor.
+	
+	Student(int _id, String _name){
+		// this will assign the id and name.
+		id = _id;
+		name =_name;
+	}
+
+	// Now Here again we will use another constructor to initialize all the data members.
+	Student(int _id, String _name, int _age){
+		// in this we will assign id, name and age
+		id = _id;
+		name =_name;
+		age = _age;
+	}
+
+	// a method to update the data members.
+	void updateDetails(int _id, String _name){
+		id = _id;
+		name = _name;
+	}
+
+	// A method to display the information.
+	void displayInfromation(){
+		System.out.println(id+ " " +name + " " + age);
+	}
+}
+
+class Main{
+
+	// now here we need to define our main funciton and we will 
+	// also initialize the Student instance data members.
+
+	public static void main(String args[]){
+
+		// Here we will create two new instace
+		// * one without paramters
+		// * one with parameters.
+		Student s1 = new Student();
+		Student s2 = new Student(101, "Manish");
+		Student s3 = new Student(102, "Kumar", 26);
+		
+
+		// Now we will display the information of the each Student instance.
+		s1.displayInfromation();
+		s2.displayInfromation();
+		s3.displayInfromation();
+	}
+}
+
+/*
+
+	output:
+	0 null 0                                                                               
+	101 Manish 0                                                                           
+	102 Kumar 26 
+
+
+Note: As we can see that there is Constructor overloading happening.
+according to the type and size of argument list it will run the specified Constructor.                                                                                
+*/

@@ -8,10 +8,17 @@
 		it is an OEIS sequence A005188.
 */
 
+import java.util.Scanner;
+
 class ArmstrongNumber{
 
 	// 1. A Method to compute that how many digits in a numbers.
 	static int getNumberDigits(int number){
+
+		/**
+		 * A fuction to get the number of digits in a number
+		 */
+
 		// to get the number of digits in a number.
 
 		int Number = number;
@@ -32,6 +39,10 @@ class ArmstrongNumber{
 	// 1.1 count the number of digits in a number by converting it into string.
 
 	static int getNumberDigits2(int number){
+
+		/**
+		 * A functiont
+		 */
 
 		// Now in this first of all we will convert the int into String.
 		String str = String.valueOf(number);
@@ -62,6 +73,19 @@ class ArmstrongNumber{
 		return result;
 	}
 
+	// Now we will make final function to check that a number is armstrong or not 
+	static boolean isArmStrong(int number){
+
+		int n_digits = getNumberDigits(number);
+		int sum = getExponentSum(number, n_digits);
+
+		if (sum == number)
+			return true;
+
+		return false;
+	}
+
+
 	public static void main(String[] args){
 
 		// In this section we will use the 
@@ -69,7 +93,20 @@ class ArmstrongNumber{
 		System.out.println("Number of digits in 12345: " + getNumberDigits(12345));
 		// String str = String.valueOf(12345);
 		// System.out.println("pow: " + Math.pow(10,2));
-		System.out.println("exponent sum: "+ getExponentSum(1234, 4));
+		
+		String input = new String();
 
+		Scanner read = new Scanner(System.in);
+
+		while(!input.equals("q")){
+
+			System.out.print("\n\nis ArmStrong Number: ");
+			input = read.nextLine();
+
+			if(!input.equals("q")){
+				System.out.print(isArmStrong(Integer.parseInt(input)));
+				}
+
+		}
 	}
 }
