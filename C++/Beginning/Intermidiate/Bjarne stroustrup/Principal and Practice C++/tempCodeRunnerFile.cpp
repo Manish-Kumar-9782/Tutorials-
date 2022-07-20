@@ -1,0 +1,1 @@
+go there until you see a picture on the wall to your right remove the picture and open the door behind it. tak the bag from there

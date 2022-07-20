@@ -9,7 +9,15 @@
 			"ostream": "cpp",
 			"iostream": "cpp",
 			"xutility": "cpp",
-			"stdexcept": "cpp"
+			"stdexcept": "cpp",
+			"xstring": "cpp",
+			"vector": "cpp",
+			"iosfwd": "cpp",
+			"regex": "cpp",
+			"system_error": "cpp",
+			"xlocale": "cpp",
+			"xlocbuf": "cpp",
+			"xloctime": "cpp"
 		}
 	}
 }
