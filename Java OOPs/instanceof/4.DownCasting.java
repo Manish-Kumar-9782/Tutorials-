@@ -35,10 +35,6 @@ class Main{
 
 		Dog dog = new Animal(); // Compilation error will occure. 
 
-		
-
-	
-
 	}
 }
 

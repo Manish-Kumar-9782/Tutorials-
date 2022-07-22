@@ -42,7 +42,10 @@ class Main{
 
 /*
 	Output:
-	Animal cannot be converted to Dog    
+	Exception in thread "main" java.lang.ClassCastException: class Animal cannot be cast to class Dog (Animal and Dog are in unnamed module of loader 'app')                      
+        at Main.main(5.DownCasting2.java:38)
+
+    Now compilation error at the compile time error but it will give use the runtime ClassCastException.    
 
 	Note: Here we are refering a parent class instance by using the child class instance
 	this will lead to the downcasting which cant be done implicitly.
