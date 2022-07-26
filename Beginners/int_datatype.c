@@ -40,7 +40,7 @@ int main(){
 	int LLUINT_SIZE = sizeof(long long unsigned int);
 	
 	
-	
+    
 	printf("%-20s \t %-20s \t %-20s\n", "Data Type", "Size in bytes", "Range");
 	printf("|-------------------------------------------------------------------|\n");
 	//---------------------------------------------------------------------//

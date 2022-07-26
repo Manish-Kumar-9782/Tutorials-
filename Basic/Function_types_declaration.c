@@ -99,7 +99,6 @@ double Return_noArguments5(int, float, char); // it will return either true or f
 // Note: any function can have various type of argument and it's return type may have user-defined.
 
 /*---------------------------------------------------------------------------*/
-
 void main(){
 	
 	// Nothing here
