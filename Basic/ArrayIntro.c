@@ -1,7 +1,8 @@
 #include<stdio.h>
 
-void printArray(int[], int);  //declaration of printArray function
+void printArray(int[], int);  //declaration of printArray function char[], float[]
 void printArray2(int[], int);
+
 int main(){
 	
 	int num1[5]; // declaration of array num1
@@ -12,7 +13,7 @@ int main(){
 	
 	printArray(num1, 5);  // without array notation
 	printArray(num2, 5);  // without array notation	
-	printArray2(num3, 5);
+	printArray2(num3, 5);  // wi
 	
 	printArray2(num2, 5);  // with array notation
 	// output:  array:[1,2,3,4,5]
@@ -29,7 +30,7 @@ int main(){
 
 void printArray(int arr[], int size){
 	
-	int i=0;
+	int i=0;  // counter for for-loop
 	
 	for(i=0; i<size; i++){
 		printf("%d ", arr[i]);
@@ -49,7 +50,7 @@ void printArray2(int arr[], int size){
 	
 	for(i=0; i<size; i++){
 		
-		if(i!=size-1){
+		if(i!=size-1){  // 4 != 4 --> Flase
 			printf("%d,", arr[i]);
 		}
 		else{

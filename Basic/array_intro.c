@@ -1,7 +1,7 @@
 #include<stdio.h>
 
-void getName();
-void getPass();
+void getName(); // declaration of getName
+void getPass(); // declaration of getPass
 
 void main(){
 	
