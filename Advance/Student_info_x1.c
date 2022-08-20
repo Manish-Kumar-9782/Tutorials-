@@ -19,7 +19,7 @@ void student_info(){
 	char flush[2];
 	
 	int i=0;
-	int st_size = 4;
+	int st_size = 2;
 	
 	for(i=0; i<st_size; i++){
 		
