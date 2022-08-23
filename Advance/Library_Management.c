@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<string.h>
+#include<stdbool.h>
           
 // our new data type
 
@@ -116,6 +117,11 @@ void print_dept(dept);
 
 void main(){
 	
+	bool True = true;
+	bool False = false;
+	
+	
+	
 }
 
 //================================PRINTING FUNCTION FOR NEW DATA TYPES ================================
@@ -127,7 +133,7 @@ void print_stud(stud st){
 	printf("Class:\t%d",st.std);
 	printf("Age:\t%d",st.age);
 	printf("Id:\t%d", st.id);
-	print_adrs("Address:\t",st.address);
+//	print_adrs(st.address);
 	
 }
 
