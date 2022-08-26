@@ -1,0 +1,2 @@
+This file is being reading by using the fgetc() function.
+This is new line
