@@ -6,6 +6,8 @@
 3	fscanf()	reads data from the file
 4	fputc()	writes a character into the file
 5	fgetc()	reads a character from file
+	fputs() to write a complete string
+	fgets() to read a coplete string.
 6	fclose()	closes the file
 7	fseek()	sets the file pointer to given position
 8	fputw()	writes an integer to file
@@ -32,20 +34,26 @@ ab+	:	opens a binary file in read and write mode
 
 void main(){
 	
-	FILE *fp;
+	FILE *fp;  // FILE data type for file handling
+	
+	
 	
 	char ch;
 	
+	// first of all we will opean a file in write mode put some text in a file
 	fp = fopen("file_handle2.txt","w");
-	
-	char greet[20] ="Hello World!";
+	// here we have used the relative file address.
+//	
+	char greet[50] = "C is good! \nthis is file handling class";
 	
 	int size = strlen(greet);
+	// strlen() is uesed to get the length of the string.
 	int i =0;
 	
 //	for(i=0; i<size; i++){
 //		
 //		fputc(greet[i], fp);
+//		// putting single character
 //		
 //	}
 

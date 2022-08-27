@@ -1,1 +1,2 @@
-Hello World!
+C_is_good! this file is being read by using fscanf() function. 
+this is file handling class
