@@ -41,7 +41,10 @@ void main(){
 	printf("Std:\t%d\n", st.std);
 	printf("Age:\t%d\n", st.age);
 	
-	write_student_info_header();
+//	write_student_info_header();
+	write_student_info(st);
+	
+	printf("\n\nprogram has been finished!");
 }
 
 void write_student_info_header(){
@@ -50,14 +53,20 @@ void write_student_info_header(){
 	
 	file = fopen("student_info.csv", "w");
 	
-	fprintf(file, "Name,Stream,ID,Std,Age");
+	fprintf(file, "Name,Stream,ID,Std,Age\n");
 	
 	fclose(file);
 }
 
 void write_student_info(stud st){
 	
+	FILE *file;
 	
+	file = fopen("student_info.csv", "a");
+	
+	fprintf(file, "%s,%s,%d,%d,%d\n", st.name, st.stream,st.id,st.std,st.age);
+	
+	fclose(file);
 	
 	
 }

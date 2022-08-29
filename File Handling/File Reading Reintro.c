@@ -18,7 +18,7 @@ void main(){
 //	1. method to read file by using %s format specifier.
 
 //	fscanf(file, "%s", &string);
-//  printf("%s", string);
+//  	printf("%s", string);
 
 
 // 2. method to read whole file by using %[] 'edit format conversion'
@@ -37,13 +37,13 @@ void main(){
 	int i=0;
 	int eof;
 	do{
-	
+//	
 		eof = fscanf(file, "%c", &ch);
-		
-//		puttiing the ch char into string
+//		
+////		puttiing the ch char into string
 		string[i] = ch;
 		i++;
-		
+//		
 	}while(eof != EOF);
 	
 //	EOF: end of file

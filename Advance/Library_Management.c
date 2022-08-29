@@ -81,7 +81,6 @@ typedef struct Department{
 
 /*
 	required function.
-	
 	-> add book.
 	-> remove book.
 	-> issue a book.
@@ -95,8 +94,8 @@ void add_book(book, date, time); // here book is data type of struct Book
 void remove_book(book, date, time); 
 void issue_book(stud, book, date, time, adrs);
 void return_book(stud, book, date, time);
-void view_record1();
-void view_record2();
+
+
 
 // printing funciton to print/show/display our new user-defined data types.
 void print_stud(stud);
@@ -116,12 +115,8 @@ void print_dept(dept);
 */
 
 void main(){
-	
 	bool True = true;
 	bool False = false;
-	
-	
-	
 }
 
 //================================PRINTING FUNCTION FOR NEW DATA TYPES ================================
@@ -155,5 +150,26 @@ void print_book(book bk){
 	printf("Author:\t%s", bk.author);
 	printf("Publisher:\t%s", bk.publisher);
 }
+
+void print_adrs(adrs adr){
+	// 	-> Address -- address(plot no, street/landmark, town,city,district,state,country,pincode)
+
+	printf("Plot No:\t%s\n", adr.plot_no);
+	printf("Street:\t%s\n", adr.street_landmark);
+	printf("Town:\t%s\n", adr.town);
+	printf("City:\t%s\n", adr.city);
+	printf("District:\t%s\n", adr.district);
+	printf("State:\t%s\n", adr.state);
+	printf("Country:\t%s\n", adr.country);
+	printf("Pincode:\t%s\n", adr.pincode);	
+}
+
+void print_dept(dept dp){
+	// Department -- department(dep_sub, no_teacher, no_student)
+	printf("Department Subject:\t%s\n", dp.dept_subject);
+	printf("Department No of Teachers:\t%s\n", dp.no_teachers);
+	printf("Department No of Students:\t%s\n", dp.no_students);
+}
+
 
 
