@@ -1,6 +1,12 @@
 #include<stdio.h>
 #include<string.h>
 #include<stdbool.h>
+#include<windows.h>
+
+// to control the position of the cursor: 
+// SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+
+
           
 // our new data type
 
@@ -105,6 +111,8 @@ void print_book(book);
 void print_adrs(adrs);
 void print_dept(dept);
 
+
+void scan_book(book);
 /*
 	here arguments types
 	book: to represent a book data type
@@ -114,10 +122,100 @@ void print_dept(dept);
 	adrs: to represent a address data type.
 */
 
+//=========================================================================//
+//=========================================================================//
 void main(){
 	bool True = true;
 	bool False = false;
+	int i = 0;
+	char ch;
+	
+	COORD c;
+	c.X = 20;
+	c.Y = 21;
+	
+	printf("%40s Welcome To Library Management\n", " ");
+	
+	for(i=0; i<25; i++){
+		printf("----");
+	}
+	
+	printf("\n1. Add a book\n");
+	printf("2. Remove a book\n");
+	printf("3. Issue a book\n");
+	printf("4. Return a book\n");
+	
+	for(i=0; i<15; i++){
+		printf("\n");
+	}
+	
+	printf("Select an option: \n"); // 21
+	
+
+	
+	printf("\n");
+	for(i=0; i<25; i++){
+		printf("----");
+	}
+	
+	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+	
+	ch = getch();
+	printf("\nselected option: %c", ch);
+	getch(); // to hold our input 
+	system("cls"); // to clear the screen
+	
+	if(ch == '1'){
+		
+		printf("%40s Add a book section\n", " ");
+			for(i=0; i<25; i++){
+		printf("----");
+	}
+	}
+	else if(ch == '2'){
+		printf("remove a book section");
+	}
+	else if(ch == '3'){
+		printf("Issue a book section");
+	}
+	else if(ch == '4'){
+		printf("Return a book section");
+	}
+	else{
+		printf("Invalid Selection!");
+	}
 }
+//=========================================================================//
+//=========================================================================//
+
+//==================Scannig functions===============================//
+
+void scan_book(book bk){
+	// Book -- book(title,subject,page,chapters,author,publisher,price)
+	printf("Enter Book Title: ");
+	gets(bk.title);
+	
+	printf("Enter Book Subject: ");
+	gets(bk.subject);
+	
+	printf("Enter Book Author: ");
+	gets(bk.author);
+	
+	printf("Enter Book Publisher: ");
+	gets(bk.publisher);
+	
+	printf("Enter Book price: ");
+	scanf("%f", &bk.price);
+	
+	printf("Enter Book Page: ");
+	scanf("%d", &bk.page);
+	
+	printf("Enter Book Chapters: ");
+	scanf("%d", &bk.chapters);
+	
+	
+}
+
 
 //================================PRINTING FUNCTION FOR NEW DATA TYPES ================================
 
