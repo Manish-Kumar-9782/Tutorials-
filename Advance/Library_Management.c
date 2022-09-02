@@ -3,6 +3,8 @@
 #include<stdbool.h>
 #include<windows.h>
 
+
+#define BOOK "books.csv"
 // to control the position of the cursor: 
 // SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
 
@@ -93,11 +95,12 @@ typedef struct Department{
 	-> return a book.
 	-> view record.	
 	
+	ctime()
 	Now we will declare all the required function.
 */
 
-void add_book(book, date, time); // here book is data type of struct Book
-void remove_book(book, date, time); 
+void add_book(); // here book is data type of struct Book
+void remove_book(book); 
 void issue_book(stud, book, date, time, adrs);
 void return_book(stud, book, date, time);
 
@@ -111,8 +114,9 @@ void print_book(book);
 void print_adrs(adrs);
 void print_dept(dept);
 
+void write_book_header();
 
-void scan_book(book);
+void scan_book(book*);
 /*
 	here arguments types
 	book: to represent a book data type
@@ -168,9 +172,15 @@ void main(){
 	if(ch == '1'){
 		
 		printf("%40s Add a book section\n", " ");
-			for(i=0; i<25; i++){
+		
+//		------------------------------------------------------ //
+		for(i=0; i<25; i++){
 		printf("----");
-	}
+//		adding a book
+		}
+//		------------------------------------------------------ //
+		printf("\n\n");
+		add_book();
 	}
 	else if(ch == '2'){
 		printf("remove a book section");
@@ -190,30 +200,48 @@ void main(){
 
 //==================Scannig functions===============================//
 
-void scan_book(book bk){
+void write_book_header(){
+//	 Book -- book(title,subject,page,chapters,author,publisher,price)
+	FILE *file = NULL;
+	file = fopen(BOOK, "r");
+	
+	if(file == NULL){
+//		if file is not found then we need to create one file with predefined header.
+		file = fopen("books.csv", "w");
+		fprintf(file, "Title,Subject,Page,Chapters,Author,Publisher,Price\n");
+		fclose(file);
+	}
+	else{
+		fclose(file);
+	}
+	
+}
+
+void scan_book(book *bk){
 	// Book -- book(title,subject,page,chapters,author,publisher,price)
 	printf("Enter Book Title: ");
-	gets(bk.title);
+	gets(bk->title);
 	
 	printf("Enter Book Subject: ");
-	gets(bk.subject);
+	gets(bk->subject);
 	
 	printf("Enter Book Author: ");
-	gets(bk.author);
+	gets(bk->author);
 	
 	printf("Enter Book Publisher: ");
-	gets(bk.publisher);
+	gets(bk->publisher);
 	
 	printf("Enter Book price: ");
-	scanf("%f", &bk.price);
+	scanf("%f", &bk->price);
 	
 	printf("Enter Book Page: ");
-	scanf("%d", &bk.page);
+	scanf("%d", &bk->page);
 	
 	printf("Enter Book Chapters: ");
-	scanf("%d", &bk.chapters);
+	scanf("%d", &bk->chapters);
 	
 	
+	print_book(*bk);
 }
 
 
@@ -240,13 +268,13 @@ void print_time(time tt){
 
 void print_book(book bk){
 	// Book -- book(title,subject,page,chapters,author,publisher,price)
-	printf("Title:\t%s", bk.title);
-	printf("Subject:\t%s", bk.subject);
-	printf("Page:\t%d", bk.page);
-	printf("Price:\t%f",bk.price);
-	printf("Chapters:\t%d", bk.chapters);
-	printf("Author:\t%s", bk.author);
-	printf("Publisher:\t%s", bk.publisher);
+	printf("Title:\t%s\n", bk.title);
+	printf("Subject:\t%s\n", bk.subject);
+	printf("Page:\t%d\n", bk.page);
+	printf("Price:\t%f\n",bk.price);
+	printf("Chapters:\t%d\n", bk.chapters);
+	printf("Author:\t%s\n", bk.author);
+	printf("Publisher:\t%s\n", bk.publisher);
 }
 
 void print_adrs(adrs adr){
@@ -269,5 +297,38 @@ void print_dept(dept dp){
 	printf("Department No of Students:\t%s\n", dp.no_students);
 }
 
+//================================ Library Functions ================================//
+
+void add_book(){
+	char ch;
+	FILE *file = NULL;
+	file = fopen(BOOK,"r");
+	printf("file pointer values: %p", file);
+	if(file == NULL){
+		
+		printf("\nBook database is not found...!");
+		printf("\nCreating a New Book database...!");
+		write_book_header();
+//		This function will create a book.csv database.
+		printf("\nDatabase Created!   press any to continue....");
+		ch = getch();
+		add_book();
+	}
+	else{
+		fclose(file);
+//		file close since it was opened in reading mode.
+//	 Book -- book(title,subject,page,chapters,author,publisher,price)
+		printf("\nAdding book information:\n");
+		file = fopen(BOOK,"a");
+		book bk;
+		scan_book(&bk);
+		
+		fprintf(file, "%s,%s,%d,%d,%s,%s,%f\n", 
+					bk.title, bk.subject,bk.page,bk.chapters,
+					bk.author,bk.publisher,bk.price); 
+		fclose(file);
+		printf("file data has been saved!");
+	}
+}
 
 
