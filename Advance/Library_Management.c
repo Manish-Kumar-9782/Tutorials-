@@ -117,6 +117,7 @@ void print_dept(dept);
 void write_book_header();
 
 void scan_book(book*);
+void view_books_record();
 /*
 	here arguments types
 	book: to represent a book data type
@@ -125,6 +126,10 @@ void scan_book(book*);
 	stud: to represent a student data type.
 	adrs: to represent a address data type.
 */
+
+//	some extra funciton
+void pirnt_seprator(); // to print the seprator line
+void show_main_options(); // to show the main options
 
 //=========================================================================//
 //=========================================================================//
@@ -140,27 +145,9 @@ void main(){
 	
 	printf("%40s Welcome To Library Management\n", " ");
 	
-	for(i=0; i<25; i++){
-		printf("----");
-	}
-	
-	printf("\n1. Add a book\n");
-	printf("2. Remove a book\n");
-	printf("3. Issue a book\n");
-	printf("4. Return a book\n");
-	
-	for(i=0; i<15; i++){
-		printf("\n");
-	}
-	
-	printf("Select an option: \n"); // 21
-	
-
-	
-	printf("\n");
-	for(i=0; i<25; i++){
-		printf("----");
-	}
+	print_seprator(); // add  seprator
+	show_main_options(); // to show the main options
+	print_seprator(); // add seoratir
 	
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 	
@@ -172,14 +159,9 @@ void main(){
 	if(ch == '1'){
 		
 		printf("%40s Add a book section\n", " ");
-		
 //		------------------------------------------------------ //
-		for(i=0; i<25; i++){
-		printf("----");
-//		adding a book
-		}
+		pirnt_seprator();
 //		------------------------------------------------------ //
-		printf("\n\n");
 		add_book();
 	}
 	else if(ch == '2'){
@@ -190,6 +172,9 @@ void main(){
 	}
 	else if(ch == '4'){
 		printf("Return a book section");
+	}
+	else if (ch == '5'){
+		printf("view book records");
 	}
 	else{
 		printf("Invalid Selection!");
@@ -331,4 +316,38 @@ void add_book(){
 	}
 }
 
+void view_books_record(){
+	
+//	first clear the screen
+	system("cls");
+	
+//	Now print the Title of the view
+	printf("%45s Library Book Record", "");
+	
+//	Now we n
+}
 
+
+//================================ Extra Functions ================================//
+
+void print_seprator(){
+	for(i=0; i<25; i++){
+		printf("----");
+//		adding a book
+		}
+	printf("\n\n");
+}
+
+void show_main_options(){
+	
+	printf("1. Add a book\n");
+	printf("2. Remove a book\n");
+	printf("3. Issue a book\n");
+	printf("4. Return a book\n");
+	
+	for(i=0; i<15; i++){
+		printf("\n");
+	}
+	
+	printf("Select an option: \n"); 
+}

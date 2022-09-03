@@ -2,12 +2,7 @@
 #include<string.h>
 
 
-typedef struct Student{
-	
-	char name[16];
-	int age;
-	char graduation[8];
-
+typedef struct Student{		char name[16];	int age;	char graduation[8];
 }stu;
 
 
