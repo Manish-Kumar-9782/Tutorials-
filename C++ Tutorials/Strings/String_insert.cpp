@@ -36,6 +36,7 @@ void insert5(); // str.insert(index, str, index_str, count); --> (5)
 
 int main()
 {
+    system("cls");
     // str.insert(index, count, ch); --> (1)
     insert1();
 
@@ -58,7 +59,7 @@ void insert1()
 {
     string str = "hello welcom";
     // str.insert(index, count, ch); --> (1)
-    str.insert(str.length(), 1, 'e');
+    str.insert(str.length(), 5, 'e');
     cout << "str.insert(index, count, ch)" << endl;
     cout << "modified string: " << str << endl;
     printf("\n\n");
@@ -67,7 +68,7 @@ void insert1()
 void insert2()
 {
     string str = "hello welcome";
-    const char *str2 = " to jaipur";
+    const char *str2 = " to jaipur"; // literal string
     // str.insert(index, ch*); --> (2)
     str.insert(str.length(), str2);
     cout << "str.insert(index, ch*)" << endl;
@@ -104,7 +105,7 @@ void insert5()
     string str = "hello welcome";
     string str2 = " to jaipur, it is wonderful to have you.";
     // str.insert(index, str, index_str, count); --> (5)
-    str.insert(str.length(), str2, 10, 30);
+    str.insert(str.length(), str2, 0, 30);
 
     cout << "str.insert(index, str, index_str, count);" << endl;
     cout << "modified string: " << str << endl;

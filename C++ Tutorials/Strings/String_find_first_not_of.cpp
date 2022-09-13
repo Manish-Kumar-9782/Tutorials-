@@ -34,7 +34,7 @@ void find_last_not_of3(); // params: ch, pos
 
 int main()
 {
-
+    system("cls");
     // 1. find1
     find_last_not_of1();
     printf("\n\n");
@@ -51,8 +51,8 @@ void find_last_not_of1()
     // in this we will use the  below function syntax, which will take a string to be searched
     // Syntax::str.find_last_not_of(str);
 
-    string str{"hello this is good practice"};
-    string skip_set{"good to know"};
+    string str{"hello this is good practice"}; // initializing list c++11
+    string skip_set{"godtknwe"};
 
     /*
         Now in this section we are finding the last missing value from the skip_set.
@@ -105,7 +105,7 @@ void find_last_not_of3()
     string str = "Rajasthan is a very popular state";
 
     // finding the first character which is not equal to R
-    int n = str.find_last_not_of("abdrsafgafskjljhoidsjrew");
+    int n = str.find_last_not_of("lnlsdkajfgdsjolaskcnvlka");
 
     if (n == string::npos)
     {

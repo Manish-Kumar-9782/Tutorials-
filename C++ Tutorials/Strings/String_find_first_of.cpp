@@ -29,7 +29,7 @@ void find_first_of3(); // params: ch, pos
 
 int main()
 {
-
+    system("cls");
     // 1. find1
     find_first_of1();
     printf("\n\n");
@@ -46,7 +46,7 @@ void find_first_of1()
     // in this we will use the  below function syntax, which will take a string to be searched
     // Syntax::str.find_first_of(str);
 
-    string str = "fhon yes well is good";
+    string str = "khon yes well is good";
 
     //  Now we have a string in which we need to find the the given character, it will return the
     // index number of the character (the character whichever will be found first.)
@@ -67,16 +67,14 @@ void find_first_of2()
     // in this section we will use the below sytax funciton, which will take a str and pos
     // from where we need to search the string.
 
-    int not_found_value = string::npos;
-
     // string::npos  is used to give the number which will be returned when there is no match found
     // in the given string.
     string str = "jhon, all is well is good";
 
     // matching any character from "iae" to the str.
-    int n = str.find_first_of("iae", 0, 6);
+    auto n = str.find_first_of("ie", 0, 4);
 
-    if (n == not_found_value)
+    if (n == string::npos)
     {
         cout << "No match found.";
     }
@@ -93,7 +91,7 @@ void find_first_of3()
     string str = "jhon, all is well is good";
 
     // matching only one character.
-    int n = str.find_first_of("a");
+    int n = str.find_first_of("e");
 
     if (n == string::npos)
     {
