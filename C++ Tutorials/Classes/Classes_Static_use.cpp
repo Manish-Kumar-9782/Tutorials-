@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <iomanip>
 using namespace std;
 /*
     static variable:
@@ -18,10 +19,19 @@ private:
     int age;
     float height;
 
+    void update_static()
+    {
+        Student::Studentx[Student::Count_Students] = this;
+        Student::Count_Students++; // increasing the Count_Student variable by one.
+    }
+
 public:
     // To initalize the private data member we need to use constructor.
     static int Count_Students; // static variable
-    static Student *Studentx;  // this pointer will have the address of an array.
+    static Student **Studentx; // this pointer will have the address of Students
+
+    // Note: we have implement the double (**) astrisk to make the pointer holder which will
+    // hold the pointers which can hold the reference of the students.
 
     // default constructor.
     Student()
@@ -29,9 +39,7 @@ public:
         name = "";
         age = 0;
         height = 0.0;
-
-        Student::Count_Students++; // increasing the Count_Student variable by one.
-        Student::Studentx[0] = this;
+        update_static();
     }
 
     // parameterized constructor.
@@ -43,7 +51,8 @@ public:
         set_age(Age);       // set_age function is the setter for age.
         set_height(Height); // set_height is the setter for the height.
 
-        Student::Count_Students++; // increasing the Count_Student variable by one.
+        // Now here we will store the address of the Students in an array.
+        update_static();
     }
 
     void show_info()
@@ -54,6 +63,10 @@ public:
         cout << "Height: " << height << endl;
     }
 
+    void inline_display()
+    {
+        cout << setw(10) << left << name << setw(5) << left << age << setw(5) << left << height << endl;
+    }
     // a method to set the age of the age attribute
     void set_age(int Age)
     {
@@ -98,17 +111,25 @@ public:
 // initalization the static variable of Student.
 
 int Student::Count_Students = 0;
-Student *Student::Studentx = (Student *)malloc(sizeof(Student) * 4);
+Student **Student::Studentx = new Student *[5];
+// Creating a Student Pointer array which can hold the another pointer, these pointer are also
+// the student type pointer which will hold teh reference of the student object.
 
 int main()
 {
     system("cls");
 
     // creating the object of student it will increase the Count_Students
-    Student st; // default constructor is called.
+    Student st1("Sagar", 25, 5.7);
     Student st2("Saloni", 21, 5.6);
     Student st3("Komal", 21, 5.5);
     Student st4("Abhishek", 19, 5.6);
+    Student st5("Manish", 26, 5.6);
 
     cout << "count students: " << Student::Count_Students << endl;
+
+    for (int i = 0; i < 5; i++)
+    {
+        Student::Studentx[i]->inline_display();
+    }
 }
