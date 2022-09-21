@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+
+    CRUD Application
+
+    C: Create the object
+    R: Read the object
+    U: update the object
+    D: delete the object
+
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRUD Test</title>
+
+    <script>
+
+        class Person {
+
+            static countPerson = 0; // initially no Person object will be there
+            static PersonDatabase = []; // array will work as a database.
+            static primary_key = 1000; // 
+
+            // 1. Create the object.
+            constructor(name, age, height, bloodgroup) {
+                this.name = name;
+                this.age = age;
+                this.height = height;
+                this.bloodgroup = bloodgroup;
+                this.primarykey = Person.primary_key;
+
+                // first add the person into PersonDatabase
+                // increase the countPerson
+
+                Person.PersonDatabase.push(this);
+                Person.countPerson++;
+
+                // increasing the primary key.
+                Person.primary_key++;
+            }
+
+            // 2. Read the object.
+            display() {
+                console.log("Name:".padEnd(15, " "), this.name);
+                console.log("Age:".padEnd(15, " "), this.age);
+                console.log("Height:".padEnd(15, " "), this.height);
+                console.log("BloodGroup:".padEnd(15, " "), this.bloodgroup);
+            }
+
+            inline_display(...args) {
+                console.log(
+                    `${this.name}`.padEnd(args[0], " "),
+                    `${this.age}`.padEnd(args[1], " "),
+                    `${this.height}`.padEnd(args[2], " "),
+                    `${this.bloodgroup}`.padEnd(args[3], " "),
+                )
+            }
+
+            static ShowDatabase(...args) {
+
+                // displaying the column heading
+                console.log(
+                    `Name:`.padEnd(args[0], " "),
+                    `Age:`.padEnd(args[1], " "),
+                    `Height:`.padEnd(args[2], " "),
+                    `BloodGroup:`.padEnd(args[3], " "),
+                )
+
+                for (let i = 0; i < Person.countPerson; i++) {
+                    Person.PersonDatabase[i].inline_display(...args);
+                }
+            }
+
+            // 3. update the object/person
+            update() {
+                pass
+            }
+
+            // delete the person/object
+            delete() {
+                pass
+            }
+        };
+
+
+        function create_person() {
+
+            let name = prompt("Enter the name of Person");
+            let age = prompt("Enter the age of Person");
+            let height = prompt("Enter the height of Person");
+            let bloodgroup = prompt("Enter the bloodgroup of Person");
+
+            let person = new Person(name, age, height, bloodgroup);
+
+            return person;
+        }
+
+        new Person("manish", 26, 5.6, "O-");
+        new Person("Abhishek", 19, 5.7, "AB+");
+        new Person("varsha", 22, 5.5, "A-");
+        new Person("komal", 21, 5.3, "B+");
+
+    </script>
+
+</head>
+
+<body>
+
+</body>
+
+</html>
