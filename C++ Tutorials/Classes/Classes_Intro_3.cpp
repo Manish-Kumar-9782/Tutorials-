@@ -36,8 +36,8 @@ public:
         // cout << "parameterized construstor is called." << endl;
         // assigning values during creation of object.
         name = Name;
-        set_age(Age);
-        set_height(Height);
+        set_age(Age); // set_age function is the setter for age.
+        set_height(Height); // set_height is the setter for the height.
     }
 
     void show_info()
