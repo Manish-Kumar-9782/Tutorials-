@@ -46,14 +46,15 @@
 
             // 2. Read the object.
             display() {
-                console.log("Name:".padEnd(15, " "), this.name);
-                console.log("Age:".padEnd(15, " "), this.age);
-                console.log("Height:".padEnd(15, " "), this.height);
-                console.log("BloodGroup:".padEnd(15, " "), this.bloodgroup);
+                console.log("Name".padEnd(15, " "), this.name);
+                console.log("Age".padEnd(15, " "), this.age);
+                console.log("Height".padEnd(15, " "), this.height);
+                console.log("BloodGroup".padEnd(15, " "), this.bloodgroup);
             }
 
             inline_display(...args) {
                 console.log(
+                    `${this.primarykey}`.padEnd(args[0], " "),
                     `${this.name}`.padEnd(args[0], " "),
                     `${this.age}`.padEnd(args[1], " "),
                     `${this.height}`.padEnd(args[2], " "),
@@ -65,10 +66,11 @@
 
                 // displaying the column heading
                 console.log(
-                    `Name:`.padEnd(args[0], " "),
-                    `Age:`.padEnd(args[1], " "),
-                    `Height:`.padEnd(args[2], " "),
-                    `BloodGroup:`.padEnd(args[3], " "),
+                    `PrimaryKey`.padEnd(args[0], " "),
+                    `Name`.padEnd(args[0], " "),
+                    `Age`.padEnd(args[1], " "),
+                    `Height`.padEnd(args[2], " "),
+                    `BloodGroup`.padEnd(args[3], " "),
                 )
 
                 for (let i = 0; i < Person.countPerson; i++) {
@@ -84,6 +86,32 @@
             // delete the person/object
             delete() {
                 pass
+            }
+
+            static serachPerson(by = "primarykey", value = null) {
+                // valid values for by parameter..
+                // primarykey, name, age, height, bloodgroup
+                console.log("value: ", value);
+                let result = [];
+
+                if (value == null) {
+                    console.log("Error: value can't be null")
+                    return -1
+                }
+
+                for (let i = 0; i < Person.countPerson; i++) {
+                    //Person.PersonDatabase.length 
+                    if (Person.PersonDatabase[i][by] === value) {
+                        result.push(Person.PersonDatabase[i])
+                    }
+                }
+
+                if (by == "primarykey") {
+                    return result[0];
+                }
+                else {
+                    return result;
+                }
             }
         };
 
@@ -104,6 +132,7 @@
         new Person("Abhishek", 19, 5.7, "AB+");
         new Person("varsha", 22, 5.5, "A-");
         new Person("komal", 21, 5.3, "B+");
+        new Person("manish", 31, 5.7, "O+");
 
     </script>
 
