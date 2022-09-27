@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class getter & setter</title>
+
+    <script>
+
+        class Person {
+
+            constructor(name, age, height) {
+                this.name = name;
+                this.age = age;
+                this.height = height;
+            }
+
+            display() {
+                console.log("Name".padEnd(15, " "), this.name);
+                console.log("Age".padEnd(15, " "), this.age);
+                console.log("Height".padEnd(15, " "), this.height);
+            }
+
+            // get and set keyword.
+
+            // getter and setter for the name
+            get name() {
+                console.log("accessing the name property:")
+                return this._name;
+            }
+
+            set name(name) {
+                console.log("setting the name property");
+
+                this._name = name;
+            }
+        };
+
+        let man = new Person("varsha", 21, 5.6);
+        // Now we will make another class which will inherit the Person.
+
+
+    </script>
+
+
+</head>
+
+<body>
+
+
+
+</body>
+
+</html>

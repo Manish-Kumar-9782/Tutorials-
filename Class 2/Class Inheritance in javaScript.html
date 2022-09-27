@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Inheritance</title>
+
+    <script>
+
+        class Person {
+
+            constructor(name, age, height) {
+                this.name = name;
+                this.age = age;
+                this.height = height;
+            }
+
+            display() {
+                console.log("Name".padEnd(15, " "), this.name);
+                console.log("Age".padEnd(15, " "), this.age);
+                console.log("Height".padEnd(15, " "), this.height);
+            }
+        }
+
+
+        // Now we will make another class which will inherit the Person.
+
+        class Student extends Person {
+
+            constructor(name, age, height, id, std, subject) {
+                super(name, age, height);
+                this.id = id;
+                this.std = std;
+                this.subject = subject;
+            }
+
+            display() {
+                super.display();
+                console.log("Id".padEnd(15, " "), this.id);
+                console.log("Std".padEnd(15, " "), this.std);
+                console.log("Subject".padEnd(15, " "), this.subject);
+            }
+        }
+
+    </script>
+
+
+</head>
+
+<body>
+
+
+
+</body>
+
+</html>
