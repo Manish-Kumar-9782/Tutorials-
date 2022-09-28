@@ -25,19 +25,21 @@ class Book {
 
 function getinputArray() {
     const form = document.forms[0];
-    const inputArray = form.getElementsByTagName("input");
 
-    console.log(inputArray);
 
-    return inputArray;
+    const book_title = form["title"].value;
+    const book_author = form["author"].value;
+    const book_subject = form["subject"].value;
+    const book_pages = form["pages"].value;
+    const book_price = form["price"].value;
+
+    console.log([book_title, book_author, book_pages, book_subject, book_price])
+    return [book_title, book_author, book_pages, book_subject, book_price];
 }
 
 function add_book() {
 
-    const form = document.forms[0];
-
-    const inputArray = form.getElementsByTagName("input");
-
-
+    let input_data = getinputArray();
+    new Book(...input_data)
 
 }
