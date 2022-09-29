@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management</title>
+
+
+    <style>
+        input {
+
+            margin: 15px 10px;
+
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 
+        <label>: it used to provide the text for input, it is bound with input element
+            with the help of input name.
+
+        <input>: it is an element which is used to get the input from the user  by providing the input field.
+
+        Attribute:
+
+        label::for -> name of the input to which it will bound. 
+
+            title, author, subject, pages, prices
+     -->
+
+    <form action="#" name="myform" id="myform" validate="false">
+
+        <label for="title">Enter Book Title</label>
+        <input type="text" id="title" name="title"><br>
+
+        <label for="author">Enter Book Author Name:</label>
+        <input type="text" id="author" name="author"><br>
+
+        <label for="subject">Enter Book Subject</label>
+        <input type="text" id="subject" name="subject"><br>
+
+        <label for="pages">Enter Book Pages</label>
+        <input type="text" id="pages" name="pages"><br>
+
+        <label for="prices">Enter Book Prices</label>
+        <input type="text" id="prices" name="prices"><br>
+
+        <input type="button" onclick="createBook()" value="addBook">
+
+    </form>
+
+
+
+
+
+    <script src="LibManagement.js"></script>
+</body>
+
+</html>
