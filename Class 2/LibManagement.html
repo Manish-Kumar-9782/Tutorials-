@@ -13,17 +13,44 @@
         input {
             margin: 10px 5px;
         }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 550px;
+        }
+
+        .container {
+            border: 1px solid dodgerblue;
+            padding: 20px;
+        }
+
+        #buttons {
+            padding: 10px;
+            margin: 10px;
+            text-align: center;
+            border: 5px groove rgb(101, 101, 147);
+        }
+
+        #buttons button {
+            margin-left: 10px;
+        }
+
+        #showdatabase {
+            display: none;
+        }
     </style>
 
 </head>
 
 <body>
 
-    <div class="cotainer">
+    <div class="container">
 
         <h1>Library Management System</h1>
 
-        <form action="#" name="LibManagement">
+        <form action="#" name="LibManagement" id="LibManagement">
 
             <label for="title"> Book Title</label>
             <input type="text" , id="title" name="title" placeholder="Enter Book Title" value=""><br>
@@ -46,7 +73,33 @@
 
         </form>
 
+        <div id="showdatabase">
 
+            <table>
+
+                <thead id="showdatabase-thead">
+                    <!-- Here we will put our heading row -->
+                </thead>
+
+                <tbody id="showdatabase-tbody">
+                    <!-- Here we will put the book database details rows. -->
+                </tbody>
+
+            </table>
+
+
+        </div>
+
+
+
+        <div id="buttons">
+
+            <button id="addbook">AddBook</button>
+            <button id="showbooks">ShowBooks</button>
+            <button id="updatebook">UpdateBook</button>
+            <button id="deletebook">DeleteBook</button>
+
+        </div>
 
     </div>
 
