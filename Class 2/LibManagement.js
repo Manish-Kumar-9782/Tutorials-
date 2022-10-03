@@ -82,7 +82,7 @@ class Database {
         for (let i = 0; i < books.length; i++) {
 
             let tr_element = document.createElement("tr");
-            Database.load_table_row(tr_element, books[i]);
+            Database.load_table_row(tr_element, books[i], true, true);
 
             Database.showdatabase_tbody.appendChild(tr_element);
         }
@@ -91,7 +91,7 @@ class Database {
 
     }
 
-    static load_table_row(tr_element, book) {
+    static load_table_row(tr_element, book, _update_ = false, _delete_ = false) {
 
         let keys = Book.getBookKeys();
 
@@ -104,9 +104,89 @@ class Database {
             tr_element.appendChild(th_element);
         }
 
+        if (_update_) {
+
+            // let tdata = document.createElement("td");
+            // let bt = document.createElement("button");
+            // bt.setAttribute("PK", book["primarykey"]);
+            // bt.innerText = "edit";
+            // tdata.appendChild(bt);
+            // tr_element.appendChild(tdata);
+
+            // // binding functionality with edit  buttons
+            // bt.onclick = (ev) => {
+            //     // console.log(ev);
+            //     console.log(Database.#getItem(book["primarykey"]));
+            // }
+
+            Database.#update("edit", book, tr_element);
+        }
+
+        if (_delete_) {
+            // let tdata = document.createElement("td");
+            // let bt = document.createElement("button");
+            // bt.setAttribute("PK", book["primarykey"]);
+            // bt.innerText = "delete";
+            // tdata.appendChild(bt);
+            // tr_element.appendChild(tdata);
+
+            // binding functionality with delete button
+            Database.#update("delete", book, tr_element);
+        }
+
     }
 
+    static #update(type, book, tr_element) {
+
+        let tdata = document.createElement("td");
+
+        tr_element.appendChild(tdata);
+
+        // binding functionality with edit  buttons
+
+
+        if (type == "delete") {
+            let bt1 = document.createElement("button");
+            bt1.setAttribute("PK", book["primarykey"]);
+            bt1.innerText = type;
+            tdata.appendChild(bt1);
+
+            bt1.onclick = (ev) => {
+                tr_element.remove();
+                const bk_index = Book.BookDataBase.indexOf(book);
+                Book.BookDataBase.splice(bk_index, 1);
+            }
+        }
+
+        if (type == "edit") {
+            let bt2 = document.createElement("button");
+            bt2.setAttribute("PK", book["primarykey"]);
+            bt2.innerText = type;
+            tdata.appendChild(bt2);
+
+        }
+
+    }
+
+
+
+    static #getItem(id) {
+        console.log("id: ", id);
+
+        let item = Book.BookDataBase.filter((bk) => {
+            // console.log(bk)
+            if (bk["primarykey"] == id) {
+                return true
+            }
+            else {
+                return false
+            }
+        });
+
+        return item[0];
+    }
 }
+
 
 Database.load_head();
 Database.load_body();
@@ -134,6 +214,9 @@ function add_book() {
 
 function addBook() {
     console.log("add book button is pressed");
+
+    addbook_container.style.display = "block";
+    showbooks_container.style.display = "none";
 }
 
 function showBooks() {
@@ -145,10 +228,11 @@ function showBooks() {
     // element.style.display = value;
 
     addbook_container.style.display = "none";
-    showbooks_container.style.display = 'block';
+    showbooks_container.style.display = "block";
 
 
 }
+
 
 // binding the onclick event
 
