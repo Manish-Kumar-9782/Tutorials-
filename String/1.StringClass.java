@@ -8,6 +8,15 @@
 	Java String: In java, String is basically an object that represents 
 	sequence of char values. An array of characters works Same as Java
 	String.	
+
+	In Java, string is an object that represents a sequence of characters. 
+	The java.lang.String class is used to create a string object.
+
+	* Java String is immutable which means it cannot be changed. Wheneve 
+	we change any String, a new instance is created.
+
+	* For mutable strings, we can use StringBuffer and StringBuilder class.
+
 */
 
 /*-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-x-*/
