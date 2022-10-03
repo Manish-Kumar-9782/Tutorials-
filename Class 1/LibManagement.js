@@ -2,7 +2,22 @@
 // document.createElement()
 // document.append()
 
+/**
+ *  <button id="addBook">AddBook</button>
+    <button id="showBook">ShowDatabase</button>
+    <button id="updateBook">UpdateBook</button>
+    <button id="deleteBook">DeleteBook</button>
+ */
 
+const addBook_button = document.getElementById("addBook");
+const showBook_button = document.getElementById("showBook");
+const updateBook_button = document.getElementById("updateBook");
+const deleteBook_button = document.getElementById("deleteBook");
+
+/*------------------------------------------------------------*/
+
+const addbook_section = document.getElementById("addbook");
+const showdatabase_section = document.getElementById("showdatabase")
 
 class Book {
 
@@ -98,7 +113,7 @@ class ShowDatabase {
             // get book one by one using i.
             let book = Book.BookDataBase[i];
 
-            this.load_td_row(tr_element, book);
+            this.load_td_row(tr_element, book, true, true);
 
             // putting the ta
             this.showDatabase_tableBody.appendChild(tr_element);
@@ -106,8 +121,8 @@ class ShowDatabase {
 
     }
 
-    load_td_row(tr_element, book_data) {
-        keys = Book.getBookKeys();
+    load_td_row(tr_element, book_data, _update_ = false, _delete_ = false) {
+        let keys = Book.getBookKeys();
         for (let i = 0; i < keys.length; i++) {
 
             // creating td element for each key
@@ -121,9 +136,79 @@ class ShowDatabase {
             tr_element.appendChild(td);
         }
 
+        if (_update_) {
+            let td = document.createElement("td");
+            let bt = document.createElement("button");
+            bt.setAttribute("PK", book_data["primarykey"]);
+            bt.onclick = (event) => {
+                // console.log(event["path"]);
+                ShowDatabase.#edit(book_data["primarykey"]);
+            };
+            bt.innerText = "edit";
+            td.appendChild(bt);
+            tr_element.appendChild(td);
+        }
+
+        if (_delete_) {
+            let td = document.createElement("td");
+            let bt = document.createElement("button");
+            bt.setAttribute("PK", book_data["primarykey"]);
+            bt.innerText = "delete";
+            td.appendChild(bt);
+            tr_element.appendChild(td);
+        }
+
+
         return tr_element;
     }
+
+    display_database() {
+
+        //this function will hide other sections and only make the Database visible.
+        // hide-> display:none;
+        // show -> display:block;
+
+        addbook_section.style.display = "none";
+        showdatabase_section.style.display = "block";
+    }
+
+    static #edit(id) {
+
+        console.log("id: ", id);
+        const book = Book.BookDataBase.filter((book) => {
+            if (book["primarykey"] == id)
+                return true;
+        });
+
+        console.log(book[0]);
+
+    }
+
+
+    /**====================================================================*/
+
+    addbook_function() {
+        addbook_section.style.display = "block";
+        showdatabase_section.style.display = "none";
+    }
+
+    update_function() {
+
+
+
+    }
+
 }
+
+const database = new ShowDatabase();
+
+// Now here we need to bind our showBook_button.onclick event with the database.display_database.
+
+showBook_button.onclick = database.display_database;
+addBook_button.onclick = database.addbook_function;
+
+
+
 
 
 
