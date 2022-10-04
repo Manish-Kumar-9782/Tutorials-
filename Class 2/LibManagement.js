@@ -8,6 +8,10 @@ const deletebook_button = document.getElementById("deletebook")
 const addbook_container = document.getElementById("LibManagement");
 const showbooks_container = document.getElementById("showdatabase");
 
+
+const createBook_button = document.getElementById("cbook");
+const saveEdit_button = document.getElementById("ebook");
+
 class Book {
 
     static BookDataBase = [];
@@ -97,11 +101,11 @@ class Database {
 
         for (let i = 0; i < keys.length; i++) {
 
-            let th_element = document.createElement("th");
+            let td_element = document.createElement("td");
 
-            th_element.innerText = book[keys[i]];
+            td_element.innerText = book[keys[i]];
 
-            tr_element.appendChild(th_element);
+            tr_element.appendChild(td_element);
         }
 
         if (_update_) {
@@ -146,16 +150,25 @@ class Database {
 
 
         if (type == "delete") {
+            // first we will create a button
             let bt1 = document.createElement("button");
+            // now we need to set the attribute id  as the primary key.
             bt1.setAttribute("PK", book["primarykey"]);
+            // now we will put the inner text of the button
             bt1.innerText = type;
+            // appending (adding at the last position )
             tdata.appendChild(bt1);
 
+
+            //=================================================//
+            // event for delete functionality
             bt1.onclick = (ev) => {
+                // removing the selected element
                 tr_element.remove();
                 const bk_index = Book.BookDataBase.indexOf(book);
                 Book.BookDataBase.splice(bk_index, 1);
             }
+            //=================================================//
         }
 
         if (type == "edit") {
@@ -164,6 +177,21 @@ class Database {
             bt2.innerText = type;
             tdata.appendChild(bt2);
 
+            /*
+                1. get data from HTML Element
+                2. put HTML data to form
+                3. switch to form and edit the data.
+                4. save the changes.
+                5. changes should be also made in the book object 
+                    form database.
+            */
+
+            //=================================================//
+            bt2.onclick = (ev) => {
+
+                Database.#get_data_from_html(tr_element, book);
+            }
+            //=================================================//
         }
 
     }
@@ -184,6 +212,67 @@ class Database {
         });
 
         return item[0];
+    }
+
+
+    static #get_data_from_html(tr_element, book) {
+
+        let tds = tr_element.getElementsByTagName("td");
+        console.log(tds);
+
+        addbook_container["title"].value = tds[1].innerText
+        addbook_container["author"].value = tds[2].innerText
+        addbook_container["subject"].value = tds[3].innerText
+        addbook_container["pages"].value = tds[4].innerText
+        addbook_container["price"].value = tds[5].innerText
+
+        // 3. switching to the form
+        addbook_container.style.display = "block";  // show
+        showbooks_container.style.display = "none"; // hide
+
+        // first hide the creatBook_button
+        // then we need to display the saveEdit_button
+
+        createBook_button.style.display = "none";
+        saveEdit_button.style.display = "block";
+
+        saveEdit_button.onclick = (ev) => {
+
+            Database.#saveEdit_Changes(book, tr_element);
+        }
+
+    }
+
+
+    static #saveEdit_Changes(book, tr_element) {
+
+        book["title"] = addbook_container["title"].value
+        book["author"] = addbook_container["author"].value
+        book["subject"] = addbook_container["subject"].value
+        book["pages"] = addbook_container["pages"].value
+        book["price"] = addbook_container["price"].value
+
+
+        // 3. switching to the form
+        addbook_container.style.display = "none";  // show
+        showbooks_container.style.display = "block"; // hide
+
+        // first hide the creatBook_button
+        // then we need to display the saveEdit_button
+
+        createBook_button.style.display = "block";
+        saveEdit_button.style.display = "none";
+
+        let tds = tr_element.getElementsByTagName("td");
+        console.log(tds);
+
+        tds[1].innerText = addbook_container["title"].value
+        tds[2].innerText = addbook_container["author"].value
+        tds[3].innerText = addbook_container["subject"].value
+        tds[4].innerText = addbook_container["pages"].value
+        tds[5].innerText = addbook_container["price"].value
+
+        addbook_container.reset()
     }
 }
 

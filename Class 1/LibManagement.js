@@ -113,6 +113,7 @@ class ShowDatabase {
             // get book one by one using i.
             let book = Book.BookDataBase[i];
 
+            // Now we need to load the data inside the tr element
             this.load_td_row(tr_element, book, true, true);
 
             // putting the ta
@@ -140,16 +141,24 @@ class ShowDatabase {
             let td = document.createElement("td");
             let bt = document.createElement("button");
             bt.setAttribute("PK", book_data["primarykey"]);
+
+
             bt.onclick = (event) => {
-                // console.log(event["path"]);
-                ShowDatabase.#edit(book_data["primarykey"]);
+                let id = book_data["primarykey"];
+                ShowDatabase.#edit(id, tr_element, book_data);
+                console.log(id, tr_element);
             };
+
+
+
             bt.innerText = "edit";
             td.appendChild(bt);
             tr_element.appendChild(td);
         }
 
         if (_delete_) {
+            // creating another td for update button 
+            // this td will be placed inside the tr_element.
             let td = document.createElement("td");
             let bt = document.createElement("button");
             bt.setAttribute("PK", book_data["primarykey"]);
@@ -168,19 +177,33 @@ class ShowDatabase {
         // hide-> display:none;
         // show -> display:block;
 
+        // first we have to hide the addbook_section.
         addbook_section.style.display = "none";
+        // after hiding the addbook_section we need to show the showdatabase_section.
         showdatabase_section.style.display = "block";
     }
 
-    static #edit(id) {
+    static #edit(id, element, bookdata) {
 
-        console.log("id: ", id);
-        const book = Book.BookDataBase.filter((book) => {
-            if (book["primarykey"] == id)
-                return true;
-        });
+        ShowDatabase.#getdata_from_html(element);
 
-        console.log(book[0]);
+    }
+
+    static #getdata_from_html(tr_element) {
+
+
+        // we have the total number 
+        let tds = tr_element.getElementsByTagName("td")
+
+
+        addbook_section["title"].value = tds[1].innerText
+        addbook_section["author"].value = tds[2].innerText
+        addbook_section["subject"].value = tds[3].innerText
+        addbook_section["pages"].value = tds[4].innerText
+        addbook_section["prices"].value = tds[5].innerText
+
+        addbook_section.style.display = "block";
+        showdatabase_section.style.display = "none";
 
     }
 
@@ -188,6 +211,9 @@ class ShowDatabase {
     /**====================================================================*/
 
     addbook_function() {
+        //this function will hide other sections and only make the Database visible.
+        // hide-> display:none;
+        // show -> display:block;
         addbook_section.style.display = "block";
         showdatabase_section.style.display = "none";
     }
@@ -208,14 +234,6 @@ showBook_button.onclick = database.display_database;
 addBook_button.onclick = database.addbook_function;
 
 
-
-
-
-
-
-
-
-
 function createBook() {
 
     console.log("createBook function has been invoked");
@@ -233,3 +251,18 @@ function createBook() {
     new Book(title, author, subject, pages, prices);
 
 }
+
+
+/*
+    Process of editing data.
+    
+    1. get the data from HTML elements
+    2. get the Book instance with the matching primarykey
+    3. go back to add book form put all the currently selected element.
+    4. we need to make getdata to retrieve data from HTML element
+    5. we need to make putdata to put the data into the form element.
+    6. we also need to make a function to update the database.
+
+
+
+*/
