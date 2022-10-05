@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change color 2</title>
+
+    <style>
+        #div1 {
+            height: 200px;
+            width: 700px;
+            border: 1px solid;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem;
+            color: white;
+            border: 1px solid lightblue;
+        }
+
+        .text {
+            margin-top: 30px;
+            font-size: 1.7rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="div1"></div>
+    <button id="focus-blur">focus-blur</button>
+    <button id="double-click">double-click</button>
+    <button id="mouse-in-out">mouse-in-out</button>
+
+    <div class="text">
+
+        <p>onfocus: red color</p>
+        <p>onblur: green color</p>
+        <p>double click: purple</p>
+        <p>mouseIn: brown</p>
+        <p>mouseOut: chocolate</p>
+
+    </div>
+
+</body>
+
+<!-- 
+
+    Note: Please not the changing behavior
+
+    onfocus: red;
+    onblur: green;
+
+    doubleClick: purple;
+
+    mouseIn: brown;
+    mouseOut: chocolate;
+
+
+ -->
+
+
+<script>
+    // first we need to get the button element
+    const focusBlur = document.getElementById("focus-blur");
+    const doubleClick = document.getElementById("double-click");
+    const mouseInOut = document.getElementById("mouse-in-out");
+
+    const div = document.getElementById("div1")
+    // Now we need to make a function which will give us the random
+
+    function random(number) {
+        return Math.floor(Math.random() * (number + 1));
+        // Note here we are adding 1 into the number intentionally.
+    }
+
+    // Now we will make another function which will generate random
+    // colors
+    function random_color() {
+        return `rgb(${random(255)}, ${random(255)}, ${random(255)})`
+    }
+
+    // Now we need to bind the onclick event to the button
+
+
+    focusBlur.addEventListener("focus", (e) => {
+        div.style.backgroundColor = "red";
+        div.innerText = "focused";
+        console.log(e);
+    })
+
+    focusBlur.addEventListener("blur", (e) => {
+        div.style.backgroundColor = "green";
+        div.innerText = "blured";
+        console.log(e);
+    })
+
+    doubleClick.addEventListener("dblclick", (e) => {
+        div.style.backgroundColor = "purple";
+        div.innerText = "double clicked";
+        console.log(e);
+    })
+
+    mouseInOut.addEventListener("mouseover", (e) => {
+        div.style.backgroundColor = "brown";
+        div.innerText = "mouseover";
+        console.log(e);
+    })
+
+    mouseInOut.addEventListener("mouseout", (e) => {
+        div.style.backgroundColor = "chocolate";
+        div.innerText = "mouseout";
+        console.log(e);
+    })
+
+</script>
+
+</html>

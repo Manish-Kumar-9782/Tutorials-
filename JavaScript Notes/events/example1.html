@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Change color</title>
+
+    <style>
+        #div1 {
+            height: 200px;
+            width: 700px;
+            border: 1px solid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="div1"></div>
+    <button id="bt">Change Color</button>
+
+</body>
+
+
+<script>
+    // first we need to get the button element
+    const bt = document.getElementById("bt");
+    const div = document.getElementById("div1")
+    // Now we need to make a function which will give us the random
+
+    function random(number) {
+        return Math.floor(Math.random() * (number + 1));
+        // Note here we are adding 1 into the number intentionally.
+    }
+
+    // Now we will make another function which will generate random
+    // colors
+    function random_color() {
+        return `rgb(${random(255)}, ${random(255)}, ${random(255)})`
+    }
+
+    // Now we need to bind the onclick event to the button
+    bt.addEventListener("click", () => {
+        div.style.backgroundColor = random_color();
+    })
+</script>
+
+</html>
