@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=b, initial-scale=1.0">
+    <title>Event Bubbling StopTest</title>
+
+    <style>
+        #outerContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 700px;
+            height: 500px;
+            background-color: #006c84;
+
+        }
+
+        #innerContainer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 400px;
+            height: 300px;
+            background-color: #c4dfe6;
+            color: #006c84;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- In this section we will make two div section
+    
+        outer: This is the main container for some kind of another 
+            inner container.
+
+        inner: This is another inner container which has some kind of 
+            important content which is only visible whenever we click on the 
+            display and hides whenever it is blur or clicked on the outer
+            container.
+
+        Here we will add to event handler one for the outer container and 
+        one for the inner container.
+    -->
+
+    <div id="outerContainer">
+
+        <div id="innerContainer" style="display: none;">
+            <h1>Hello, How are you</h1>
+        </div>
+
+    </div>
+
+    <!-- Here we also have a button. -->
+    <button id="bt">show</button>
+
+    <!-- Now we will write down the script for the above html code. -->
+
+    <script>
+        // here first we need to get all the html element 
+        const outer = document.getElementById("outerContainer");
+        const inner = document.getElementById("innerContainer");
+        const bt = document.getElementById("bt");
+
+        // Registering the event handler for the button
+        bt.onclick = (e) => {
+            inner.style.display = "flex";
+        }
+
+        // Registering the event handler for the outer div
+        outer.onclick = (e) => {
+            inner.style.display = "none";
+        }
+
+        // Now if we want to stop the event bubbling we need to add another
+        // event handler for the innerContainer.
+
+        inner.onclick = (e) => {
+            e.stopPropagation();
+            // this will stop the event bubbling
+        }
+    </script>
+
+</body>
+
+</html>

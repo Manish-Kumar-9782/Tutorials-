@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Keyboard Events</title>
+</head>
+
+<body>
+
+    <input id="textBox" type="text" /><br>
+    <div id="output"></div>
+
+
+    <script>
+        const textBox = document.getElementById("textBox");
+        const output = document.getElementById("output");
+
+        // now we need to add the event listener 
+        textBox.addEventListener('keypress', (event) => {
+            output.textContent = `Pressed key: "${event.key}"`
+        })
+
+    </script>
+</body>
+
+</html>

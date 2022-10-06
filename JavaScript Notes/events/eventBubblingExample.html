@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Bubbling</title>
+</head>
+
+<body>
+    <div id="container">
+        <button id="bt">Click me!</button>
+    </div>
+    <pre id="output"></pre>
+
+    <script>
+        // first we will get the div and button element
+        const bt = document.getElementById("bt");
+        const container = document.getElementById("container");
+        // we also need to output
+        const output = document.getElementById("output");
+        // now we need to make a common function in response.
+        function handleClick(e) {
+            output.textContent += `You have clicked on a ${e.currentTarget.tagName} element\n`;
+            console.log(`You have clicked on a ${e.currentTarget.tagName} element`)
+        }
+        // Now we will register this function with the body, container and
+        // button click event.
+        document.body.onclick = handleClick;
+        container.onclick = handleClick;
+        bt.onclick = handleClick;
+    </script>
+</body>
+
+</html>
