@@ -266,12 +266,14 @@ class Database {
         let tds = tr_element.getElementsByTagName("td");
         console.log(tds);
 
+        // updating the html tr -> td elements
         tds[1].innerText = addbook_container["title"].value
         tds[2].innerText = addbook_container["author"].value
         tds[3].innerText = addbook_container["subject"].value
         tds[4].innerText = addbook_container["pages"].value
         tds[5].innerText = addbook_container["price"].value
 
+        // resetting the form container
         addbook_container.reset()
     }
 }

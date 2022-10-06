@@ -19,6 +19,10 @@ const deleteBook_button = document.getElementById("deleteBook");
 const addbook_section = document.getElementById("addbook");
 const showdatabase_section = document.getElementById("showdatabase")
 
+/*------------------------------------------------------------*/
+const cbook = document.getElementById("cbook");
+const ebook = document.getElementById("ebook");
+
 class Book {
 
     static countBook = 0;
@@ -150,6 +154,13 @@ class ShowDatabase {
             };
 
 
+            // binding/registering/linking saveChanges function with
+            // ebook button.
+
+            ebook.onclick = (event) => {
+                ShowDatabase.#saveChanges(tr_element, book_data);
+            }
+
 
             bt.innerText = "edit";
             td.appendChild(bt);
@@ -165,6 +176,12 @@ class ShowDatabase {
             bt.innerText = "delete";
             td.appendChild(bt);
             tr_element.appendChild(td);
+
+            bt.onclick = function (event) {
+                tr_element.remove();
+                const index = Book.BookDataBase.indexOf(book_data);
+                Book.BookDataBase.splice(index, 1);
+            }
         }
 
 
@@ -202,8 +219,44 @@ class ShowDatabase {
         addbook_section["pages"].value = tds[4].innerText
         addbook_section["prices"].value = tds[5].innerText
 
-        addbook_section.style.display = "block";
-        showdatabase_section.style.display = "none";
+        // switching from the showdatabase to form
+        addbook_section.style.display = "block"; // form
+        showdatabase_section.style.display = "none"; // table
+
+        // now we will hide the cbook button and make visible ebook button
+        cbook.style.display = "none"; // add book button
+        ebook.style.display = "block"; // save book button
+
+    }
+
+    static #saveChanges(tr_element, book) {
+
+        let tds = tr_element.getElementsByTagName("td")
+
+        // getting the data from the changed from
+        tds[1].innerText = addbook_section["title"].value
+        tds[2].innerText = addbook_section["author"].value
+        tds[3].innerText = addbook_section["subject"].value
+        tds[4].innerText = addbook_section["pages"].value
+        tds[5].innerText = addbook_section["prices"].value
+
+        // saving data/ changing book data
+
+        book["title"] = addbook_section["title"].value
+        book["author"] = addbook_section["author"].value
+        book["subject"] = addbook_section["subject"].value
+        book["pages"] = addbook_section["pages"].value
+        book["prices"] = addbook_section["prices"].value
+
+
+        // switching from the showdatabase to form
+        addbook_section.style.display = "none"; // form
+        showdatabase_section.style.display = "block"; // table
+
+        // now we will hide the cbook button and make visible ebook button
+        cbook.style.display = "block"; // add book button
+        ebook.style.display = "none"; // save book button
+
 
     }
 
