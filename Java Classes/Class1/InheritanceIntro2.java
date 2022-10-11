@@ -3,7 +3,7 @@
  * 
  * HAS-A relationship (aggregation)
  * 
- * super:
+ * super keyword
  */
 
 class Address {
@@ -47,6 +47,8 @@ class Student {
     }
 
     void display() {
+
+        // %[flag][width][type]
         System.out.println(String.format("%-15s: %-15s", "Name", this.name));
         System.out.println(String.format("%-15s: %-15s", "Age", this.age));
         System.out.println(String.format("%-15s: %-15s", "Height", this.height));
@@ -54,7 +56,7 @@ class Student {
 }
 
 class Employee extends Student {
-
+    /* IS-A relationship */
     int empId;
     int salary;
     String department;
@@ -70,6 +72,7 @@ class Employee extends Student {
         this.department = department;
     }
 
+    @Override
     void display() {
         super.display();
         System.out.println(String.format("%-15s: %-15s", "EmpId", this.empId));
@@ -82,12 +85,12 @@ public class InheritanceIntro2 {
 
     public static void main(String[] args) {
 
-        Address addrs = new Address(12, "gali no. 5", "bhatakti aatma", "near samasan Ghaat", "Govindpura", "India",
-                123654);
-
-        Employee emp = new Employee("Saloni", 21, 5.6, 420, 45000, "Head of Bhoot", addrs);
-
+        Address addrs = new Address(21, "gopalpura road", "gopalpura", "Jaipur", "Rajasthan", "India", 302030);
+        Employee emp = new Employee("Yatharth", 26, 5.6, 1001, 30000, "Developer", addrs);
+        System.out.println("\n------------------------------------------\n");
         emp.display();
         emp.addrs.display();
+        System.out.println("\n------------------------------------------\n");
+
     }
 }

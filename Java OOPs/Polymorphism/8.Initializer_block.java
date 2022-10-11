@@ -7,7 +7,6 @@
 	of the instance it will be called from the constructor.
 */
 
-
 /*
 
 Rules of the initializer block:
@@ -18,24 +17,24 @@ Rules of the initializer block:
 	3. The instance initializer block comes in the order in which they appear.
 */
 
-class One{
+class One {
 
-	One(){
+	One() {
 
-		System.out.println("One class constructor is calles");
+		System.out.println("One class constructor is calls");
 	}
+
 	// Here we will make an initializer block
 	{
 		System.out.println("This is initializer block inside the One!");
 	}
 }
 
+class Two extends One {
 
-class Two extends One{
-
-	Two(){
+	Two() {
 		super(); // calling the One class constructor.
-		
+
 		System.out.println("Two class constructor is called");
 	}
 	// Now here we will outside the constructor we will make the initializer block.
@@ -45,27 +44,28 @@ class Two extends One{
 	}
 }
 
-
 // Now we will make the Main class
 
-class Main{
+class Main {
 
 	public static void main(String[] args) {
-		
+
 		// Here we will make the class Two method.
 		Two two = new Two();
 	}
 }
 
 /*
-
-	Output:
-		This is initializer block inside the One!                                              
-	One class constructor is calles                                                        
-	This is initializer block inside Two!                                                  
-	Two class constructor is called         
-
-	Note: Process of the above output
-		1. initializer block is copied inside the constructor at the top of all the statement.
-		2. One class print statement is executed after executing the initializer block
-*/
+ * 
+ * Output:
+ * This is initializer block inside the One!
+ * One class constructor is calls
+ * This is initializer block inside Two!
+ * Two class constructor is called
+ * 
+ * Note: Process of the above output
+ * 1. initializer block is copied inside the constructor at the top of all the
+ * statement.
+ * 2. One class print statement is executed after executing the initializer
+ * block
+ */
