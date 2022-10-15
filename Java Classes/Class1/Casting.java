@@ -27,7 +27,7 @@ class Dog extends Animal implements GetAnimal {
     }
 }
 
-class Cat extends Animal {
+class Cat extends Animal implements GetAnimal {
     void display() {
         System.out.println("I am a beauty cat meow...!");
     }
@@ -42,7 +42,7 @@ public class Casting {
     public static void main(String[] args) {
 
         // DownCasting
-        // Dog dog = (Dog) new Animal();
+        Dog dogg = (Dog) new Animal();
 
         // UpCasting
         Animal animal = new Dog();

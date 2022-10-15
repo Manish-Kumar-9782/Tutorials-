@@ -32,6 +32,9 @@ abstract class Automobile {
 
 }
 
+// Runtime Polymorphism --> method overriding
+// CompileTime Polymorphism --> method overloading.
+
 class Car extends Automobile {
 
     Car() {

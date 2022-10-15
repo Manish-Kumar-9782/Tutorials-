@@ -1,84 +1,22 @@
+package LibManage;
+
 import java.util.Scanner;
 
-//=============================================================================//
-class Display {
-
-    static void printSep(int len) {
-        for (int i = 0; i < len; i++) {
-            System.out.print("-");
-        }
-        System.out.print("\n");
-    }
-
-    static void clScreen() {
-        /*
-         * ANSI Code
-         * \033[H: It moves the cursor at the top left corner of the screen or console.
-         * \033[2J: It clears the screen from the cursor to the end of the screen.
-         */
-        System.out.print("\033[H\033[2J");
-        System.out.flush(); // to reset the cursor position at the top of the console screen
-    }
-}
-
-// =============================================================================//
-
-class Book {
-
-    String title, author, publisher, department;
-    int pages, pk;
-    double price;
-
-    static String tableFormat = "%-20s %-20s %-15s %-20s %-8s %-8s %-20s";
-    static int countBooks;
-    static Book bookDatabase[];
-    static int primaryKey;
-
-    static {
-        countBooks = 0;
-        bookDatabase = new Book[10];
-        primaryKey = 1000;
-    }
-
-    Book(String title, String author, String publisher, int pages, double price, String department) {
-
-        this.title = title;
-        this.author = author;
-        this.publisher = publisher;
-        this.pages = pages;
-        this.price = price;
-        this.department = department;
-        this.pk = primaryKey;
-
-        // Now we need to update the static variable of book database.
-        Book.bookDatabase[countBooks++] = this;
-        Book.primaryKey++;
-    }
-
-    void inline_display() {
-        // primaryKey, title, author, publisher, page, price, department
-        System.out.println(
-                String.format(Book.tableFormat, this.pk, this.title, this.author, this.publisher, this.pages,
-                        this.price,
-                        this.department));
-    }
-
-    static void getHeader() {
-        System.out.println(
-                String.format(Book.tableFormat, "Primary key", "Title", "Author", "Publisher", "Pages", "Price",
-                        "Department"));
-    }
-}
-
-// =============================================================================//
-
 public class LibManagement {
-
     static void addPreBooks() {
         new Book("java", "komal", "wiley", 234, 120, "IT");
         new Book("HTML", "Abhishek", "Pearson", 342, 234, "IT");
         new Book("C++", "Saloni", "Pearson", 2345, 432, "IT");
         new Book("IC Engine", "Manish", "Spring", 122, 123, "Mechanical");
+    }
+
+    static void addPersons(){
+        Address adrs = new Address(20, "sitapura", "sitapura",
+                "sitapura", "jaipur", "jaipur", "rajasthan",
+                "india", 302022);
+
+        Registration.registrations[Registration.countPerson++] = new Person("Komal", 21, 5.7,adrs);
+        Registration.registrations[Registration.countPerson++] = new Person("Saloni", 21, 5.6,adrs);
     }
 
     static void showMainHead() {
@@ -100,6 +38,43 @@ public class LibManagement {
         System.out.println("6.Other");
     }
 
+    static void showOtherOptions(){
+        Display.clScreen();
+        Display.sectionHeading("Other Options");
+        Display.printSep(100);
+        System.out.println("1. Add Person");
+        System.out.println("2. Show Persons");
+    }
+
+    static void showRegisteredPerson(){
+        Display.clScreen();
+        Display.sectionHeading("Registered Person");
+        Display.printSep(100);
+
+        Person.showHeading();
+        Display.printSep(100);
+
+        for (int i=0; i<Registration.countPerson; i++){
+            Registration.registrations[i].inline_display();
+        }
+    }
+    static void getOtherOptions(){
+        Scanner scan = new Scanner(System.in);
+        int option = scan.nextInt();
+
+        switch (option){
+            case 1:
+                Registration.registerPerson();
+                break;
+
+            case 2:
+                showRegisteredPerson();
+                break;
+            default:
+                break;
+
+        }
+    }
     // ----------------------------------------------------------------------//
 
     static void getOptions() {
@@ -137,6 +112,8 @@ public class LibManagement {
 
             case 6:
                 // other section (registerPerson)
+                showOtherOptions();
+                getOtherOptions();
                 break;
             default:
                 // invalid option
@@ -187,6 +164,7 @@ public class LibManagement {
 
     public static void main(String[] args) {
         addPreBooks();
+        addPersons();
         String cmd;
         Scanner scan = new Scanner(System.in);
 
@@ -204,5 +182,3 @@ public class LibManagement {
         } while (true);
     }
 }
-
-// =============================================================================//
