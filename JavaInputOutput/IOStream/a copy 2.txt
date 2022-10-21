@@ -1,1 +1,1 @@
-This is file a copy 2 data.
+This data is written by ByteArrayOutputStream

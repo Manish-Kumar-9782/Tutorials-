@@ -64,10 +64,12 @@ public class LibManagement {
 
         switch (option){
             case 1:
+                // to add a new person
                 Registration.registerPerson();
                 break;
 
             case 2:
+                // to show all the person
                 showRegisteredPerson();
                 break;
             default:

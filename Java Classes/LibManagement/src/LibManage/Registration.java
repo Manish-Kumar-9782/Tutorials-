@@ -33,7 +33,7 @@ public class Registration {
         double height = scan.nextDouble();
 
         // Now get the address information
-        Address adrs = new Address();
+        Address adrs = new Address(); // default address.
         adrs.scanAddress();
 
         Display.printSep(100);

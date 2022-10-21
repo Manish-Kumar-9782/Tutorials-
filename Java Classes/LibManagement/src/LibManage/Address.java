@@ -3,7 +3,6 @@ package LibManage;
 import java.util.Scanner;
 
 public class Address {
-
     int plno, pincode;
     String street, landmark, town, city, district, state, country;
 
