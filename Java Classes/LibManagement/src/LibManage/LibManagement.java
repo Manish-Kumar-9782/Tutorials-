@@ -57,6 +57,8 @@ public class LibManagement {
         for (int i=0; i<Registration.countPerson; i++){
             Registration.registrations[i].inline_display();
         }
+
+//        Here we need to provide an additional option to show the address of person.
     }
     static void getOtherOptions(){
         Scanner scan = new Scanner(System.in);
