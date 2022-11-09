@@ -4,12 +4,12 @@ import java.util.Scanner;
 
 public class Registration {
 
-    static Person registrations[];
+    static RegisteredPerson registrations[];
     static int countPerson;
     static int libId;
 
     static {
-        registrations = new Person[10];
+        registrations = new RegisteredPerson[10];
         countPerson=0;
         libId = 100;
     }
@@ -38,6 +38,6 @@ public class Registration {
 
         Display.printSep(100);
 
-        Registration.registrations[Registration.countPerson++] = new Person(name, age, height,adrs);
+        Registration.registrations[Registration.countPerson++] = new RegisteredPerson(name, age, height,adrs);
     }
 }

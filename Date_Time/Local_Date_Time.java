@@ -29,6 +29,7 @@ public class Local_Date_Time {
         System.out.println("Day of year: " + dateTime.get(ChronoField.DAY_OF_YEAR));
         System.out.println("Hour of day: " + dateTime.get(ChronoField.HOUR_OF_DAY));
         System.out.println("Minute of day: " + dateTime.get(ChronoField.MINUTE_OF_DAY));
+        System.out.println("Year: " + dateTime.get(ChronoField.YEAR));
 
     }
 

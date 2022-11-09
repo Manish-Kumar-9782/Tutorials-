@@ -4,10 +4,10 @@ import java.util.Scanner;
 
 public class LibManagement {
     static void addPreBooks() {
-        new Book("java", "komal", "wiley", 234, 120, "IT");
-        new Book("HTML", "Abhishek", "Pearson", 342, 234, "IT");
-        new Book("C++", "Saloni", "Pearson", 2345, 432, "IT");
-        new Book("IC Engine", "Manish", "Spring", 122, 123, "Mechanical");
+        new RegisteredBook("IT","java", "komal", "wiley", 234, 120 );
+        new RegisteredBook("IT","HTML", "Abhishek", "Pearson", 342, 234);
+        new RegisteredBook("IT","C++", "Saloni", "Pearson", 2345, 432);
+        new RegisteredBook("Mechanical","IC Engine", "Manish", "Spring", 122, 123);
     }
 
     static void addPersons(){
@@ -15,8 +15,8 @@ public class LibManagement {
                 "sitapura", "jaipur", "jaipur", "rajasthan",
                 "india", 302022);
 
-        Registration.registrations[Registration.countPerson++] = new Person("Komal", 21, 5.7,adrs);
-        Registration.registrations[Registration.countPerson++] = new Person("Saloni", 21, 5.6,adrs);
+        Registration.registrations[Registration.countPerson++] = new RegisteredPerson("Komal", 21, 5.7,adrs);
+        Registration.registrations[Registration.countPerson++] = new RegisteredPerson("Saloni", 21, 5.6,adrs);
     }
 
     static void showMainHead() {
@@ -36,6 +36,7 @@ public class LibManagement {
         System.out.println("4. Return Book");
         System.out.println("5. Show Books");
         System.out.println("6.Other");
+        System.out.println("7. Search Book");
     }
 
     static void showOtherOptions(){
@@ -103,6 +104,16 @@ public class LibManagement {
             case 3:
                 // issue a book
                 System.out.println("issue a book");
+//                first we need to select the book
+                RegisteredBook bk = RegisteredBook.searchBook();
+
+                if(bk != null){
+                    bk.issueBook();
+                }
+                else{
+                    System.out.println("No match found...");
+                }
+
                 break;
             case 4:
                 // return a book
@@ -118,6 +129,17 @@ public class LibManagement {
                 // other section (registerPerson)
                 showOtherOptions();
                 getOtherOptions();
+                break;
+
+            case 7:
+                RegisteredBook bkX = RegisteredBook.searchBook();
+                if(bkX != null){
+                    System.out.println("match found");
+                    bkX.inline_display();
+                }
+                else{
+                    System.out.println("No Match found");
+                }
                 break;
             default:
                 // invalid option
@@ -149,20 +171,31 @@ public class LibManagement {
         System.out.print("Book Price: ");
         double price = scan.nextInt();
 
-        new Book(title, author, publisher, pages, price, dept);
+        new RegisteredBook(dept, title, author, publisher, pages, price);
     }
 
     // ----------------------------------------------------------------------//
 
     static void showDatabase() {
         System.out.println("Book Database");
-        Book.getHeader();
+        RegisteredBook.getHeader();
         Display.printSep(100);
 
-        for (int i = 0; i < Book.countBooks; i++) {
-            Book.bookDatabase[i].inline_display();
+        for (int i = 0; i < RegisteredBook.countBooks; i++) {
+            RegisteredBook.bookDatabase[i].inline_display();
         }
     }
+
+    // ----------------------------------------------------------------------//
+
+
+    // ----------------------------------------------------------------------//
+//        Issue a Book
+
+    static void issueBook(){
+//        For now all the books are stored inside the
+    }
+
 
     // ----------------------------------------------------------------------//
 

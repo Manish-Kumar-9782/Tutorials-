@@ -2477,3 +2477,860 @@ long skip(long n)
   Skips characters.
 */
 ```
+_____
+<br><br>
+
+## StringWriter
+
+A character stream that collects its output in a string buffer, which can then be used to construct a string.
+
+Closing a StringWriter has no effect. The methods in this class can be called after the stream has been closed without generating an `IOException`. 
+
+```java
+StringWriter()
+/*
+  Create a new string writer using the default initial string-buffer size.
+*/
+
+StringWriter(int initialSize)
+/*
+  Create a new string writer using the specified initial string-buffer size.
+*/
+
+StringWriter append(char c)
+/*
+  Appends the specified character to this writer.
+*/
+
+StringWriter append(CharSequence csq)
+/*
+  Appends the specified character sequence to this writer.
+*/
+
+StringWriter append(CharSequence csq, int start, int end)
+/*
+  Appends a subsequence of the specified character sequence to this writer.
+*/
+
+void close()
+/*
+  Closing a StringWriter has no effect.
+*/
+
+void flush()
+/*
+  Flush the stream.
+*/
+
+StringBuffer getBuffer()
+/*
+  Return the string buffer itself.
+*/
+
+String toString()
+/*
+  Return the buffer's current value as a string.
+*/
+
+void write(char[] cbuf, int off, int len)
+/*
+  Write a single character.
+*/
+
+void write(int c)
+/*
+  Write a single character.
+*/
+
+void write(String str)
+/*
+  Write a string.
+*/
+
+void write(String str, int off, int len)
+/*
+  Write a portion of a string.
+*/
+```
+
+____
+<br><br>
+
+## PipedReader
+
+```java
+PipedReader()
+/*
+  Creates a PipedReader so that it is not yet connected.
+*/
+
+PipedReader(int pipeSize)
+/*
+  Creates a PipedReader so that it is not yet connected and uses the specified pipe size for the pipe's buffer.
+*/
+
+PipedReader(PipedWriter src)
+/*
+  Creates a PipedReader so that it is connected to the piped writer src.
+*/
+
+PipedReader(PipedWriter src, int pipeSize)
+/*
+  Creates a PipedReader so that it is connected to the piped writer src and uses the specified pipe size for the pipe's buffer.
+*/
+
+void clos()
+/*
+  Closes the piped stream and releases any system resources associated with the stream.
+*/
+
+void connect(PipedWriter src)
+/*
+  Causes this piped reader to be connected to the piped writer src.
+*/
+
+int read()
+/*
+  Reads the next character of data from this piped stream.
+*/
+
+int read(char[] cbuf, int off, int len)
+/*
+  Reads characters into a portion of an array.
+*/
+
+boolean ready()
+/*
+  Tell whether this stream is ready to be read.
+*/
+```
+
+____
+<br><br>
+
+## PipedWriter
+
+Piped character-output streams.
+
+```java
+PipedWriter()
+/*
+  Creates a piped writer that is not yet connected to a piped reader.
+*/
+
+PipedWriter(PipedReader snk)
+/*
+  Creates a piped writer connected to the specified piped reader.
+*/
+
+void close()
+/*
+  Closes this piped output stream and releases any system resources associated with this stream.
+*/
+
+void connect(PipedReader snk)
+/*
+  Connects this piped writer to a receiver.
+*/
+
+void flush()
+/*
+  Flushes this output stream and forces any buffered output characters to be written out.
+*/
+
+void write(char[] cbuf, int off, int len)
+/*
+  Writes len characters from the specified character array starting at offset off to this piped output stream.
+*/
+
+void write(int c)
+/*
+  Writes the specified character to piped output stream.
+*/
+```
+_____
+<br><br>
+
+## FilterWriter
+
+Abstract class for writing filtered character streams. The abstract class FilterWriter itself provides default methods that pass all requests to the contained stream. Subclass of FilterWriter should override some of these methods and may also provide additional methods and fields.
+
+```java
+Protected FilterWriter(Writer out)
+/*
+  Create a new filtered writer.
+*/
+
+void close()
+/*
+  Closes the stream, flushing it first.
+*/
+
+void flush()
+/*
+  Flushes the stream.
+*/
+
+void write(char[] cbuf, int off, int len)
+/*
+  Writes a portion of an array of characters.
+*/
+
+void write(int c)
+/*
+  Writes a single character.
+*/
+
+void write(String str, int off, int len)
+/*
+  Writes a portion of a string.
+*/
+```
+_____
+<br><br>
+
+## FilterReader
+
+Abstract class for reading filtered character streams, The abstract class FilterReader itself provides default methods that pass all requests to the contained stream. Subclasses of FilterReader should override some of these methods and may also provide additional methods and fields.
+
+```java
+protected FilterReader(Reader in)
+/*
+  Creates a new filtered reader.
+*/
+
+void close()
+/*
+  Closes the stream and releases any system resources associated with it.
+*/
+
+void mark(int readAheadLimit)
+/*
+  Marks the present position in the stream.
+*/
+
+boolean markSupported()
+/*
+  Tells whether this stream supports the mark() operation.
+*/
+
+int read()
+/*
+  Reads a single character
+*/
+
+int read(char[] cbuf, int off, int len)
+/*
+  Reads characters into a portion of an array.
+*/
+
+boolean ready()
+/*
+  Tells whether this stream is ready to be read.
+*/
+
+void reset()
+/*
+  Resets the stream.
+*/
+
+long skip(long n)
+/*
+  Skips characters.
+*/
+```
+_____
+<br><br>
+
+## File
+
+An abstract representation of file and directory pathname.
+
+User interface and operating systems use system-dependent pathname strings to name files and directories. This class presents an abstract, system-independent view of hierarchical pathname. An abstract pathname has two component.
+
+1. An optional system-dependent prefix string, such as aa disk-drive specifier, "/" for the UNIX root directory, or "\\\\" for a Microsoft Windows UNC pathname.
+2. A sequence of zero or more string names.
+
+* The first name in an abstract pathname may be directory name or , in the case of Microsoft Windows UNC pathnames, a hostname.
+
+* Each subsequent name in an abstract pathname denotes a directory; the last name may denote either a directory or a file. 
+
+* The empty a abstract pathname has no prefix and an empty name sequence.
+
+The conversion of a pathname string to or form an abstract pathname is inherently system-dependent. When an abstract pathname is converted into a pathname string, each name is separated from the next by a single copy of the default separator character.
+
+The default name-separator character is defined by the system property file.separator, and is made available in the public static fields `separator` and `separatorChar` of this class.
+
+When a pathname string is converted into an abstract pathname, the names within it may be separated by the default name-separator character or by any other name-separator character that is supported by the underlying system.
+
+A pathname, whether abstract or in string from, amy be either absolute or relative. An absolute pathname is complete in that no other information is required in order to locate the file that it denotes.
+
+
+**File's Fields**
+
+```java
+static final String pathSeparator
+/*
+  The system-dependent path-separator character, represented as a string for conversion.
+*/
+
+static final char pathSeparatorChar
+/*
+  The system-dependent path-separator character.
+*/
+
+static final String separator
+/*
+  The system-dependent default name-separator character, represented as a string for convenience.
+*/
+
+static final char separatorChar
+/*
+  The system-dependent default name-separator character.
+*/
+```
+
+**File's Constructor**
+
+```java
+File(File parent, String child)
+/*
+  Creates a new File instance form a parent abstract pathname and a child pathname string.
+*/
+
+File(String pathname)
+/*
+  Creates a new File instance by converting the given pathname string into an abstract pathname.
+*/
+
+File(String parent, String child)
+/*
+  Creates a new File instance from a parent pathname string a child pathname string.
+*/
+
+File(URI uri)
+/*
+  Creates a new File instance by converting the given file: URI into an abstract pathname.
+*/
+```
+
+**File's Methods**
+
+```java
+boolean canExecute()
+/*
+  Tests whether the application can execute the file denoted by this abstract pathname.
+*/
+
+boolean canRead()
+/*
+  Tests whether the application can read the file denoted by this abstract pathname.
+*/
+
+boolean canWrite()
+/*
+  Tests whether the application can modify the file denoted by this abstract pathname.
+*/
+
+int compareTo(File pathname)
+/*
+  Compares two abstract pathnames lexicographically.
+*/
+
+boolean createNewFile()
+/*
+  Atomically creates a new, empty file named by this abstract pathname if and only if a file with this name does not yet exist.
+*/
+
+static File createTempFile(String prefix, String suffix)
+/*
+  Creates an empty file in the default temporary file directory, using the given prefix and suffix to generate its name.
+*/
+
+static File createTempFile(String prefix, String suffix, File directory)
+/*
+  Creates a new empty file int the specified directory, using the given prefix and suffix strings to generate its name.
+*/
+
+boolean delete()
+/*
+  Deletes the file or directory denoted by this abstract pathname.
+*/
+
+void deleteOnExit()
+/*
+  Requests that the file or directory denoted by this abstract pathname be deleted when the virtual machine terminates.
+*/
+
+boolean exists()
+/*
+  Tests whether the file or directory denoted by this abstract pathname exists.
+*/
+
+File getAbsoluteFile()
+/*
+  Returns the absolute form of this abstract pathname.
+*/
+
+String getAbsolutePath()
+/*
+  Returns the absolute pathname string of this abstract pathname.
+*/
+
+File getCanonicalFile()
+/*
+  Returns the absolute pathname string of this abstract pathname.
+*/
+
+String getCanonicalPath()
+/*
+  Returns the canonical pathname string of this abstract pathname.
+*/
+
+long getFreeSpace()
+/*
+  Returns the number of unallocated bytes in the partition named by this abstract path name.
+*/
+
+String getName()
+/*
+  Returns the name of the file or directory denoted by this abstract pathname.
+*/
+
+String getParent()
+/*
+  Returns the pathnames string of this abstract pathnames's parent, or null if this pathnames does not name a parent directory.
+*/
+
+String getParentFile()
+/*
+  Returns the abstract pathname of this abstract pathname's parent, or null if this pathname does not name a parent directory.
+*/
+
+String getPath()
+/*
+  Converts the size of the partition named by this abstract pathname.
+*/
+
+long getTotalSpace()
+/*
+  Returns the size of the partition named by this abstract pathname.
+*/
+
+long getUsableSpace()
+/*
+  Returns the number of bytes available to this virtual machine on the partition named by this abstract pathname.
+*/
+
+int hashCode()
+/*
+  computes a hash code for this abstract pathname.
+*/
+
+boolean isAbsolute()
+/*
+  Tests whether this abstract pathname is absolute.
+*/
+
+boolean isDirectory()
+/*
+  Tests whether the file denoted by this abstract pathname is a directory.
+*/
+
+boolean isFile()
+/*
+  Tests whether the file denoted by this abstract pathname is a normal file.
+*/
+
+boolean isHidden()
+/*
+  Tests whether the file named by this abstract pathname is a hidden file.
+*/
+
+long lastModified()
+/*
+  Returns the time that the file denoted by this abstract pathname was last modified.
+*/
+
+long length()
+/*
+  Returns the length of the file denoted ty this abstract pathname.
+*/
+
+String[] list()
+/*
+  Returns an array of strings naming the files and directories in the directory denoted by this abstract pathname.
+*/
+
+String[] list(FilenameFilter filter)
+/*
+  Returns an array of strings naming the files and directories in the directory denoted by this abstract pathname that satisfied the specified filter.
+*/
+
+File[] listFiles()
+/*
+  Returns an array of abstract pathname denoting the files in the directory denoted by this abstract pathname.
+*/
+
+File[] listFiles(FileFilter filter)
+/*
+  Returns an array of abstract pathname denoting the files and directories in the directory denoted by this abstract pathname that satisfy the specified filter. 
+*/
+
+File[] listFiles(FilenameFilter filter)
+/*
+  Returns an array of abstract pathnames denoting the files and directories in the directory denoted by this abstract pathname that satisfy the specified filter.
+*/
+
+static File[] listRoots()
+/*
+  List the available filesystem roots.
+*/
+
+boolean mkdir()
+/*
+  Creates the directory named by this abstract pathname.
+*/
+
+boolean mkdirs()
+/*
+  creates the directory named by this abstract pathname, including any necessary but nonexistent parent directories.
+*/
+
+boolean renameTo(File dest)
+/*
+  Rename the file denoted by this abstract pathname.
+*/
+
+boolean setExecutable(boolean executable)
+/*
+  A convenience method to set the owner's execute permission for this abstract pathname.
+*/
+
+boolean setExecutable(boolean executable, boolean ownerOnly)
+/*
+  Sets the owner's or everybody's execute permission for this abstract pathname.
+*/
+
+boolean setLastModified(long time)
+/*
+  Sets the last-modified time of the file or directory named by this abstract pathname.
+*/
+
+boolean setReadable(boolean readable)
+/*
+A convenience method to set the owner's read permission for this abstract pathname.
+*/
+
+boolean setReadable(boolean readable, boolean ownerOnly)
+/*
+  Sets the owner's or everybody's read permission for this abstract pathname.
+*/
+
+boolean setReadOnly()
+/*
+  Marks the file or directory named by this abstract pathname so that only read operations are allowed.
+*/
+
+boolean seWritable(boolean writable)
+/*
+  A convenience methods to set the owner's write permission for this abstract pathname.
+*/
+
+boolean setWritable(boolean writable, boolean ownerOnly)
+/*
+  Sets the owner's or everybody's write permission for this abstract pathname.
+*/
+
+Path toPath()
+/*
+  Returns a java.nio.file.Path object constructed from this abstract path.
+*/
+
+String toString()
+/*
+  Returns the pathname string of this abstract pathname.
+*/
+
+URI toURI()
+/*
+  Construct a file: URI the represents this abstract pathname.
+*/
+```
+______
+<br><br>
+
+## FileDescriptor
+
+Instance of the file descriptor class serve as an opaque handle to the underlying machine-specific structure representing an open file, an open socket, or another source or sink of bytes. The main practical use for a file descriptor is to create a FileInputStream or FileOutputStream to contain it.
+
+**FileDescriptor's Fields**
+```java
+static final FileDescriptor err
+/*
+  a handle to the standard error stream.
+*/
+
+static final FileDescriptor in 
+/*
+  A handle to the standard input stream.
+*/
+
+static final FileDescriptor out
+/*
+  A handle to the standard output stream.
+*/
+```
+
+**FileDescriptor's Constructor & Methods**
+```java
+FileDescriptor()
+/*
+  Constructs an (invalid) FileDescriptor object.
+*/
+
+void sync()
+/*
+  Force all system buffers to synchronize with the underlying device.
+*/
+
+boolean valid()
+/*
+  Tests if this file descriptor object is valid.
+*/
+```
+
+_____
+<br><br>
+
+## RandomAccessFile
+
+Instance of this class support both reading and writing to a random access file. A random access file behaves like a large array of bytes stored in the file system. 
+
+There is a kind of cursor, or index into the implied array, called the file pointer; input operations read bytes starting at the file pointer and advance the file pointer past the bytes read. 
+
+If the random access file is created in read/write mode, then output operations are also available; output operation write bytes starting at the file pointer and advance the file pointer past the bytes written. 
+
+Output operations that write past the current end of the implied array cause the array to be extended. The file pointer can be read by the `getFilePointer` method and set by the seek method.
+
+`Exception:` It is generally true of all the reading routines in this class that if end-of-file is reached before the desired number of bytes has been read, an EOFException (which is a kind of IOException) is thrown, if any byte cannot be read for any reason other than end-of-file, an IOException other than EOFException is thrown. In particular, an IOException may be thrown if the stream has been closed.
+
+**RandomAccessFile's Constructors**
+```java
+RandomAccessFile(File file, String mode)
+/*
+  Creates a random access file stream to read from, and optionally to write to, the file specified by the File argument.
+*/
+
+RandomAccessFile(String name, String mode)
+/*
+  Creates a random access file stream to read from, and optionally to write to, a file with the specified name.
+*/
+```
+
+**RandomAccessFile's Methods**
+```java
+void close()
+/*
+  Closes this random access file stream and releases any system resources associated with the stream.
+*/
+
+final FileChannel getChannel()
+/*
+  Returns the unique FileChannel object associated with this file.
+*/
+
+final FileDescriptor getFD()
+/*
+  Returns the opaque file descriptor object associated with this stream.
+*/
+
+long getFilePointer()
+/*
+  Returns the current offset in this file.
+*/
+
+long getFilePointer()
+/*
+  Returns the current offset in this file.
+*/
+
+long length()
+/*
+  Returns the length of this file.
+*/
+
+int read()
+/*
+  Reads a byte of data from this file.
+*/
+
+int read(byte[] b)
+/*
+  Reads up to b.length bytes of data from this file into an array of bytes.
+*/
+
+int read(byte[] b, int off, int len)
+/*
+  Reads up to len bytes of data from this file into an array of bytes.
+*/
+
+final boolean readBoolean()
+/*
+  Reads a boolean from this file.
+*/
+
+final byte readByte()
+/*
+  Reads a signed eight-bit value from this file.
+*/
+
+final char readChar()
+/*
+  Reads a character from this file
+*/
+
+final double readDouble()
+/*
+  Reads a double from this file.
+*/
+
+final float readFloat()
+/*
+  Reads a float from this file.
+*/
+
+final void readFully(byte[] b)
+/*
+  Reads b.length bytes from this file into the byte array, starting at the current file pointer.
+*/
+
+final void readFully(byte[] b, int off, int len)
+/*
+  Reads exactly len bytes fro this file into the byte array, starting at the current file pointer.
+*/
+
+final int readInt()
+/*
+  Reads a signed 32-bit integer from this file.
+*/
+
+final String readLine()
+/*
+  Reads the next line of text from this file.
+*/
+
+final long readLong()
+/*
+  Reads a signed 64-bit integer form this file.
+*/
+
+final short readShort()
+/*
+  Reads a signed 16-bit integer number from this file.
+*/
+
+final int readUnsignedByte()
+/*
+  Reads an unsigned eight-bit number form this file.
+*/
+
+final int readUnsignedShort()
+/*
+  Reads an unsigned 16-bit number from this file.
+*/
+
+final String readUTF()
+/*
+  Reads in a string fro this file.
+*/
+
+void seek(long pos)
+/*
+  Sets the file-Pointer offset, measured from the beginning of this file, at which the next read or write occurs.
+*/
+
+void setLength(long newLength)
+/*
+  Sets the length of this file.
+*/
+
+int skipBytes(int n)
+/*
+  Attempts to skp over n bytes of input discarding the skipped bytes.
+*/
+
+int write(byte[] b)
+/*
+  Writes b.length bytes from the specified byte array to this fiel, starting sat the current file pointer.
+*/
+
+int write(byte[] b, int off, int len)
+/*
+  Writes len bytes from the specified byte array starting at offset off to this file.
+*/
+
+void write(int b)
+/*
+  Writes the specified byte to this file.
+*/
+
+final void writeBoolean(boolean v)
+/*
+  Writes a boolean to the file as a none-byte value.
+*/
+
+final void writeByte(int v)
+/*
+  Writes a byte to the file as one-bute value.
+*/
+
+final void writeBytes(String s)
+/*
+  Writes the string to the file as a sequence of bytes.
+*/
+
+final void writeChar(int v)
+/*
+  Writes a char to the file as a two-bute value, high byte first.
+*/
+
+final void writeChars(String s)
+/*
+  Writes a string to the file aas a sequence of characters.
+*/
+
+final void writeDouble(double v)
+/*
+  Converts the double argument to a long using the `doubleToLongBits` method in
+  class Double, and then writes that long value to the file as an eight-byte
+  quantity, high byte first.
+*/
+
+final void writeFloat(float v)
+/*
+  Converts the float argument to an int using the floatToIntBits method in class
+  Float, and then writes that int value to the file as four-byte quantity, high
+  byte first.
+*/
+
+final void writeInt()
+/*
+  Write an int to the file as four bytes, high byte first.
+*/
+
+final void writeLong(long v)
+/*
+  Writes a long to the file as eight bytes, hight byte first.
+*/
+
+final void writeShort()
+/*
+  Write a short to the file as two bytes, hight byte first.
+*/
+
+final void writeUTF(String str)
+/*
+  Writes a string to the file using modified UTF-8 encoding in a machine-independent manner.
+*/
+```

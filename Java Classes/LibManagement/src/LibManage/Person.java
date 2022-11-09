@@ -6,8 +6,7 @@ public class Person {
     int age;
     double height;
     Address adrs;
-
-    static String tableFormat = "%20s %8s %8s";
+    static String tableFormat = "%10s %20s %8s %8s";
 
     Person(String name, int age, double height, Address adrs){
         this.age =age;
@@ -17,6 +16,7 @@ public class Person {
     }
 
     void inline_display(){
+
         System.out.println(String.format(Person.tableFormat, this.name, this.age,  this.height));
     }
 
@@ -26,7 +26,8 @@ public class Person {
     }
 
     static void showHeading(){
-        System.out.println(String.format(Person.tableFormat, "Name", "Age", "Height"));
+
+        System.out.println(String.format(Person.tableFormat,"Lib Id" ,"Name", "Age", "Height"));
     }
 
 }

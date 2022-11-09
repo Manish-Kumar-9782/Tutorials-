@@ -7,12 +7,12 @@ public class Book {
 
     static String tableFormat = "%-20s %-20s %-15s %-20s %-8s %-8s %-20s";
     static int countBooks;
-    static Book bookDatabase[];
+//    static Book bookDatabase[];
     static int primaryKey;
 
     static {
         countBooks = 0;
-        bookDatabase = new Book[10];
+//        bookDatabase = new Book[10];
         primaryKey = 1000;
     }
 
@@ -27,7 +27,7 @@ public class Book {
         this.pk = primaryKey;
 
         // Now we need to update the static variable of book database.
-        Book.bookDatabase[countBooks++] = this;
+//        Book.bookDatabase[countBooks++] = this;
         Book.primaryKey++;
     }
 
