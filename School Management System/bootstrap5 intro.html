@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Bootstrap 5 css -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap icon cdn -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+
+    <!-- map api css -->
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet" />
+    <style>
+        @media (min-width: 768px) {
+            .news-input {
+                width: 50%;
+            }
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 
+        first we we will make a nav bar by using the nav element. to create a nave bar nav element
+        should have the navbar class.
+
+        additional class:
+            navbar-expend-lg: to make navbar responsive at the large screen size break point.
+            bg-dark: for bootstrap 5 dark theme color background.
+            navbar-dark: to set the navbar color theme as dark.
+            navbar-brand: to set the text color along with the theme color.
+     -->
+
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark">
+        <!-- Here we are using the container class which will make a some additional x direction
+            margin -->
+        <div class="container">
+            <a href="#" class="navbar-brand">Bootstrap 5 Crash Course</a>
+
+            <!-- Now we will use a another div element with collapse class which will show and hide the 
+            navbar links on a certain breakpoints  
+                
+            To make a collapsable navbar (responsive navbar) we need to follow the nested structure.
+
+            div.collapse.navbar-collapse
+                -> ul.navbar-nav
+                    -> li.nav-item
+                        -> a.nav-link
+                    -> li.nav-item
+                        -> a.nav-link
+                    -> li.nav-item
+                        -> a.nav-link
+                    -> li.nav-item
+                        -> a.nav-link
+        -->
+
+            <!-- Note: Since we are making the navbar responsive hence it will disappear on the small size screen 
+            so to make it visible we need to use a toggler button which will show/hide the navbar.
+        
+                1. make a button with class .navbar-toggler
+                2. set attributes type = "button", data-bs-toggle="collapse", data-bs-target=<navbar container id or class>
+                3. icon or text for the button.
+
+                navbar-toggler: this class will make the button as a toggler button which will be identified by the js bundler.
+                data-bs-toggle: "collapse" will tell the operation of the toggler button.
+                data-bs-target: it will tell the js what is the targeted container for the collapse button.
+                -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navmenu">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navmenu">
+                <ul class="navbar-nav ms-auto">
+                    <!-- 
+                        -> .collapse.navbar-collapse: it will make the collapsable navbar container.
+                        -> navbar-nav: it will set the ul as a flex container in x-axis.
+                        -> nav-item: it will show that this container contain the actual navigation link/ref.
+                        -> nav-link: it will set some left and right padding. 
+
+                        -> ms-auto: it will set the auto margin on the left and right side. this will place the nav ul-list to right side.
+                     -->
+                    <li class="nav-item">
+                        <a href="#learn" class="nav-link">What we will learn!</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#questions" class="nav-link">Questions</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a href="#instructors" class="nav-link">Instructors</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ShowCase section -->
+    <section class="bg-dark text-light p-5 text-center text-sm-start">
+        <!-- 
+            bg-dark: for dark background;
+            text-light: light (like white) text color;
+            p-5: 5x padding all around;
+            text-center: set text as center justified for all size of screen.
+            text-sm-center: set text at start for all size of screen except small screen.
+         -->
+
+        <!-- Now we will make a container in which we will put the a row, row will contain the description and image. -->
+        <div class="container">
+            <div class="d-sm-flex align-items-center justify-content-center justify-content-between">
+                <!-- 
+                    d-sm-flex: set the container as flex-container util the small screen breakpoint does not hit.
+                    align-item-center: align all items at center on cross-axis.
+                    justify-content-between: set a space in b/w the flex-items.
+                 -->
+                <div>
+                    <h1>Become a <span class="text-warning">Web Developer</span></h1>
+                    <p class="lead my-3">Lorem ipsum dolor sit amet consectetur adipisicing elit. Iure, architecto
+                        aliquam? Minus, sapiente totam! Similique vel maiores voluptate iusto rerum sapiente vero est in
+                        provident ullam at omnis culpa architecto dignissimos facere delectus, accusamus magni corporis
+                        esse itaque rem doloremque eius perspiciatis earum? Dolores harum vitae possimus repellat sit
+                        et.</p>
+                    <button class="btn btn-primary btn-lg" data-bs-toggle="modal" data-bs-target="#enroll">Start The
+                        Enrollment</button>
+                </div>
+                <img src="images/showcase.svg" class="img-fluid w-50 d-none d-sm-block" alt="showcase image">
+                <!-- 
+                    img-fluid: fit the image into the container.
+                    w-50: set the image as 50% of its original container size;
+                    d-none: set the display of img as none for all screen;
+                    d-sm-block: set the display of img as block for all screen except small screen.
+                 -->
+            </div>
+        </div>
+
+    </section>
+
+    <!-- Newsletter Section -->
+
+    <!-- Now we will make a news letter section with bg-primary, text-light and p-5 classes.-->
+    <section class="bg-primary text-light p-5">
+
+        <div class="container">
+            <div class="d-md-flex justify-content-between align-items-center">
+                <h3 class="mb-3 mb-md-0">Sign up For our Newsletter</h3>
+
+                <div class="input-group news-input">
+                    <input type="email" class="form-control" placeholder="Enter Email">
+                    <button class="btn btn-dark btn-lg" type="button" id="button-addon2">Button</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Boxes -->
+    <!-- Now we will make boxes in which we will put information about some workers.
+    
+        we will make a row in a container and this row will container three columns on all above the
+        medium screen size.
+    -->
+
+    <section class="p-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Now each column will have the card-->
+                <div class="col-md">
+                    <div class="card bg-dark text-light text-center">
+                        <div class="card-body">
+                            <div class="h1"><i class="bi bi-laptop"></i></div>
+                            <h3 class="card-title">Virtual</h3>
+                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident quo
+                                explicabo ea quibusdam! Magnam aliquid reiciendis ipsum quis, aspernatur culpa.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="card bg-secondary text-light text-center">
+                        <div class="card-body">
+                            <div class="h1"><i class="bi bi-person-square"></i></div>
+                            <h3 class="card-title">Hybrid</h3>
+                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident quo
+                                explicabo ea quibusdam! Magnam aliquid reiciendis ipsum quis, aspernatur culpa.</p>
+                            <a href="#" class="btn btn-dark">Read More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md">
+                    <div class="card bg-dark text-light text-center">
+                        <div class="card-body">
+                            <div class="h1"><i class="bi bi-people"></i></div>
+                            <h3 class="card-title">In Person</h3>
+                            <p class="card-text">Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident quo
+                                explicabo ea quibusdam! Magnam aliquid reiciendis ipsum quis, aspernatur culpa.</p>
+                            <a href="#" class="btn btn-primary">Read More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Learn Sections -->
+
+    <section id="learn" class="p-5">
+        <!-- Fundamentals -->
+        <div class="container">
+            <div class="row align-items-center justify-content-between g-5">
+
+                <div class="col-md">
+                    <img src="images/fundamentals.svg" class="img-fluid" alt="fundamentals">
+                </div>
+
+                <div class="col-md">
+                    <h2>Learn The Fundamentals</h2>
+                    <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis architecto quidem
+                        quae soluta eaque quaerat sunt. Aliquid, molestiae perspiciatis. Deleniti velit ut quos
+                        doloremque eum consequatur rem incidunt nobis a.</p>
+                    <p class="lead">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Adipisci ea ullam
+                        voluptatibus dolorem in. Voluptatibus quaerat omnis voluptas alias fugit, inventore voluptate,
+                        accusantium voluptates, ipsam distinctio quasi cumque sint ipsum?</p>
+
+                    <a class="btn btn-light mt-3"><i class="bi bi-chevron-right"></i>Read More</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- React -->
+        <section id="" class="p-5 bg-dark text-light mt-5">
+            <div class="container">
+                <div class="row align-items-center justify-content-between g-5">
+                    <div class="col-md">
+                        <h2>Learn React</h2>
+                        <p class="lead">Lorem ipsum dolor sit amet consectetur adipisicing elit. Omnis architecto quidem
+                            quae soluta eaque quaerat sunt. Aliquid, molestiae perspiciatis. Deleniti velit ut quos
+                            doloremque eum consequatur rem incidunt nobis a.</p>
+                        <p class="lead">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Adipisci ea ullam
+                            voluptatibus dolorem in. Voluptatibus quaerat omnis voluptas alias fugit, inventore
+                            voluptate,
+                            accusantium voluptates, ipsam distinctio quasi cumque sint ipsum?</p>
+
+                        <a class="btn btn-light mt-3"><i class="bi bi-chevron-right"></i>Read More</a>
+                    </div>
+                    <div class="col-md">
+                        <img src="images/react.svg" class="img-fluid" alt="fundamentals">
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+
+    <!-- Questions accordion -->
+    <section id="questions" class="p-5">
+        <div class="container">
+            <h2 class="text-center m-5">Frequently Asked Questions?</h2>
+
+            <!-- Accordion
+                accordion: To make accordion we need a container with .accordion class with an id which will be parent id for 
+                each accordian item
+
+                accordion-item: a container of the accordion item which containes 'accordion-header' , 'accordion-button',
+                                and an 'accordion-body' placed inside the .accordion-collapse.collapse container with .show 
+                                class.
+
+            -->
+            <div class="accordion" id="questions">
+                <!-- accordion: it is a container class for multiple accordion-item -->
+                <div class="accordion-item">
+                    <!-- accordion-item: an accordion item which must container three part
+                            -> accordion-header
+                            -> accordion-button
+                            -> accordion-body
+
+                            Note: accordion-button is used to show/hide the accordion-body.
+                            we need to make the each accordion-item button with it's body by using the data-bs-target attribute 
+                            and the id of the accordion-body container's id.
+                        -->
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#question1">
+                            Where exactly ary you located?
+                        </button>
+                    </h2>
+                    <div id="question1" class="accordion-collapse collapse" data-bs-parent="#questions">
+                        <div class="accordion-body">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem ducimus asperiores
+                                maxime ipsa animi rerum, facilis molestiae libero mollitia neque expedita quam, minus
+                                sed repudiandae laudantium deserunt quisquam doloribus officia. Quod sunt ex molestias
+                                repudiandae amet recusandae veniam, consequatur animi quas temporibus id facere sed
+                                atque dicta illum, fuga reiciendis?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- item 2 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#question2">
+                            How much does it cost to attend?
+                        </button>
+                    </h2>
+                    <div id="question2" class="accordion-collapse collapse" data-bs-parent="#questions">
+                        <div class="accordion-body">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem ducimus asperiores
+                                maxime ipsa animi rerum, facilis molestiae libero mollitia neque expedita quam, minus
+                                sed repudiandae laudantium deserunt quisquam doloribus officia. Quod sunt ex molestias
+                                repudiandae amet recusandae veniam, consequatur animi quas temporibus id facere sed
+                                atque dicta illum, fuga reiciendis?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- item 3 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#question3">
+                            What do i need to know?
+                        </button>
+                    </h2>
+                    <div id="question3" class="accordion-collapse collapse" data-bs-parent="#questions">
+                        <div class="accordion-body">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem ducimus asperiores
+                                maxime ipsa animi rerum, facilis molestiae libero mollitia neque expedita quam, minus
+                                sed repudiandae laudantium deserunt quisquam doloribus officia. Quod sunt ex molestias
+                                repudiandae amet recusandae veniam, consequatur animi quas temporibus id facere sed
+                                atque dicta illum, fuga reiciendis?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- item 4 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#question4">
+                            How do i sign up?
+                        </button>
+                    </h2>
+                    <div id="question4" class="accordion-collapse collapse" data-bs-parent="#questions">
+                        <div class="accordion-body">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem ducimus asperiores
+                                maxime ipsa animi rerum, facilis molestiae libero mollitia neque expedita quam, minus
+                                sed repudiandae laudantium deserunt quisquam doloribus officia. Quod sunt ex molestias
+                                repudiandae amet recusandae veniam, consequatur animi quas temporibus id facere sed
+                                atque dicta illum, fuga reiciendis?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- item 5 -->
+                <div class="accordion-item">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#question5">
+                            Do you help me find a job?
+                        </button>
+                    </h2>
+                    <div id="question5" class="accordion-collapse collapse" data-bs-parent="#questions">
+                        <div class="accordion-body">
+                            <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Dolorem ducimus asperiores
+                                maxime ipsa animi rerum, facilis molestiae libero mollitia neque expedita quam, minus
+                                sed repudiandae laudantium deserunt quisquam doloribus officia. Quod sunt ex molestias
+                                repudiandae amet recusandae veniam, consequatur animi quas temporibus id facere sed
+                                atque dicta illum, fuga reiciendis?</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Instructors Section -->
+    <section id="instructors" class="p-5 bg-primary">
+        <div class="container">
+            <h2 class="text-center text-white">Our Instructors</h2>
+            <p class="lead text-center text-white mb-5">
+                Our instructors all have 5+ years working as a web developer in the
+                industry
+            </p>
+
+            <!-- Now we will make the a row in which we will place all the instructors cards. -->
+            <div class="row g-4">
+                <!-- This row will contain col-md-6 for medium screen and col-lg-3 for large screen. -->
+                <div class="col-md-6 col-lg-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <img src="https://randomuser.me/api/portraits/women/11.jpg" class="rounded-circle mb-3"
+                                alt="">
+
+                            <h3 class="card-title mb-3">Joni Moni</h3>
+                            <p class="card-text">
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus inventore
+                                reprehenderit enim rerum qui libero sunt iusto maxime non. Provident.
+
+                            </p>
+
+                            <a href=""><i class="bi bi-twitter text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-facebook text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-youtube text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-instagram text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-linkedin text-dark mx-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <img src="https://randomuser.me/api/portraits/women/12.jpg" class="rounded-circle mb-3"
+                                alt="">
+
+                            <h3 class="card-title mb-3">Angelina</h3>
+                            <p class="card-text">
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus inventore
+                                reprehenderit enim rerum qui libero sunt iusto maxime non. Provident.
+
+                            </p>
+
+                            <a href=""><i class="bi bi-twitter text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-facebook text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-youtube text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-instagram text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-linkedin text-dark mx-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <img src="https://randomuser.me/api/portraits/women/13.jpg" class="rounded-circle mb-3"
+                                alt="">
+
+                            <h3 class="card-title mb-3">Jennifer Winget</h3>
+                            <p class="card-text">
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus inventore
+                                reprehenderit enim rerum qui libero sunt iusto maxime non. Provident.
+
+                            </p>
+
+                            <a href=""><i class="bi bi-twitter text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-facebook text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-youtube text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-instagram text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-linkedin text-dark mx-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="col-md-6 col-lg-3">
+                    <div class="card bg-light">
+                        <div class="card-body text-center">
+                            <img src="https://randomuser.me/api/portraits/women/14.jpg" class="rounded-circle mb-3"
+                                alt="">
+
+                            <h3 class="card-title mb-3">Charly jess</h3>
+                            <p class="card-text">
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Delectus inventore
+                                reprehenderit enim rerum qui libero sunt iusto maxime non. Provident.
+
+                            </p>
+
+                            <a href=""><i class="bi bi-twitter text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-facebook text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-youtube text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-instagram text-dark mx-1"></i></a>
+                            <a href=""><i class="bi bi-linkedin text-dark mx-1"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Info and Location -->
+    <section class="p-5">
+        <div class="container">
+            <div class="row g-4">
+                <!-- Here we will make two columns 
+                first one will have the contace info text.
+                second one will have the locaion on the map  -->
+                <div class="col-md">
+                    <h2 class="text-center mb-4">
+                        Contact Info
+                    </h2>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <span class="fw-bold">Main Location: </span> Luniyawas near khathipura
+                        </li>
+                        <li class="list-group-item">
+                            <span class="fw-bold">Enrollment Phone:</span> (555) 555-5555
+                        </li>
+                        <li class="list-group-item">
+                            <span class="fw-bold">Student Phone:</span> (333) 333-3333
+                        </li>
+                        <li class="list-group-item">
+                            <span class="fw-bold">Enrollment Email:</span> (555)
+                            enroll@teststudent.test
+                        </li>
+                        <li class="list-group-item">
+                            <span class="fw-bold">Student Email: </span> Studentexample@enroll.test
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-md">
+                    <!-- Here we will use the map  
+                    we need to embed the map css and js cdnjs links-->
+                    <div id="map"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="p-5 bg-dark text-white text-center position-relative">
+        <p class="lead">Copyright &copy; 2022 Bootstrap 5 Crash Course</p>
+        <a href="#" class="p-5 position-absolute end-0 bottom-0">
+            <i class="bi bi-arrow-up-circle h1"></i>
+        </a>
+    </footer>
+
+    <!-- Modal: this modal will poped up after clicked on teh Start Eroll button -->
+
+    <!-- first we will make a modal container by using the .modal class and 
+    we alos use the fade class to apply the fade-in transition effect. -->
+    <div class="modal fade" id="enroll" tabindex="-1">
+        <!-- Now we have a modal-dialog container in which we have modal-content 
+        modal-content: can have multiple sub container like
+            
+            modal-header, modal-body, modal-footer
+    -->
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Enrollment</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <!-- modal body -->
+                <div class="modal-body">
+                    <p>Fill out this form we will get to you as soon as possible.</p>
+                    <form>
+                        <label for="first-name" class="col-form-label">First Name:</label>
+                        <input type="text" class="form-control" id="first-name" name="first-name">
+
+                        <label for="last-name" class="col-form-label">Last Name:</label>
+                        <input type="text" class="form-control" id="last-name" name="last-name">
+
+                        <label for="email" class="col-form-label">Email:</label>
+                        <input type="email" class="form-control" id="email" name="email">
+
+                        <label for="phone" class="col-form-label">Phone:</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </form>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 js -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+    <!-- map js script -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
+
+    <script>
+        // additonal part of the map js
+        mapboxgl.accessToken =
+            'pk.eyJ1IjoiYnRyYXZlcnN5IiwiYSI6ImNrbmh0dXF1NzBtbnMyb3MzcTBpaG10eXcifQ.h5ZyYCglnMdOLAGGiL1Auw'
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [-71.060982, 42.35725],
+            zoom: 18,
+        })
+    </script>
+</body>
+
+</html>
+
+<!-- breakpoints
+
+
+Breakpoint	        Class infix	    Dimensions
+X-Small	            None	        <576px
+Small	            sm	            ≥576px
+Medium	            md	            ≥768px
+Large	            lg	            ≥992px
+Extra large	        xl	            ≥1200px
+Extra extra large	xxl	            ≥1400px
+-->
