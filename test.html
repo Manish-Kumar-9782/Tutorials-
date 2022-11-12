@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>text</title>
+</head>
+
+<body>
+
+
+    <table>
+        <tr>
+            <th>Operator</th>
+            <th>Name</th>
+            <th>Example</th>
+            <th>Description</th>
+        </tr>
+        <tr>
+            <td>?:</td>
+            <td>Ternary</td>
+            <td>$x = expr1 ? expr2 : expr3</td>
+            <td>Returns the value of $x.
+                The value of $x is expr2 if expr1 = TRUE.
+                The value of $x is expr3 if expr1 = FALSE</td>
+        </tr>
+        <tr>
+            <td>??</td>
+            <td>Null coalescing</td>
+            <td>$x = expr1 ?? expr2</td>
+            <td>Returns the value of $x.
+                The value of $x is expr1 if expr1 exists, and is not NULL.
+                If expr1 does not exist, or is NULL, the value of $x is expr2.
+                Introduced in PHP 7</td>
+        </tr>
+        <tr>
+            <td>===</td>
+            <td>Identity</td>
+            <td>$x === $y</td>
+            <td>true: if $x and $y have the same key/value pairs and their type also matches in the same order.</td>
+        </tr>
+        <tr>
+            <td>!=</td>
+            <td>Inequality</td>
+            <td>$x != $y</td>
+            <td>true: true if $x is not equal to $y.</td>
+        </tr>
+        <tr>
+            <td>&lt;&gt;</td>
+            <td>Inequality</td>
+            <td>$x &lt;&gt; $y</td>
+            <td>true: true if $x is not equal to $y.</td>
+        </tr>
+        <tr>
+            <td>!==</td>
+            <td>Non-identity</td>
+            <td>$x !== $y</td>
+            <td>true if $x is not identical to $y.</td>
+        </tr>
+        <tr>
+            <td>&gt;</td>
+            <td>Greater than</td>
+            <td>To check that left value is greater than the right value. Return true or false.</td>
+        </tr>
+        <tr>
+            <td>&gt;=</td>
+            <td>Greater than or equal to</td>
+            <td>To check that right value is greater than or equal to the left value. Return true or false.</td>
+        </tr>
+        <tr>
+            <td>&lt;=</td>
+            <td>Less than or equal to</td>
+            <td>To check that right value is less than or equal to the left value. Return true or false.</td>
+        </tr>
+        <tr>
+            <td>&lt;=&gt;</td>
+            <td>Spaceship</td>
+            <td> Returns an integer less than, equal to, or greater than zero, depending on if 'left value' is less
+                than, equal to, or greater than 'right value'.</td>
+        </tr>
+    </table>
+</body>
+
+</html>

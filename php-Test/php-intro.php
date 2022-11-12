@@ -10,6 +10,7 @@ echo "<h1 style='color:red;'> Hello world </h1>";
 
 echo htmlspecialchars("<script> alert('hello this is alert') </script>");
 
+// Operators:
 /**
  * 
  * arithmetic operators:
@@ -29,7 +30,7 @@ echo htmlspecialchars("<script> alert('hello this is alert') </script>");
  * 
  * logical operator:
  * 
- * !, &&, ||
+ * !(NOT), &&(AND), ||(OR)
  * 
  *
  * Data type
@@ -108,6 +109,7 @@ switch ($color) {
 
 // loop: for-loop, while-loop, do-while loop;
 
+// initialization, termination condition, increment
 for ($i = 0; $i < 10; $i++) {
     display("<div style='background-color: red; display:flex; justify-content:center; align-item:center; width:100px; height:100px'><h1>$i</h1></div>");
 }
@@ -118,7 +120,7 @@ for ($i = 0; $i < 10; $i++) {
 // when to used while loop: whenever we don't know the number of iteration of loop.
 $i = 0; // counter initialization.
 display("<h1>While loop output:</h1>");
-while ($i < 10) {
+while ($i < 5) {
 
     display("<div style='background-color: blue; display:flex; justify-content:center; align-item:center; width:100px; height:100px'><h1>$i</h1></div>");
     $i++; // counter increment
@@ -127,11 +129,13 @@ while ($i < 10) {
 
 display("<h1>do-While loop output:</h1>");
 
-$i = 12;
+$i = 5;
 do {
-    display("first time runs");
+    display("first time runs do while loop");
     $i++;
 } while ($i < 10);
+
+// =====================================================================//
 
 
 // functions: first we use 'function' keyword with postfix function name
@@ -139,7 +143,7 @@ do {
 function myfunc($x, $y)
 {
     // it is a non return function.
-    $result = $x + $y;
+    $result = $x + $y; // performing mathematical operation.
     display("Result: $x + $y = $result");
 }
 
@@ -156,11 +160,11 @@ function myfunc2(int $x, int $y)
 
 
 // myfunc("hello", "jello");
-// myfunc2("hello", "jello");
+// myfunc2(123, "jello");
+myfunc2(152, 235);
 
 
 // function with returning a value.
-
 function func_return(int $x, float $y)
 {
     // it is a non return function.
@@ -168,6 +172,7 @@ function func_return(int $x, float $y)
     // display("Result: $x + $y = $result");
     return $result;
 }
+
 
 function func_return_int(int $x, float $y): int
 {
@@ -183,21 +188,30 @@ function func_pre_defined($x = 100, $y = 10.20)
 }
 
 
-$output = func_return(10, 34.5);
-$output2 = func_return_int(10, 34.5);
+$output = func_return(10, 34.9);
+$output2 = func_return_int(10, 34.9);
 $preoutput = func_pre_defined();
+$preoutputx = func_pre_defined(10, 20);
 
 display("output: $output");
-display("output: $output2");
+display("output2: $output2");
 display("Output pre defined values: $preoutput");
+display("Output pre defined values: $preoutputx");
 
 
 // Array 
 
 $array = [3, 4, 5, 5, 6, 8];
 
+// another way to  make array by using the Array() class constructor.
+$arr = array(1, 2, 3, 4, 5);
+
+// To print/show the array we need to use print_r() function.
+
+echo "Array 2: ", print_r($arr);
+
 foreach ($array as $value) {
-    $value *= $value;
+    $value *= $value; // computing square
     display("<div style='background-color: blue; display:flex; justify-content:center; align-item:center; width:100px; height:100px'><h1>$value</h1></div>");
 };
 
@@ -205,7 +219,7 @@ foreach ($array as $value) {
 // Associative Array: like js object.
 
 $pairs = [
-    "name" => "varsha",
+    "name" => "Gotam",
     "age" => 21,
     "height" => 5.6
 ];
@@ -216,3 +230,26 @@ $pairs = [
 // print_r(array_keys($pairs));
 
 echo "Name: " . $pairs["name"];
+
+// $_POST // $_GET ->> global variable.
+
+
+$data = [
+    [
+        "name" => "Gotam",
+        "age" => 21,
+        "height" => 5.6
+    ],
+    [
+        "name" => "Suraj",
+        "age" => 22,
+        "height" => 5.7
+    ],
+    [
+        "name" => "Narendra",
+        "age" => 22,
+        "height" => 5.5
+    ]
+];
+
+echo "<br>Column Names: ", print_r(array_keys($data[0]));

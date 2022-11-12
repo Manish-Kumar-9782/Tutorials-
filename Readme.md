@@ -69,6 +69,8 @@ A comment in PHP code is a line that is not executed as a part of the program. I
 For single line comment: comment is written after `//` (double forward slash).
 Multiline comment: we can write a multiline comment by using `/** comment lines */`.
 
+[PHP Docs](https://devdocs.io/php/)
+
 ## Tutorial Section
 
 Tutorial Section is divided in three section basic, intermediate, advance. each section contain multiple sub section which is described in their own sections.
