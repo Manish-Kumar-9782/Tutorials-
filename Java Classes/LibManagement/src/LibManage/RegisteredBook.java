@@ -2,6 +2,7 @@ package LibManage;
 import javax.lang.model.type.NullType;
 import java.time.LocalDate;
 import java.time.temporal.ChronoField;
+import java.util.Arrays;
 import java.util.Scanner;
 
 class PersonEntry{
@@ -29,14 +30,20 @@ public class RegisteredBook extends Book{
     String department;
 
     static RegisteredBook bookDatabase[];
+    static RegisteredBook allIssuedBook[];
     static int countBook;
+    static int issueCountBook;
 
     static{
         countBook = 0;
+        issueCountBook = 0;
         bookDatabase = new RegisteredBook[10];
+        allIssuedBook = new RegisteredBook[10];
     }
-    private  PersonEntry issuedPerson[] = new PersonEntry[10];
-    private int nPersonEntries = 0;
+
+    static String tableFormat = "%-15s %-30s %-30s %-25s %-10s";
+    private  PersonEntry issuedPerson[] = new PersonEntry[10]; // to store the entries.
+    private int nPersonEntries = 0; // to count the entries
     private Person currentIssuedPerson;
     private  boolean availability=true;
     private  boolean returnStatus = true;
@@ -62,6 +69,24 @@ public class RegisteredBook extends Book{
 //      adding a new entry to the issuedPerson
             this.issuedPerson[this.nPersonEntries++]  = new PersonEntry(person,
                     issuedDate, null, false, 0);
+
+//      here we need to verify that current book is already exist in the database.
+            if(RegisteredBook.issueCountBook>0) {
+
+                for (int i = 0; i < RegisteredBook.issueCountBook; i++) {
+
+                    if (!RegisteredBook.allIssuedBook[i].equals(this)) {
+                        System.out.println("Book added to the issued book database.");
+                        RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
+                    } else {
+                        System.out.println("Book is already exist in issued Database.");
+                    }
+                }
+            }
+            else{
+                RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
+            }
+
         }
         else {
             System.out.println("person entry is not found..");
@@ -101,6 +126,22 @@ public class RegisteredBook extends Book{
             }
         }
         return null;
+    }
+//    BookName, NumberOfIssuedPerson, CurrentIssuedPerson, LastIssueDate, LastIssueDataValidity,
+    void inlineDisplay(){
+        System.out.println(String.format(RegisteredBook.tableFormat, this.title,this.nPersonEntries,
+                this.currentIssuedPerson.name, this.issuedDate, this.validDays));
+    }
+
+    static void getHeading(){
+        System.out.println(String.format(RegisteredBook.tableFormat, "BookName", "NumberOfIssuedPerson",
+                "CurrentIssuedPerson", "LastIssueDate", "LastIssueDataValidity"));
+    }
+    static void showDatabase(){
+        RegisteredBook.getHeading();
+        for (int i=0; i<RegisteredBook.issueCountBook; i++){
+            RegisteredBook.allIssuedBook[i].inlineDisplay();
+        }
     }
 
 

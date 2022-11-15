@@ -37,6 +37,7 @@ public class LibManagement {
         System.out.println("5. Show Books");
         System.out.println("6.Other");
         System.out.println("7. Search Book");
+        System.out.println("8. All Issued Books");
     }
 
     static void showOtherOptions(){
@@ -80,6 +81,8 @@ public class LibManagement {
 
         }
     }
+    // ----------------------------------------------------------------------//
+
     // ----------------------------------------------------------------------//
 
     static void getOptions() {
@@ -132,6 +135,7 @@ public class LibManagement {
                 break;
 
             case 7:
+//                search book
                 RegisteredBook bkX = RegisteredBook.searchBook();
                 if(bkX != null){
                     System.out.println("match found");
@@ -140,6 +144,10 @@ public class LibManagement {
                 else{
                     System.out.println("No Match found");
                 }
+                break;
+            case 8:
+//                all issued books
+                    RegisteredBook.showDatabase();
                 break;
             default:
                 // invalid option
