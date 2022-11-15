@@ -24,7 +24,7 @@
     show_array($array1);
     // print_r($array1);
 
-    $chunks = array_chunk($array1, 4, true);
+    $chunks = array_chunk($array1, 4);
     heading(3, "Chunked arrays: ");
 
     echo "<div style='padding-left:15px;'> <b style='margin-top:30px;'><br>Array (</br>";
@@ -66,7 +66,7 @@
 
 
     <?php
-
+    // array column
     put_sep();
     heading(1, "Array_column");
 

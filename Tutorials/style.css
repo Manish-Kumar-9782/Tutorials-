@@ -16,3 +16,10 @@
     padding: 3px;
     font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 }
+
+.arvalue {
+    font-size: 1.2rem;
+    color: coral;
+    /* font-family: 'Courier New', Courier, monospace; */
+    padding-left: 20px;
+}
