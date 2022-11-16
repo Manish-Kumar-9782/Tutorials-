@@ -11,14 +11,22 @@ function show_array(array $array)
 }
 
 
-function show_array_values(array $array, int $rlen)
+function show_array_values(array $array, int $rlen = 10)
 {
+    $gap = true;
+    if (count($array) < $rlen) {
+        // global $gap;
+        $gap = false;
+    }
 
-    echo "<b>Array [</b><br>";
 
     $len = count($array);
     // echo "found length: $len";
     echo "<p class='p-5'>";
+    if ($gap)
+        echo "<b>Array [</b><br>";
+    else
+        echo "<b>Array [</b> ";
     for ($i = 0; $i < $len; $i++) {
 
         // if $i%$rlen == 0 => make a new line
@@ -26,13 +34,18 @@ function show_array_values(array $array, int $rlen)
         if ($i % $rlen == 0  && $i > 0) {
             echo "<br>";
         }
-        echo "<span class='arvalue'>" . $array[$i] . "</span>";
+        // echo "<span class='arvalue'>" . $array[$i] . "</span>";
         if ($i != $len - 1) {
-            echo ", ";
+            echo "<span class='arr_item'>" . $array[$i] . "</span>";
+        } else {
+            echo "<span class='arr_last_item arr_item'>" . $array[$i] . "</span>";
         }
     }
+    if ($gap)
+        echo "<br><b> ]</b><br><br>";
+    else
+        echo "<b> ]</b><br><br>";
     echo "</p>";
-    echo "<b>]</b><br><br>";
 }
 
 function heading(int $n, string $str)

@@ -23,3 +23,28 @@
     /* font-family: 'Courier New', Courier, monospace; */
     padding-left: 20px;
 }
+
+.arr_item {
+    font-size: 1.2rem;
+    color: coral;
+    /* font-family: 'Courier New', Courier, monospace; */
+    padding: 0px 5px;
+}
+
+.arr_item::after {
+    content: ",";
+}
+
+.arr_last_item.arr_item::after {
+    content: "";
+}
+
+.data {
+    font-size: 1.3rem;
+    color: brown;
+}
+
+.data-output {
+    font-size: 1.2rem;
+    color: rgb(40, 40, 103);
+}
