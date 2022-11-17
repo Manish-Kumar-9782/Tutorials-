@@ -63,28 +63,39 @@ public class RegisteredBook extends Book{
 
         if (person != null){
             issuedDate = LocalDate.now();
-            this.availability = false;
-            this.returnStatus = false;
             this.currentIssuedPerson = person;
 //      adding a new entry to the issuedPerson
             this.issuedPerson[this.nPersonEntries++]  = new PersonEntry(person,
                     issuedDate, null, false, 0);
 
 //      here we need to verify that current book is already exist in the database.
-            if(RegisteredBook.issueCountBook>0) {
 
-                for (int i = 0; i < RegisteredBook.issueCountBook; i++) {
-
-                    if (!RegisteredBook.allIssuedBook[i].equals(this)) {
-                        System.out.println("Book added to the issued book database.");
-                        RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
-                    } else {
-                        System.out.println("Book is already exist in issued Database.");
+            /*
+            *   Now here wee need to check two things
+            *
+            * 1. is our array database is empty or not.
+            * 2. current book is availability.
+            *
+            * */
+            if(this.availability){
+                if(RegisteredBook.issueCountBook>0) {
+                    for (int i = 0; i < RegisteredBook.issueCountBook; i++) {
+                        if (!RegisteredBook.allIssuedBook[i].equals(this)) {
+                            System.out.println("Book added to the issued book database.");
+                            this.finalize_issue_book();
+                        } else {
+                            System.out.println("Book is already exist in issued Database.");
+                        }
                     }
                 }
+                else{
+                    this.finalize_issue_book();
+                }
             }
-            else{
-                RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
+            else {
+                System.out.println("This book is not available right now:");
+                int rdays = this.getRemainValidReturnedDays();
+                System.out.println("You can get this book after "+ rdays +" days.");
             }
 
         }
@@ -93,6 +104,7 @@ public class RegisteredBook extends Book{
         }
     }
 
+//    returnBook is not currently in use
     public void returnBook(){
         LocalDate currentTime = LocalDate.now();
 //        currentTime - issuedDate
@@ -101,6 +113,8 @@ public class RegisteredBook extends Book{
             if((validDays-totalDays) < 0){
 //                if negative then it means fine should be applied
                     double fineAmount = (validDays - totalDays)* this.perDayFine;
+
+
 
             }
             else{
@@ -144,5 +158,31 @@ public class RegisteredBook extends Book{
         }
     }
 
+    // getRemainValidReturnedDays
+    private int getRemainValidReturnedDays(){
+
+        int rdays = 0;
+        if (!this.availability){
+            int iday = this.issuedDate.get(ChronoField.DAY_OF_YEAR);
+
+            int cday = LocalDate.now().get(ChronoField.DAY_OF_YEAR);
+
+//            to varify the current year
+            if (!((cday-iday) <0) ){
+                System.out.println("return days: ");
+                System.out.println("issue iday: " + iday);
+                System.out.println("issue Cday: " + cday);
+                rdays = this.validDays - (cday-iday);
+            }
+        }
+
+        return rdays;
+    }
+
+    private void finalize_issue_book(){
+        RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
+        this.availability = false;
+        this.returnStatus = false;
+    }
 
 }
