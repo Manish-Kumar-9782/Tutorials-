@@ -177,13 +177,14 @@
     put_sep();
     ?>
 
+    <!-- Replacing String -->
     <?php
     heading(1, "Replacing a String");
     heading(3, "Our String");
     $str = "HelloMailAddress@mailEaxample.com";
     display('pre', $str, "data", "String: ");
 
-
+    // search, replace, subject, count
     $result = str_replace("Address", "Gotam", $str); //
     heading(3, "Output: ");
     // show_array($result);
@@ -199,18 +200,19 @@
     display('pre', $str, "data", "String: ");
     heading(3, "Replace These character by .");
 
-    $replaced = str_replace($items, ".", $str);
+    $replaced = str_replace($items, "*", $str);
     display('pre', $replaced, "data", "String: ");
 
-    put_sep();
+    // put_sep();    
+    echo "<br><br>";
 
     // Replacing a sequence of word with another sequence of words.
 
 
     heading(2, "Replacing a sequence of word with another sequence of word.");
-    $str = "Gotam,21,5.7,B+";
-    $seq1 = ["Gotam", "21", "5.7", "B+"];
-    $seq2 = ["Narendra", "22", "5.6", "A+"];
+    $str = "Gotam,21,5.7,B+"; // subject
+    $seq1 = ["Gotam", "21", "5.7", "B+"]; // search
+    $seq2 = ["Narendra", "22", "5.6", "A+"]; // replace
 
     display('pre', $str, "data", "Subject String: ");
 
@@ -223,6 +225,54 @@
     heading(3, "Output: ");
     $replaced = str_replace($seq1, $seq2, $str);
     display('pre', $replaced, "data", "Replaced String: ");
+    put_sep();
+    ?>
+
+    <!-- Formatted string: sprintf 
+    formatting sytax: : %[argnum$][flags][width][.precision]specifier.
+    
+    Date foramt: "%04d-%02d-%02d" 
+-->
+    <?php
+
+    heading(1, "Formatted String");
+
+    heading(2, "Date formatting: ");
+    $format1 = sprintf("%04d-%02d-%02d", 2022, 11, 7);
+    $format2 = sprintf("%02d-%02d-%04d", 17, 11, 2022);
+    display("p", $format1, "data", "Date Formate: ");
+    display("p", $format2, "data", "Date Formate: ");
+
+    echo "<br> <br>";
+
+    heading(2, "Argument positioning with format");
+
+    // Name, age, number;
+
+    $format = sprintf("%1$-2s %2$1.d %3$2.4e", "Abhishek", 21, 3145673.89);
+    display("pre", $format, "data", "Custom format 1: ");
+
+    echo "<br> <br>";
+
+    heading(2, "Time Format: ");
+    $format2 = sprintf("%02d:%02d:%02d", 4, 41, 45);
+    display("p", $format2, "data", "Time Formate: ");
+    put_sep();
+    ?>
+
+    <?php
+    heading(1, "String comparison Non-binary safe");
+
+    heading(2, "Our string:");
+    $str1 = "web";
+    $str2 = "web\0x00Development";
+    display("pre", $str1, "data", "String1: ");
+    display("pre", $str2, "data", "String2: ");
+
+    $result = strcoll($str1, $str2);
+    heading(3, "Output: ");
+    display("p", $result, "data", "Result: ");
+    // "\0"
 
     ?>
 </body>
