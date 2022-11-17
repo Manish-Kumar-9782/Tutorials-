@@ -48,3 +48,8 @@
     font-size: 1.2rem;
     color: rgb(40, 40, 103);
 }
+
+.data-bg {
+    background-color: rgba(165, 42, 42, 0.359);
+    width: fit-content;
+}
