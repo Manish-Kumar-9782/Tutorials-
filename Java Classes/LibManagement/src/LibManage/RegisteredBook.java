@@ -1,7 +1,9 @@
 package LibManage;
 import javax.lang.model.type.NullType;
 import java.time.LocalDate;
+import java.time.Period;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Scanner;
 
@@ -108,21 +110,22 @@ public class RegisteredBook extends Book{
     public void returnBook(){
         LocalDate currentTime = LocalDate.now();
 //        currentTime - issuedDate
-        if (currentTime.get(ChronoField.YEAR)  == issuedDate.get(ChronoField.YEAR)){
-            int totalDays = currentTime.get(ChronoField.DAY_OF_YEAR)  - issuedDate.get(ChronoField.DAY_OF_YEAR);
-            if((validDays-totalDays) < 0){
-//                if negative then it means fine should be applied
-                    double fineAmount = (validDays - totalDays)* this.perDayFine;
-
-
-
-            }
-            else{
-//              if non-negative then it means no fine
-
-            }
+        if(Period.between(this.issuedDate, currentTime).get(ChronoUnit.DAYS) > this.validDays ){
+        // we will apply the fine
+            int diff_day = (int)Period.between(this.issuedDate, currentTime).get(ChronoUnit.DAYS) - this.validDays;
+            int FineAmount = diff_day*10;
+            this.finalize_return_book((RegisteredPerson) this.currentIssuedPerson,
+                    this, issuedDate, currentTime,
+                    true, FineAmount);
         }
-    }
+        else {
+            this.finalize_return_book((RegisteredPerson) this.currentIssuedPerson,
+                    this, issuedDate, currentTime,
+                    false, 0);
+        }
+
+        }
+
 
     static RegisteredBook searchBook(){
 //        this will search the book by using the primary key.
@@ -183,6 +186,14 @@ public class RegisteredBook extends Book{
         RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
         this.availability = false;
         this.returnStatus = false;
+    }
+
+    private  void finalize_return_book(RegisteredPerson person,RegisteredBook bk,
+                                       LocalDate issueDate, LocalDate returnDate,
+                                       boolean isFined, double fineAmount){
+        person.returnBook(bk, issueDate, returnDate, isFined, fineAmount);
+        this.availability = true;
+        this.returnStatus = true;
     }
 
 }

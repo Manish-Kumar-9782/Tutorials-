@@ -17,11 +17,8 @@ class BookEntry{
         this.book = bk;
         this.issueDate = issueDate;
         this.returnDate = returnDate;
-
-        if (isFined){
-            this.isFined = true;
-            this.fineAmount = fineAmount;
-        }
+        this.isFined = isFined;
+        this.fineAmount = fineAmount;
     }
 }
 
@@ -57,11 +54,13 @@ public class RegisteredPerson extends Person{
         System.out.printf((Person.tableFormat) + "%n", this.libId, this.name, this.age,  this.height);
     }
 
-    public void returnBook(RegisteredBook book, boolean isFined){
+    public void returnBook(RegisteredBook book, LocalDate issueDate, LocalDate returnDate,
+                           boolean isFined, double fineAmount){
 
-        if(isFined){
+//        BookEntry(bk, issueDate, returnDate, isFined, fineAmount);
             // if fined then enter the amount of fine.
-        }
-
+            this.issuedBooks[this.nBookEntries++] =  new BookEntry(book, issueDate, returnDate,
+            isFined,fineAmount);
     }
+
 }
