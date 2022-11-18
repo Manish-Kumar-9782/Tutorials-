@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Array In JS</title>
+
+    <script>
+
+        let arr = [1, 2, 3, "hello", 'jeloo', true, false, 3.5, null, undefined];
+        console.log("Our Array: ", arr);
+        // To find out the length (number of element present in the array)
+        console.log("Length of array: ", arr.length);
+
+        // Indexing [] (subscript for array indexing with array.)
+        // selecting "hello" by using the indexing number
+
+        console.log("value at index number 3: ", arr[3]);
+
+        //  selecting "hello" by using the indexing number with at() method.
+        console.log("value at index number 3 with at(): ", arr.at(3));
+
+        // To find the index number of a value we can use indexOf()
+        console.log("index of 'hello' word: ", arr.indexOf("hello"));
+
+
+        // include, reverse, join
+        // To test that a value exist in an array or not
+        console.log("is 'hello' present in array: ", arr.includes("hello"));
+        console.log("is 'kello' present in array: ", arr.includes("kello"));
+
+    </script>
+
+</head>
+
+<body>
+
+</body>
+
+</html>

@@ -65,8 +65,79 @@
         
         */
 
+        /*
+            initialization; condition; increment;
+
+            increment is used for the counter variable initialized in the initialization section
+        */
+
+        for (let i = 10; i > 0; i -= 1) {
+            console.log(i);
+        }
+
+        // Relational Operator
+
+        // == : equality operator (===)
+        a = 10;
+        b = 10;
+
+        console.log("is a equal to b: ", a == b); // equal to 
+        console.log("is a not equal to b: ", a != b); // Not equal to
+        console.log("\n\n"); // making two new lines.
 
 
+        c = 20;
+        console.log("is a not equal to c: ", a != c); // Not equal to
+
+        // less than operator <
+
+        console.log("is a less than b: ", a < b);
+        console.log("is a less than c: ", a < c);
+        console.log("\n\n"); // making two new lines.
+
+
+        // greater than operator >
+        console.log("is a greater than b: ", a > b);
+        console.log("is a greater than c: ", a > c);
+        console.log("\n\n"); // making two new lines.
+
+
+
+        // less than or equal <=
+        console.log("is a less than or equal to b: ", a <= b);
+        console.log("is a less than or equal to c: ", a <= c);
+        console.log("\n\n"); // making two new lines.
+
+        // greater than or equal >=
+        console.log("is a greater than or equal to b: ", a >= b);
+        console.log("is a greater than or equal to c: ", a >= c);
+        console.log("\n\n"); // making two new lines.
+
+
+        // Logical Operator &&
+
+        let cmd1 = true;
+        let cmd2 = false;
+        let cmd3 = true;
+
+        // template string by using the back ticks
+        console.log(`${cmd1} &&  ${cmd2} -----> `, cmd1 && cmd2);
+        console.log(`${cmd2} &&  ${cmd3} -----> `, cmd2 && cmd3);
+        console.log(`${cmd3} &&  ${cmd1} -----> `, cmd3 && cmd1);
+        console.log("\n\n"); // making two new lines.
+
+
+        // Logical Or Operator
+        console.log(`${cmd1} ||  ${cmd2} -----> `, cmd1 || cmd2);
+        console.log(`${cmd2} ||  ${cmd3} -----> `, cmd2 || cmd3);
+        console.log(`${cmd3} ||  ${cmd1} -----> `, cmd3 || cmd1);
+        console.log("\n\n"); // making two new lines.
+
+        // Logical Not operator
+
+
+        console.log("!cmd1 --> ", !cmd1);
+        console.log("!cmd2 --> ", !cmd2);
     </script>
 
 </head>
