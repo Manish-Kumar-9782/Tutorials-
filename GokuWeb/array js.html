@@ -31,6 +31,44 @@
         console.log("is 'hello' present in array: ", arr.includes("hello"));
         console.log("is 'kello' present in array: ", arr.includes("kello"));
 
+        // reverse method.
+        console.log("Original array: ", arr);
+        console.log("Reverse Array: ", arr.reverse());
+
+        // sort method
+        console.log("Original array: ", arr);
+        console.log("Sorted array: ", arr.sort());
+
+        // arr join method.
+        arr2 = ["Ravi1", "Ravi2", "Kushal", "Abhishek"];
+
+        console.log("Our Array: ", arr2);
+        console.log("Joined Array: ", arr2.join(","));
+
+        //"19/11/2022"
+
+        date_arr = [19, 11, 2022];
+        console.log("Date: ", date_arr.join("-"));
+
+        // suppose that we have multidimensional array.
+        let arr2d = [
+            [true, "kello", true],
+            [87, "Jeloo", false],
+            12, 45.9, "hello"
+        ]
+
+        // flat method --> convert any nd array into 1d array.
+
+        console.log("\n\n");
+        console.log("Our Original array: ", arr2d);
+        console.log("Our 2D array: ", arr2d.flat());
+
+
+        //console.log("at 10: ", arr2d[10]);
+
+        let blank_arr = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        console.log("Our Blank array: ", blank_arr);
+        console.log("Filled arrayL ", blank_arr.fill("*", 2, 6));
     </script>
 
 </head>
