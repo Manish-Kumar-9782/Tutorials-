@@ -25,6 +25,12 @@ class PersonEntry{
             this.fineAmount = fineAmount;
         }
     }
+
+    void entryDisplay(){
+        System.out.println("Issued to : "+ person.name);
+        System.out.println("Issued Date : "+ this.issueDate);
+        System.out.println("Current Return Valid day: "+ 15);
+    }
 }
 
 public class RegisteredBook extends Book{
@@ -47,6 +53,7 @@ public class RegisteredBook extends Book{
     private  PersonEntry issuedPerson[] = new PersonEntry[10]; // to store the entries.
     private int nPersonEntries = 0; // to count the entries
     private Person currentIssuedPerson;
+    private PersonEntry currentIssuedEntry = null;
     private  boolean availability=true;
     private  boolean returnStatus = true;
     private  LocalDate issuedDate;
@@ -65,11 +72,6 @@ public class RegisteredBook extends Book{
 
         if (person != null){
             issuedDate = LocalDate.now();
-            this.currentIssuedPerson = person;
-//      adding a new entry to the issuedPerson
-            this.issuedPerson[this.nPersonEntries++]  = new PersonEntry(person,
-                    issuedDate, null, false, 0);
-
 //      here we need to verify that current book is already exist in the database.
 
             /*
@@ -84,14 +86,14 @@ public class RegisteredBook extends Book{
                     for (int i = 0; i < RegisteredBook.issueCountBook; i++) {
                         if (!RegisteredBook.allIssuedBook[i].equals(this)) {
                             System.out.println("Book added to the issued book database.");
-                            this.finalize_issue_book();
+                            this.finalize_issue_book(person);
                         } else {
                             System.out.println("Book is already exist in issued Database.");
                         }
                     }
                 }
                 else{
-                    this.finalize_issue_book();
+                    this.finalize_issue_book(person);
                 }
             }
             else {
@@ -138,7 +140,7 @@ public class RegisteredBook extends Book{
         for(int i=0; i<RegisteredBook.countBooks; i++){
 
             if(RegisteredBook.bookDatabase[i].pk == pk){
-                RegisteredBook.bookDatabase[i].inline_display();
+//                RegisteredBook.bookDatabase[i].inline_display();
                 return RegisteredBook.bookDatabase[i];
             }
         }
@@ -182,8 +184,19 @@ public class RegisteredBook extends Book{
         return rdays;
     }
 
-    private void finalize_issue_book(){
+    private void finalize_issue_book(RegisteredPerson person){
+//        enter the RegisteredBook in allIssuedBook databse
         RegisteredBook.allIssuedBook[RegisteredBook.issueCountBook++] = this;
+
+//        setting the currently issued person.
+        this.currentIssuedPerson = person;
+
+//        setting the currentIssuedEntry
+        this.currentIssuedEntry = new PersonEntry(person,
+                issuedDate, null, false, 0);
+
+        //      adding a new entry to the issuedPerson
+        this.issuedPerson[this.nPersonEntries++]  = this.currentIssuedEntry;
         this.availability = false;
         this.returnStatus = false;
     }
@@ -196,4 +209,7 @@ public class RegisteredBook extends Book{
         this.returnStatus = true;
     }
 
+    public void show_current_Issued_Entry(){
+        this.currentIssuedEntry.entryDisplay();
+    }
 }

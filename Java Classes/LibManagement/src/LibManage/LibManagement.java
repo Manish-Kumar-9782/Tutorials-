@@ -38,6 +38,7 @@ public class LibManagement {
         System.out.println("6.Other");
         System.out.println("7. Search Book");
         System.out.println("8. All Issued Books");
+        System.out.println("9. Return a Book");
     }
 
     static void showOtherOptions(){
@@ -149,6 +150,21 @@ public class LibManagement {
 //                all issued books
                     RegisteredBook.showDatabase();
                 break;
+
+            case 9:
+//                first we will get the book object by using the searchBook method.
+                // in this we will use book id to get the book.
+                RegisteredBook return_book = RegisteredBook.searchBook();
+                if (return_book != null){
+                    System.out.println("Returning Book: " + return_book.title);
+                    return_book.show_current_Issued_Entry();
+                }
+                else{
+                    System.out.println("No Match found");
+                }
+                break;
+
+
             default:
                 // invalid option
                 System.out.println("Invalid Option");
