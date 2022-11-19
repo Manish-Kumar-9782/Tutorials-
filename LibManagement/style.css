@@ -1,0 +1,65 @@
+input {
+    margin: 15px 10px;
+}
+
+#showdatabase {
+    display: none;
+    /* To hide the showdatabase container*/
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 600px;
+
+
+}
+
+.main-container {
+
+    border: 1px solid;
+    padding: 30px;
+
+}
+
+.buttons {
+
+    border: 1px solid;
+    margin: 10px;
+    padding: 20px;
+}
+
+.buttons button {
+    margin: 10px;
+}
+
+
+/* showDatabase table styling*/
+
+
+#showdatabase table,
+th,
+td {
+    border: 1px solid;
+}
+
+#showdatabase th,
+td {
+    padding: 3px 10px;
+    border-color: dodgerblue;
+}
+
+#showdatabase table {
+    border-collapse: collapse;
+}
+
+#showdatabase th {
+    background-color: dodgerblue;
+    color: whitesmoke;
+}
+
+td button {
+    background-color: white;
+    border: 0px;
+}
