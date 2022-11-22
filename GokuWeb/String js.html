@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>String In JS</title>
+
+    <script>
+
+        function display(value, nline = false) {
+            console.log(value);
+
+            if (nline) {
+                console.log("\n\n");
+            }
+
+        }
+
+        display("This is String section: ", true);
+
+        let str = "Hello this is double quote string.";
+
+        display(str);
+
+        let str2 = 'Hello this is single quote string';
+        display(str2);
+        display(typeof str2);
+
+        let str3 = "Hello, My name is 'kushal jaiman' and i live in dausa city."
+        let str4 = 'Hello, My name is "kushal jaiman" and i live in dausa city.'
+
+        display(str3, true);
+        display(str4, true);
+
+
+        function greet(name) {
+            display("Hello, My name is " + name);
+        }
+
+        greet("Ravi");
+
+        // making a string by using the template string.
+        function greet2(name) {
+            display(`Hello, My name is ${name}`);
+        }
+
+        let new_str = new String("Hello world!!...");
+
+        greet2("Manish");
+        display(new_str);
+        display(typeof new_str);
+        display(new_str.toString());
+
+
+        display("", true);
+
+        //=================================================================//
+
+        display(str, true);
+        display(new String(str));
+        display("char at 0: " + str[0]);
+        display("char at 6: " + str[6]);
+        display("char at 11: " + str.charAt(11));
+
+        // 
+        let one = "hello ";
+        let two = "buffalo";
+        let three = 3;
+
+        display("Concat String one + two : " + one.concat(two));
+
+        // endsWith method: to test that a string endswith a specified substring.
+
+        let my_mail = "KushalJaiman420@gmail.com";
+
+        // to test that the above string contain valid gmail address.
+        display(my_mail);
+        display("is Valid gmail: " + my_mail.endsWith("@gmail.com"));
+
+        let row = "Kushal,Jaiman,21,5.6,B+";
+
+        display("Is contain Kushal: " + row.includes("Kushal"));
+    </script>
+</head>
+
+<body>
+
+
+
+</body>
+
+</html>

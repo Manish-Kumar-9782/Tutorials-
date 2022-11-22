@@ -68,7 +68,31 @@
 
         let blank_arr = [0, 0, 0, 0, 0, 0, 0, 0, 0];
         console.log("Our Blank array: ", blank_arr);
-        console.log("Filled arrayL ", blank_arr.fill("*", 2, 6));
+        console.log("Filled array ", blank_arr.fill("*", 2, 6));
+
+
+        // To replace an element we can use  arr[index] = 'value';
+        blank_arr[1] = 'hello';
+        console.log("Filled array ", blank_arr.fill("*", 2, 6));
+
+        // slicing an blank_arr: 
+        arr = [1, 2, 3, "hello", 'jeloo', true, false, 3.5, null, undefined];
+
+        // slicing our array
+
+        console.log("\n\nOriginal Array: ", arr);
+        sliced_arr = arr.slice(0, 4);
+
+        console.log("Sliced Array: ", sliced_arr);
+
+
+        let numbers1 = [1, 2, 3, 4, 5];
+        let numbers2 = [6, 7, 8, 9, 0];
+
+        console.log("\n\nOriginal Arrays: ", numbers1, numbers2);
+        sliced_arr = arr.slice(0, 4);
+
+        console.log("Concated Array: ", numbers1.concat(numbers2, numbers2));
     </script>
 
 </head>
