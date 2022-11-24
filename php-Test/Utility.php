@@ -53,7 +53,7 @@ function heading(int $n, string $str)
     echo "<h$n>$str</h$n>";
 }
 
-function display(string $element, string $str, string $class = NULL, string $head = '')
+function display(string $element, string $str = NULL, string $class = NULL, string $head = '')
 {
     if ($class != NULL) {
         echo "<$element class='$class'><b>$head</b>$str</$element>";

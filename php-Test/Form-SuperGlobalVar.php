@@ -43,8 +43,11 @@
         <label for="adult">Adult: </label>
         <input type="checkbox" id="adult" name="adult"><br><br>
 
-        <!-- true: true, 1, on, yes
-             false: false, 0, off, no
+        <!-- 
+            for checkbox or boolean values.    
+        
+        true: true, 1, on, yes
+        false: false, 0, off, no
     
     -->
         <input type="submit">
