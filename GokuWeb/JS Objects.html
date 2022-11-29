@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Objects</title>
+</head>
+
+<body>
+
+    <script>
+
+        /*
+            To make a js object first we need to make a block with curly brackets {}
+            in that block we define the the properties with values.
+            
+            properties name can be define as an identifier or as string name.
+            Value: value of that properties can be any type.
+        */
+
+        let Person1 = {
+
+            Name: "Manish",
+            Age: 27,
+            Height: 5.6,
+            BloodGroup: "O-"
+        };
+
+
+        let Person2 = {
+
+            Name: "Kushal",
+            Age: 21,
+            Height: 5.1,
+            BloodGroup: "O+"
+        };
+
+        function displayPerson(name, age, height, bloodGroup) {
+
+            console.log("\nName: ", name);
+            console.log("Age: ", age);
+            console.log("Height: ", height);
+            console.log("BloodGroup: ", bloodGroup);
+        }
+
+        displayPerson(Person1.Name, Person1.Age, Person1.Height, Person1.BloodGroup);
+
+        /*
+            Note in the displayPerson we have to pass four values to display them. but, if these values/properties 
+            are associated with any object then we can just pass that object, and can be accessed later inside the 
+            function.
+        */
+
+        Person2.Weight = 60; // we are adding one more properties to the Person2.
+
+        function display2Person(Person) {
+            // Now in this we are passing only one argument.
+            // this argument must be an object
+            // this object must contain Name, Age, Height, BloodGroup properties.
+            console.log("\nName: ", Person.Name);
+            console.log("Age: ", Person.Age);
+            console.log("Height: ", Person.Height);
+            console.log("BloodGroup: ", Person.BloodGroup);
+            console.log("Weight: ", Person.Weight);
+        }
+
+    </script>
+
+</body>
+
+</html>

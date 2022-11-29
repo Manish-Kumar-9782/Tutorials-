@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Function Intro</title>
+</head>
+
+<!-- In this section we will see what is function and how to declare a function:
+
+        To declare/define a function first we need to specify the keyword as function.
+
+        -> keyword: function <function_name>(parameter_list)
+        -> Note: parameter_list is sourrend by parenthesis (round bracket)
+        -> parameter_list contains special variables which is used to hold values 
+            and these values are used in that function. each variable is separated by comma. 
+
+        -> To use or call that function we need to use function with the with the parameters value
+            which are called arguments.
+
+            function <function_name>(val1, val2, val3, ... valn) -======> function header
+
+        -> after defining the function header we need to make a block/scope in which we write the
+            multiple statements, (multiple line of codes)                
+                
+            function myFunction(val1, val2, val3){
+                // code block
+                // multiple statement.
+                
+                // optional statement (keyword)
+                return keyword.
+            }
+ 
+        -> return keyword: it is used to get some value out of the function.
+        -->
+
+<script>
+
+    // declaring/defining the function.
+    function Greeting(name) {
+        console.log("Hello, My name is ", name);
+    }
+
+    Greeting("Manish"); // function calling.
+    Greeting("Krishan Kant"); // function calling.
+
+
+    function Greeting2(name, age = 20) {
+        console.log("Hello, My name is ", name, " and i'm ", age, " years old.")
+    }
+
+    Greeting2("Manish");
+
+    console.log("\n\n");
+
+    function Greeting3(name, age = 18, height) {
+        console.log("Hello, My name is ", name, " and i'm ", age, " years old.")
+        console.log("My height is ", height);
+    }
+    Greeting3("manish", 5.7);
+
+
+
+    console.log("\n\n");
+
+    function Greeting4(name, height, age = 18) {
+        console.log("Hello, My name is ", name, " and i'm ", age, " years old.")
+        console.log("My height is ", height);
+    }
+
+    Greeting4("manish", 5.7);
+
+</script>
+
+<body>
+
+
+</body>
+
+</html>

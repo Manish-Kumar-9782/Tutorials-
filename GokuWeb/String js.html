@@ -9,12 +9,22 @@
 
     <script>
 
+        // This function will take two argument
+
         function display(value, nline = false) {
+
+            /**
+                value: this is the string to be display on the console screen on browser.
+                nline: if true, put two new lines, else no new line will be printed.
+
+            */
             console.log(value);
 
+            // now if nline get true, it will print two new  blank lines
             if (nline) {
                 console.log("\n\n");
             }
+            // if nline gets false it will not print any new line
 
         }
 
@@ -81,7 +91,72 @@
 
         let row = "Kushal,Jaiman,21,5.6,B+";
 
-        display("Is contain Kushal: " + row.includes("Kushal"));
+        display("Is contain Kushal: " + row.includes("Kushal"), true);
+
+        //===================================================================/
+
+        // substring: this method is used too get  a portion of the given string 
+        // by providing the start index and stop index.
+
+        // Now we will use the my_mail string.
+        let sub_mail = my_mail.substring(4, 9);
+
+
+        // Now will show both original and substring.
+
+        display("Original String: " + my_mail);
+        display("SubString: " + sub_mail, true);
+
+        // Task: 1 test 420 exist, if exist replace it with 007.
+
+        display("Original String: " + my_mail);
+        // first we will test 420 exist or not
+
+        if (my_mail.includes("420")) {
+            let i = -1;
+            // now we need to get the first index number of the 420 substring.
+            if ((i = my_mail.indexOf("420")) != -1) {
+                // if not -1 then it means we have the index number fo the substring.
+                // now we will replace the substring by using the replace method.
+                my_mail = my_mail.replace("420", "007")
+            }
+
+        } else {
+            display("420 does not exist.")
+        }
+        display("Replaced String: " + my_mail, true);
+
+
+        //==============================================================/
+
+        // Trim method: it will remove the extra leading edge whitespace.
+        // for example:  ________mY string_________
+        // consider _ as " ", white space.
+
+        let my_string = "          mY string        ";
+
+        // Now we will remove all the leading edge _'s
+        display("Original String: " + my_string);
+        display("Trimmed String: " + my_string.trim(), true);
+
+        // Pad function.
+
+        let my_string2 = "Hello World";
+        display("Original String: " + my_string2);
+        display("padStart String: " + my_string2.padStart(20, "-="));
+        display("padEnd String: " + my_string2.padEnd(20, "-="), true);
+
+        // to compute the length of the string we can use length property.
+        display("Length of the string: " + my_string.length, true);
+
+        row = "Kushal,Jaiman,21,5.6,B+";
+
+        display("Original String: " + row);
+        display("Splitted array:");
+        display(row.split(","));
+
+
+
     </script>
 </head>
 
