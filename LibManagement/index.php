@@ -90,6 +90,7 @@
                     <!-- putting all the header_array value to the first row of thead as the 
                     column of table.-->
                     <tr>
+                        <!-- ?php echo or ?=  -->
                         <th><?= $header_array[0] ?></th>
                         <th><?= $header_array[1] ?></th>
                         <th><?= $header_array[2] ?></th>
@@ -114,7 +115,7 @@
 
                         if ($data_str) {
                             // increasing the row number
-                            $file_row_number++; // line 1
+                            $file_row_number++; // line ++
                             //  getting each column value from the string line
                             $data = str_getcsv($data_str);
                         } else {
@@ -123,6 +124,7 @@
                         }
 
                         ?>
+
                         <?php if ($data != null) { ?>
 
                             <tr>

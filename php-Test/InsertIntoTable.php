@@ -17,7 +17,7 @@
     $host = "localhost";
     $user = "root";
     $password = "";
-    $db_name = "abhi_database";
+    $db_name = "xyz2";
 
     // to make a connection we need to use mysqli_connect(host, user, password)
 
@@ -36,23 +36,12 @@
     <?php
     // creating a table person
 
-    /**
-     * CREATE TABLE person 
-     * (
-     * 'id' INT UNSIGNED NOT NULL AUTO_INCREMENT,
-     * 'Name' VARCHAR(30) NOT NULL,
-     * 'Age' INT UNSIGNED NOT NULL,
-     * 'Height' FLOAT UNSIGNED NOT NULL,
-     * 'Reg_Date' DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     * 'Modify_Date'DATETIME NOT NULL on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     * PRIMARY_KEY ('id')
-     * );
-     */
 
     // Now we will make or query string to make a table
     $sql_query = "INSERT INTO person (Name, Age, Height) VALUES 
-    ('Abhishek', 21, 5.6),
-    ('Manish', 34, 5.7);";
+    ('Narendra', 21, 5.6),
+    ('Gotam', 19, 5.7),
+    ('suraj', 22, 5.8);";
 
     heading(2, "Inserting data To table");
 

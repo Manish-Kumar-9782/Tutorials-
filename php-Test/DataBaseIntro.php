@@ -35,7 +35,7 @@
     <?php
     // create database abhi_database
     heading(2, "Creating Database");
-    $result = mysqli_query($con, "CREATE DATABASE abhi_database");
+    $result = mysqli_query($con, "CREATE DATABASE xyz2");
 
     if ($result) {
         display("p", "Database successfully Created: ", "success", "Success: ");

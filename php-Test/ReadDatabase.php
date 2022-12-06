@@ -46,13 +46,15 @@
     }
     ?>
 
-    <!-- Now we will create a table inside a abhi_database -->
+    <!-- Now we will create a table inside a varsha_database -->
     <?php
-    // creating a table person
+    // Reading database
 
 
     // Now we will make or query string to make a table
     $sql_query = "SELECT * FROM person";
+
+    // Here we are not using any kind of filter operation.
     heading(2, "Reading Database...");
 
     $result = mysqli_query($con, $sql_query);

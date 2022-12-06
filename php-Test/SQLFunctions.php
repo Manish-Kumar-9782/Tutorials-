@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../Tutorials/style.css">
     <title>SQLFunction</title>
+
     <style>
         table,
         td,
@@ -34,23 +35,24 @@ include "Utility.php";
 
 function sql_insert($connection, $table_name, $cols, $values)
 {
-    $str1 = null;
-    $str2 = null;
+    $column_string = null; // this will contain the cols values as string.
+    $values_string = null; // this will contain the values of columns as string.
 
     show_array($cols);
     show_array($values);
 
     if (is_array($cols)) {
-        $str1 = join(",", $cols);
+        $column_string = join(",", $cols);
     }
 
     if (is_array($values)) {
-        $str2 = join(",", $values);
+        $values_string = join(",", $values);
     }
 
-    $sql_query = "INSERT INTO $table_name ($str1) VALUES ($str2)";
+    $sql_query = "INSERT INTO $table_name ($column_string) VALUES ($values_string)";
 
-    echo $sql_query;
+    // echo $sql_query; // displaying the sql_query string on page.
+    display("code", '"' . $sql_query . '"', "data", "Query: ");
 
     // Now Making query and storing the result of query inside the $result variable.
     $result = mysqli_query($connection, $sql_query);
@@ -111,11 +113,11 @@ if ($con) {
     display("p", "Unable To connect to database: " . mysqli_connect_error(), "error", "Error: ");
 }
 
-// sql_insert($con, "person", ["Name", "Age", "Height"], ["'Varsha'", 21, 5.6]);
+// sql_insert($con, "person", ["Name", "Age", "Height"], ["'Gotam007'", 30, 5.8]);
 
 // Now we will read and display data by using the tables.
 
-$result = sql_read_database($con, "persona");
+$result = sql_read_database($con, "person");
 ?>
 
 <body>

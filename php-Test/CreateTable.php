@@ -17,7 +17,7 @@
     $host = "localhost";
     $user = "root";
     $password = "";
-    $db_name = "abhi_database";
+    $db_name = "xyz2";
 
     // to make a connection we need to use mysqli_connect(host, user, password)
 
@@ -39,18 +39,18 @@
     /**
      * CREATE TABLE person 
      * (
-     * 'id' INT UNSIGNED NOT NULL AUTO_INCREMENT,
-     * 'Name' VARCHAR(30) NOT NULL,
-     * 'Age' INT UNSIGNED NOT NULL,
-     * 'Height' FLOAT UNSIGNED NOT NULL,
-     * 'Reg_Date' DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-     * 'Modify_Date'DATETIME NOT NULL on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-     * PRIMARY_KEY ('id')
+     * id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+     * Name VARCHAR(30) NOT NULL,
+     * Age INT UNSIGNED NOT NULL,
+     * Height FLOAT UNSIGNED NOT NULL,
+     * Reg_Date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+     * Modify_Date DATETIME NOT NULL on update CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     * PRIMARY KEY ('id')
      * );
      */
 
     // Now we will make or query string to make a table
-    $sql_query = "CREATE TABLE person 
+    $sql_query = "CREATE TABLE person2 
       (id INT NOT NULL AUTO_INCREMENT,
       Name VARCHAR(30) NOT NULL,
       Age INT UNSIGNED NOT NULL,

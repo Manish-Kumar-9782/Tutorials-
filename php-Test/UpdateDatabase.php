@@ -17,7 +17,7 @@
     $host = "localhost";
     $user = "root";
     $password = "";
-    $db_name = "varsha_database";
+    $db_name = "xyz2";
 
     // to make a connection we need to use mysqli_connect(host, user, password)
 
@@ -38,7 +38,7 @@
 
 
     // Now we will make or query string to make a table
-    $sql_query = "UPDATE person SET Age=24,Height=5.8 WHERE id=7";
+    $sql_query = "UPDATE person SET Age=24,Height=5.8 WHERE id=3";
     heading(2, "Updating Database...");
 
     $result = mysqli_query($con, $sql_query);

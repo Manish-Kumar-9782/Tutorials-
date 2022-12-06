@@ -47,14 +47,14 @@
         $stmt->bind_param("sssid", $Title, $Author, $Subject, $pages, $price);
 
         $result = $stmt->execute();
-
         if ($result) {
             display("p", "Inserted To the Database successfully: ", "success", "Success: ");
+            header("Location: index.php");
+            die;
         } else {
             display("p", "Unable To Insert to database: " . mysqli_errno($con), "error", "Error: ");
         }
     }
-
 
 
     ?>

@@ -53,3 +53,18 @@
     background-color: rgba(165, 42, 42, 0.359);
     width: fit-content;
 }
+
+.success {
+    font-size: 1.3rem;
+    color: green;
+}
+
+.warning {
+    font-size: 1.3rem;
+    color: orangered;
+}
+
+.error {
+    font-size: 1.3rem;
+    color: red;
+}
