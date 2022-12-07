@@ -5,17 +5,22 @@
 
 include "Utility.php";
 
-function connect_db($host, $user, $password, $db_name)
+function connect_db($host, $user, $password, $db_name, $info = False)
 {
     // to make a connection we need to use mysqli_connect(host, user, password)
 
     $con = mysqli_connect($host, $user, $password, $db_name);
 
     if ($con) {
-        display("p", "Connected To the Database successfully: ", "success", "Success: ");
+
+        if ($info) {
+            display("p", "Connected To the Database successfully: ", "success", "Success: ");
+        }
         return $con;
     } else {
-        display("p", "Unable To connect to database: " . mysqli_connect_error(), "error", "Error: ");
+        if ($info) {
+            display("p", "Unable To connect to database: " . mysqli_connect_error(), "error", "Error: ");
+        }
         return false;
     }
 }

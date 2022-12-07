@@ -44,13 +44,8 @@
 
     if (isset($_POST["submit"])) {
 
-        if (!($pages = filter_var($_POST['pages'], FILTER_VALIDATE_INT))) {
-            display("p", "pages values is invalid", "error", "Error: ");
-        }
-
-        if (!($price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT))) {
-            display("p", "pages values is invalid", "error", "Error: ");
-        }
+        $pages = filter_var($_POST['pages'], FILTER_VALIDATE_INT);
+        $price = filter_var($_POST['price'], FILTER_VALIDATE_FLOAT);
 
         if ($pages && $price) {
             $_SUBMIT = true;
@@ -115,8 +110,8 @@
                         <label for="pages">Enter Book Pages</label>
                     </td>
                     <td>
-                        <?php if (!$pages && isset($_POST['submit'])) { ?>
-                            <input type="text" id="pages" class="invalid" name="pages" value="<?= $_POST['pages'] ?>" required>
+                        <?php if (isset($_POST['submit'])) { ?>
+                            <input type="text" id="pages" class="<?= $pages ? 'valid' : 'invalid' ?>" name="pages" value="<?= $_POST['pages'] ?>" required>
                         <?php } else { ?>
                             <input type="text" id="pages" name="pages" required>
                         <?php } ?>
@@ -129,8 +124,8 @@
 
                     </td>
                     <td>
-                        <?php if (!$price && isset($_POST['submit'])) { ?>
-                            <input type="text" id="price" class="invalid" name="price" value="<?= $_POST['price'] ?>" required>
+                        <?php if (isset($_POST['submit'])) { ?>
+                            <input type="text" id="price" class="<?= $price ? 'valid' : 'invalid' ?>" name="price" value="<?= $_POST['price'] ?>" required>
                         <?php } else { ?>
                             <input type="text" id="price" name="price" required>
                         <?php } ?>
@@ -171,15 +166,6 @@
             $stmt->bind_param("sssid", $Title, $Author, $Subject, $pages, $price);
 
             $result = $stmt->execute();
-
-            if ($result) {
-                display("p", "Inserted To the Database successfully: ", "success", "Success: ");
-                display("p", "Form Submitted...", "success", "Result: ");
-            } else {
-                display("p", "Unable To Insert to database: " . mysqli_error($con), "error", "Error: ");
-            }
-        } else {
-            display("p", "Please check connection of entries.: " . mysqli_error($con), "error", "Error: ");
         }
     }
 
