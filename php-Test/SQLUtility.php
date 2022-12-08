@@ -1,4 +1,3 @@
-
 <?php
 // ========================================================================//
 // ========================================================================//
@@ -79,5 +78,76 @@ function sql_read_database($connection, $table_name)
         return False;
     }
 }
+
+
+function sql_update($connection, $table_name, $id, $col, $values, $dtypes)
+{
+
+    $columns = null;
+    $arr = [];
+
+    // for ($i = 0; $i < count($col); $i++) {
+
+    //     array_push($arr, $col[$i] . "=" . $values[$i]);
+    //     $columns = join(",", $arr);
+    // }
+
+    foreach ($col as $cl) {
+        array_push($arr, $cl . "=?");
+    }
+
+    $columns = join(",", $arr);
+
+    // Title
+    $query = "UPDATE $table_name  SET  $columns  WHERE id=$id";
+
+
+    display("p", $columns, "data", "Cols: ");
+    display("p", $query, "data", "Query: ");
+
+    // $stmt = mysqli_query($connection, $query);
+    $stmt = mysqli_prepare($connection, $query);
+
+    if ($stmt) {
+        $stmt->bind_param($dtypes, ...$values);
+        $stmt->execute();
+    } else {
+        display("p", "Unable to prepare query: " . mysqli_error($connection), "error", "Error");
+    }
+}
+
+?>
+
+<!-- Only for testing  -->
+
+<?php
+
+// $host = "localhost";
+// $user = "root";
+// $password = "";
+// $db_name = "abhi_database";
+// $table = "Books";
+
+// $con = connect_db($host, $user, $password, $db_name, true);
+
+// if ($con) {
+
+//     // now after making the successful connection we need to read the data.
+//     echo "connection has been made..";
+
+//     sql_update(
+//         $con,
+//         $table,
+//         2,
+//         ["Title", "Author", "Subject", "Pages", "Price"],
+//         ["IC Engine", "Manish Kumar", "V-Engine", 240, 20],
+//         "sssid"
+//     );
+
+//     // we will test that result is good or bad.
+// } else {
+//     $result = false;
+// }
+
 
 ?>
