@@ -111,11 +111,38 @@ function sql_update($connection, $table_name, $id, $col, $values, $dtypes)
     if ($stmt) {
         $stmt->bind_param($dtypes, ...$values);
         $stmt->execute();
+        return true;
     } else {
         display("p", "Unable to prepare query: " . mysqli_error($connection), "error", "Error");
     }
+    return false;
 }
 
+
+// ===================================================================//
+
+
+function sql_get($con, $table, $id)
+{
+    // this function will be used to get a single row form the database. (if found)
+
+    $id = filter_var($id, FILTER_VALIDATE_INT);
+
+    $stmt = mysqli_query($con, "SELECT Title, Author, Subject, Pages, Price FROM $table WHERE id=$id");
+
+    if ($stmt) {
+        $result = mysqli_fetch_row($stmt);
+        if ($result) {
+            return $result;
+        } else {
+            display("p", "Unable to execute query: " . mysqli_error($con), "error", "Error");
+        }
+    } else {
+        display("p", "Unable to prepare query: " . mysqli_error($con), "error", "Error");
+    }
+
+    return false;
+}
 ?>
 
 <!-- Only for testing  -->

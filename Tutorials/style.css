@@ -68,3 +68,11 @@
     font-size: 1.3rem;
     color: red;
 }
+
+.valid {
+    border: 2px solid green;
+}
+
+.invalid {
+    border: 2px solid red;
+}
