@@ -166,6 +166,7 @@
             $stmt->bind_param("sssid", $Title, $Author, $Subject, $pages, $price);
 
             $result = $stmt->execute();
+
         }
     }
 

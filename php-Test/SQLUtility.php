@@ -143,6 +143,27 @@ function sql_get($con, $table, $id)
 
     return false;
 }
+
+
+//======================================================================//
+function sql_delete($con, $table, $id){
+
+    $stmt = mysqli_prepare($con, "DELETE FROM $table WHERE id=?");
+    if($stmt){
+        $stmt->bind_param("i",$id);
+        $result = $stmt->execute();
+        if($result){
+            return true;
+        }
+        else{
+            display("p", "Unable to delete Data: ".mysqli_error($con), "error", "Error: ");
+        }
+    }
+    else{
+        display("p", "Unable to Prepare Query: ".mysqli_error($con), "error", "Error: ");
+    }
+    return false;
+}
 ?>
 
 <!-- Only for testing  -->
