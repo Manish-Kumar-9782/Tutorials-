@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Introduction to classes</title>
+  </head>
+
+  <body>
+    <script>
+      // first we will make a simple class with
+      // Sytax:
+      /*
+         	class <class_name>{
+         	    1. define all properties.
+         	    2. initiate defined properties with the help of constructor.
+         	    3. methods/behaviors.
+         	}
+
+           */
+
+      // now first of all we will make a simple class for student information.
+
+      class Person {
+        // now first we will make all properties as public
+
+        age = null;
+        height = null;
+        bloodGroup = null;
+        s_format = [20, 10, 10, 10];
+
+        // now we will make a constructor for our class
+        constructor(name, age, height, bloodGroup) {
+          this.name = name;
+          this.age = age;
+          this.height = height;
+          this.bloodGroup = bloodGroup;
+        }
+
+        // This is a custom getter for name property
+        get_name() {
+          return name;
+        }
+
+        // This is a custom setter for name property.
+        set_name(name, user) {
+          if (user == "Manish") {
+            this.name = name;
+          } else {
+            console.error("User is not Authorized.");
+          }
+        }
+        // setter and getter for public properties.
+        get name() {
+          console.log("returning name: ");
+          return this._name;
+        }
+
+        set name(name) {
+          console.log("setting name: ");
+          this._name = name;
+        }
+
+        // this function will show the currently working object information.
+        showInfo() {
+          console.log("\nName: ", this.name);
+          console.log("Age: ", this.age);
+          console.log("Height: ", this.height);
+          console.log("BloodGroup: ", this.bloodGroup);
+        }
+      }
+      let person = new Person("Manish", 27, 5.6, "O-"); // Making person num 1
+      let person1 = new Person("Kushal", 18, 5.5, "B+"); // Making person num 2
+    </script>
+  </body>
+</html>
