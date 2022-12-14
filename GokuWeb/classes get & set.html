@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get and Set method</title>
+</head>
+
+<body>
+    <script>
+
+        // in this section we will learn about the get and set keyword which is used to 
+        // make getter and setter inside a class on it's properties.
+
+        class Person {
+            //name = null;
+            // if we want to make getter and setter with get and set 
+            // then we can make properties out of constructor function.
+
+            // to make a function with get keyword our function name should be
+            // same as the property name.
+
+
+            // like if we want to make a getter for 'name' property then 
+            // we need to make a function with get keyword whose name should be 'name'.
+            // get function does not take any parameters/arguments.
+            get name() {
+                // Now our property name 'propertyName' has been replaced 
+                // with '_propertyName'.
+                console.log("getting person name: ");
+                //this.name; // this is get function
+                //this._name; // this is property  which need to be accessed.
+
+                // if we don't override this name with '_' then a 
+                // a recursion will be called.
+
+                return this._name;
+            }
+
+
+            // like if we want to make a setter for 'name' property then 
+            // we need to make a function with set keyword whose name should be 'name'.
+            // set function only takes single parameter/argument.
+
+            set name(value) {
+                // now we need to use propertyName 
+                this._name = value;
+            }
+        }
+    </script>
+
+</body>
+
+</html>
