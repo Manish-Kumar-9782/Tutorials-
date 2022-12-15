@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Inheritance</title>
+</head>
+
+<body>
+
+    <!-- In this section first we will make a Person class with name, age, height,
+    bloodGroup properties then we will inherit this class into Student class. -->
+
+    <!-- 
+        static variable: static variables does not belongs to the object. they belongs to the 
+        whole class.
+
+        static variable can be used to maintain the record of instance, common details,
+     -->
+
+    <script>
+
+        class Person {
+            name = null;
+            age = null;
+            height = null;
+            bloodGroup = null;
+
+            constructor(name, age, height, bloodGroup) {
+                this.name = name;
+                this.age = age;
+                this.height = height;
+                this.bloodGroup = bloodGroup;
+            }
+        }
+
+        // Now we will inherit Person class into the Student class.
+
+        class Student extends Person {
+
+            static school = null;
+            // making format or column size for each entry inside table.
+            // id, name, age, height, bloodGroup, std, course, rollNo.
+            static s_format = [10, 20, 10, 10, 15, 15, 20, 10]
+
+            id = null;
+            std = null;
+            course = null;
+            rollNo = null;
+
+
+            constructor(name, age, height, bloodGroup, id, std, course, rollno) {
+
+                // Now we need to call the constructor of inherited class by using the 
+                // super() method.
+                super(name, age, height, bloodGroup);
+
+                this.id = id;
+                this.std = std;
+                this.course = course;
+                this.rollNo = rollno;
+            }
+
+            // Now we will make a static function to display the common heading for table data. 
+
+            static showHeading() {
+                // Now we will make an array with in same sequence of s_format.
+                // id, name, age, height, bloodGroup, std, course, rollNo.
+                let arr = ["Id", "Name", "Age", "Height",
+                    "BloodGroup", "Std", "Course", "RollNo"]
+
+                for (let i = 0; i < Student.length; i++) {
+                    arr[i] = arr[i].padEnd(Student.s_format[i], " ")
+                }
+
+                //console.log(arr);
+
+
+                console.log(arr.join(" "));
+            }
+        }
+    </script>
+
+</body>
+
+</html>

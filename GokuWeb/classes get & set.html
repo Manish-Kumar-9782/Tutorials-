@@ -27,6 +27,7 @@
             // we need to make a function with get keyword whose name should be 'name'.
             // get function does not take any parameters/arguments.
             get name() {
+
                 // Now our property name 'propertyName' has been replaced 
                 // with '_propertyName'.
                 console.log("getting person name: ");
@@ -35,7 +36,6 @@
 
                 // if we don't override this name with '_' then a 
                 // a recursion will be called.
-
                 return this._name;
             }
 
