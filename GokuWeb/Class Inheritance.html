@@ -45,6 +45,9 @@
             // id, name, age, height, bloodGroup, std, course, rollNo.
             static s_format = [10, 20, 10, 10, 15, 15, 20, 10]
 
+            // Now we will make another static variable to to hold all the students.
+            static studentsRecord = []
+
             id = null;
             std = null;
             course = null;
@@ -61,6 +64,9 @@
                 this.std = std;
                 this.course = course;
                 this.rollNo = rollno;
+
+                Student.studentsRecord.push(this);
+                // Now we will push the 'this' student who is going to be created.
             }
 
             // Now we will make a static function to display the common heading for table data. 
@@ -76,11 +82,37 @@
                 }
 
                 //console.log(arr);
-
-
                 console.log(arr.join(" "));
             }
+
+            // showInfoInline -> it will follow the s_format padding space and show all the
+            // specified value in single line.
+
+            showInfoInline() {
+                let arr = [this.id, this.name, this.age, this.height,
+                this.bloodGroup, this.std, this.course, this.rollNo]
+
+                for (let i = 0; i < arr.length; i++) {
+                    arr[i] = arr[i].toString().padEnd(Student.s_format[i], " ");
+                }
+
+                console.log(arr.join(" "));
+
+            }
+
+            static showDatabase() {
+
+                // first of all we will show the heading.
+                Student.showHeading();
+                for (let i = 0; i < Student.studentsRecord.length; i++) {
+                    Student.studentsRecord[i].showInfoInline();
+                }
+            }
         }
+
+        let person1 = new Student("Kushal", 17, 5.4, "AB+", 1001, "11th", "PCM", 100100);
+        let person2 = new Student("Ravi 1", 18, 5.7, "B+", 1010, "12th", "Bsc", 100256);
+        let person3 = new Student("Ravi 2", 22, 5.8, "A+", 1024, "2nd year", "PCM", 100698);
     </script>
 
 </body>
