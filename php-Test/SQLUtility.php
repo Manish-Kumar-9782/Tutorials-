@@ -56,6 +56,48 @@ function sql_insert($connection, $table_name, $cols, $values)
     mysqli_close($connection);
 }
 
+function sql_insert_prepare($connection, $table_name, $cols, $values)
+{
+    $column_string = null; // this will contain the cols values as string.
+    $values_string = null; // this will contain the values of columns as string.
+
+    if (is_array($cols)) {
+        $column_string = join(",", $cols);
+    }
+
+    if (is_array($values)) {
+        $values_string = join(",", array_fill(0,count($cols), '?'));
+    }
+
+    $sql_query = "INSERT INTO $table_name ($column_string) VALUES ($values_string)";
+
+    // echo $sql_query; // displaying the sql_query string on page.
+    display("code", '"' . $sql_query . '"', "data", "Query: ");
+
+    // Now Making query and storing the result of query inside the $result variable.
+    $stmt = mysqli_prepare($connection, $sql_query);
+
+    // if query is successfully then it will return 
+    if ($stmt) {
+
+        $stmt->bind_param('sssssiiiss', ...$values);
+        $result = $stmt->execute();
+
+        if($result){
+            display("p", "Data Inserted Successfully: " . mysqli_error($connection), "success", "Success: ");
+        }
+        else{
+            display("p", "Unable to Execute Sql Query: " . mysqli_error($connection), "success", "Success: ");
+        }
+
+        
+    } else {
+        display("p", "Unable to Prepare Sql Query: " . mysqli_error($connection), "error", "Error: ");
+    }
+
+    mysqli_close($connection);
+}
+
 // ========================================================================//
 // ========================================================================//
 
