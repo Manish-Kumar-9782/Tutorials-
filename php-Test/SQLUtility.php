@@ -164,7 +164,7 @@ function sql_update($connection, $table_name, $id, $col, $values, $dtypes)
 // ===================================================================//
 
 
-function sql_get($con, $table, $id)
+function sql_getId($con, $table, $id)
 {
     // this function will be used to get a single row form the database. (if found)
 
@@ -176,6 +176,28 @@ function sql_get($con, $table, $id)
         $result = mysqli_fetch_row($stmt);
         if ($result) {
             return $result;
+        } else {
+            display("p", "Unable to execute query: " . mysqli_error($con), "error", "Error");
+        }
+    } else {
+        display("p", "Unable to prepare query: " . mysqli_error($con), "error", "Error");
+    }
+
+    return false;
+}
+
+function sql_get($con, $table, $col, $col_value, $dtype)
+{
+    // this function will be used to get a single row form the database. (if found)
+
+    $stmt = mysqli_prepare($con, "SELECT * FROM $table WHERE $col=?");
+
+    if ($stmt) {
+        $stmt->bind_param($dtype, $col_value);
+        $result = $stmt->execute();
+        if ($result) {
+            $result =  $stmt->get_result();
+            return mysqli_fetch_assoc($result);
         } else {
             display("p", "Unable to execute query: " . mysqli_error($con), "error", "Error");
         }
