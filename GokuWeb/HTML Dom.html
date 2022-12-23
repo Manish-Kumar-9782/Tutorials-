@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML DOM</title>
+</head>
+
+<body>
+    <h1 id="Heading1" class="red">This is Document Object Model Example</h1>
+    <h1 id="Heading2" class="blue">This is Document Object Model Example 2</h1>
+
+
+    <div id="div1" class="block">
+        <h1 id="Heading3" class="blue">This is Document Object Model Example 3</h1>
+        <h1 id="Heading4" class="blue">This is Document Object Model Example 4</h1>
+
+        <p id="para1" class="red">Hello, this is the first class of HTML DOM in which we will learn about the document
+            object Model
+            through which we can access and manipulate document structure and format.
+        </p>
+    </div>
+
+    <script>
+        // first we will capture the #div1 element 
+        let div1 = document.getElementById("div1");
+
+
+        // Now we will make a new element which will be added into the div1 element
+        // as child element.
+        let elh3 = document.createElement('h3');
+
+        // Now we will put some text inside the h3 element.
+        elh3.innerText = "This is heading h3 element.";
+
+        // Now after inserting some text inside element we need to put this 
+        // element inside the div1 element.
+        div1.appendChild(elh3)
+
+
+        // Now we will make a list inside a div
+        // first we will make a div
+        let mydiv = document.createElement("div")
+        document.body.appendChild(mydiv);
+
+        // Now we will make a list container.
+        let listContainer = document.createElement("ol");
+        mydiv.appendChild(listContainer);
+        // now we will append some list item with the help of the 
+
+        for (let i = 0; i < 6; i++) {
+            let li = document.createElement('li');
+            li.innerText = `This is ${i} list item`;
+            listContainer.appendChild(li);
+        }
+
+
+        //=====================================================//
+
+        class AdvanceList {
+
+            listContainer = null;
+            constructor(parent, type = 'ol') {
+
+                if (type = 'ol') {
+                    this.listContainer = document.createElement('ol');
+                }
+                else if (type = "ul") {
+                    this.listContainer = document.createElement('ul');
+                }
+
+                parent.appendChild(this.listContainer);
+            }
+
+            addItem(content) {
+                let li = document.createElement('li');
+                li.innerText = content;
+                this.listContainer.appendChild(li);
+            }
+
+        }
+
+    </script>
+</body>
+
+</html>
