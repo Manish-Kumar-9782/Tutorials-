@@ -1,0 +1,115 @@
+*{
+    box-sizing: border-box;
+    /* margin: 0%; */
+    /* padding: 0px; */
+}
+
+body{
+    background-color: #F0F2F5;
+    font-family: Helvetica, Arial, sans-serif;
+
+}
+
+#logincontainer{
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    position: relative;
+    /* text-align: center; */
+    padding: 40px;
+    top: 50px;
+}
+
+.leftpart{
+    font-size:xx-large;
+    line-height: 3px;
+}
+
+.leftpart h2{
+    color: #1877F2;
+}
+
+.rightpart{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: white;
+    padding: 15px 10px;
+    border-radius: 7px;
+    width: 350px;
+}
+
+input{
+    width: 20rem;
+    height: 3rem;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+    border: none;
+    margin: 10px 0px;
+    font-size: medium;
+    padding: 2px 2px;
+    font-size: large;
+}
+
+.submit{
+    background-color: #1877F2;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 7px;
+}
+
+input:hover{
+    border: 2px solid #1877F2;
+    border-radius: 5px;
+}
+
+input:visited{
+    border: 2px solid #1877F2;
+}
+
+.rightpart a{
+    background-color: #42B72A;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    font-size: 17px;
+    padding: 5px 16px;
+    text-decoration: none;
+    text-align: center;
+    
+}
+
+.rightpart a:hover{
+    background-color: #34a41d;
+}
+
+#signupcontainer{
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    background-color: rgb(252, 252, 252);
+    padding: 15px 50px;
+    border-radius: 7px;
+    width: 500px;
+    /* display: flex; */
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 30px;
+    left: 25rem;
+    /* display: none; */
+}
+
+.head{
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    border: none;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    font-size: 18px;
+    margin: 2px 3px;
+    cursor: pointer;
+    border-radius: 50%;
+    font-weight: bolder;
+  }
+  
