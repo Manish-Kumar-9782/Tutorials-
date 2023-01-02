@@ -18,6 +18,8 @@
 
 //  Now make a variable with let 
 
+// a = 10;
+
 let letx = 10;
 
 /**
@@ -33,7 +35,15 @@ let letx = 10;
  *          eg. let "my_name" or 'my_name' : not allowed
  */
 
-let my_name = 10;
+
+// We have three keyword to make variables -> var, let, const
+
+let my_name; // declaration of variable 
+
+// = : assignment operator
+// it has to part left and right
+// left part -> lvalue, loperand.
+// right part -. rvalue, roperand.
 
 // To show some message on console screen we can use console interface.
 
