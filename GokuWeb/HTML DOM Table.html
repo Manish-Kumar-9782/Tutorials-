@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML DOM Table</title>
+
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script>
+
+        // Now here we will make a table with the help of java Script class.
+
+        class AdvanceTable {
+            tableContainer = null;
+            table = null;
+            header = null;
+            constructor(parent, rows, cols, headers) {
+
+                // Now we will make the table element
+                this.table = document.createElement("table");
+                // Now this table element will be put into the parent.
+                parent.appendChild(this.table);
+                //-------------------------------------------------------
+                if (rows) {
+
+                    //. a for loop to make given number of rows
+                    for (let i = 0; i < rows; i++) {
+                        let row = document.createElement("tr");
+                        this.table.appendChild(row);
+
+                        if (i == 0) {
+                            this.header = row;
+                        }
+                        //-------------------------------------------------------
+
+                        // in each row we will make given number of columns
+
+                        if (row === this.header) {
+                            for (let i = 0; i < cols; i++) {
+                                let td = document.createElement('th');
+                                td.innerText = headers[i];
+                                this.header.appendChild(td);
+                            }
+                            //-------------------------------------------------------
+                        }
+                        else {
+                            for (let i = 0; i < cols; i++) {
+                                let td = document.createElement('td');
+                                row.appendChild(td);
+                            }
+                        }
+                        //-------------------------------------------------------
+
+                    }
+                }
+            }
+
+            insertData(text, row, col) {
+                // first of all get the row
+                let currentRow = document.getElementsByTagName('tr')[row];
+
+                // now get the right td child element of row.
+                let currentTd = currentRow.children[col - 1]
+
+                // putting  table data (td) element text 
+                currentTd.innerText = text;
+            }
+
+            fillRow(row, values) {
+
+                for (let i = 0; i < values.length; i++) {
+                    this.insertData(values[i], row, i + 1);
+                }
+
+            }
+        }
+
+        // making a table 
+        let mytable = new AdvanceTable(document.body, 5, 4, ["Name", "Age", "Height", "BloodGroup"])
+    </script>
+
+</body>
+
+</html>

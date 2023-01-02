@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    <h1 id="Heading1" class="red">This is Document Object Model Example</h1>
+    <h1 id="Heading1" class="red">This is Document Object Model Example 1</h1>
     <h1 id="Heading2" class="blue">This is Document Object Model Example 2</h1>
 
 
@@ -62,6 +62,7 @@
         class AdvanceList {
 
             listContainer = null;
+
             constructor(parent, type = 'ol') {
 
                 if (type = 'ol') {
@@ -80,6 +81,18 @@
                 this.listContainer.appendChild(li);
             }
 
+
+            removeItem(number) {
+                // number starts from 1.
+                let pos = number - 1;
+                this.listContainer.children[pos].remove();
+            }
+        }
+
+        let mylist = new AdvanceList(document.body)
+
+        for (let i = 0; i < 5; i++) {
+            mylist.addItem(`This is item number ${i + 1}`);
         }
 
     </script>
