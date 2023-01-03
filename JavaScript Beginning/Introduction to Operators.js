@@ -111,3 +111,39 @@ console.log("A is : ", a);
 a = 20;
 console.log("+= add & assignment Operator: a+=20: ", a += 20);
 console.log("a is :", a);
+
+
+// Increment & Decrement Operator
+
+/**
+ * Post increment x++, Pre increment ++x --> add 1 to x
+ * 
+ * Post Decrement x--, Pre Decrement --x --> subtract 1 from x
+ * 
+ * Post Increment/Decrement  -> first use old value then increase/Decrease
+ * 
+ * Pre Increment/Decrement -> first increase/Decrease the old value then use.
+ */
+
+// Now creating x
+
+let x = 10;
+console.log("\n\n");
+console.log("x at beginning: ", x);
+
+// Post Increment: increasing x by one with post increment
+console.log("Post Increment of x: ", x++);
+console.log("After Post Increment: ", x);
+
+// Post Decrement: Decreasing x by on with post decrement
+console.log("Post Decrement of x: ", x--);
+console.log("After Post Decrement: ", x);
+
+console.log("\n\n");
+// Pre Increment: Increasing x by one with pre increment
+console.log("Pre Increment of x: ", ++x);
+console.log("After Pre Increment: ", x);
+
+// Post Decrement: Decreasing x by one with pre increment
+console.log("Pre Decrement of x: ", --x);
+console.log("After Pre Decrement: ", x);

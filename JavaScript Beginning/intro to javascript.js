@@ -28,7 +28,7 @@ let letx = 10;
  *      1. Variable name should not start form numbers/digits
  *      2. Does not support special character in a variable.
  *      3. A Variable Name should not have white-space in b/w two words.
- *          eg. let my name : not allowed
+ *          eg. let "my name" : not allowed
  *      4. A Variable Name can have underscore  "_" in b/w two or multiple words words.
  *          eg. let my_name : allowed
  *      5. A variable Name cannot be wrapped inside the double or single quotes.
@@ -40,14 +40,16 @@ let letx = 10;
 
 let my_name; // declaration of variable 
 
-// = : assignment operator
+my_name = 30; // defining / assigning a value
+
+// `=` : assignment operator
 // it has to part left and right
 // left part -> lvalue, loperand.
 // right part -. rvalue, roperand.
 
 // To show some message on console screen we can use console interface.
 
-console.log("Hello world..!");
+console.log("Hello world..!===================");
 
 /**
  * Note: here console.log() is a function to show message on the browser console screen.
@@ -57,7 +59,7 @@ console.log("Hello world..!");
 
 let a = 10;
 let b = 20;
-
 console.log("value of a + b: ", a + b);
+
 console.log("value of a + b: ", b);
 console.log("value of a + b: ", a);
