@@ -147,3 +147,68 @@ console.log("After Pre Increment: ", x);
 // Post Decrement: Decreasing x by one with pre increment
 console.log("Pre Decrement of x: ", --x);
 console.log("After Pre Decrement: ", x);
+console.log("\n\n");
+
+// ========================================================= //
+// Comparison Operator:
+
+/**
+ * 1. greater than operator: >
+ * 2. less than operator: <
+ * 3. less than or equal operator: <=
+ * 4. greater than or equal operator: >=
+ * 5. equal equal (equality) operator: ==
+ * 6. identity operator: ===
+ * 7. not equal operator: !=
+ * 8. not identical operator: !== 
+ * 
+ * binary operator: -> they have both left and right values.
+ * 
+ * return: true or false.
+ */
+
+
+// suppose that we have three variables
+let p = 10;
+let q = 20;
+let r = 10;
+let y = '10';
+
+// Now we will test <, >, <=, >= operators.
+
+console.log("p is less than q: ", p < q);
+console.log("p is greater than q: ", p > q);
+console.log("p is less or equal than q: ", p <= q);
+console.log("p is greater or equal  than q: ", p >= q);
+console.log("p is greater or equal  than r: ", p >= r);
+console.log("p is equal to r: ", p == r);
+console.log("p is equal to y: ", p == y);
+console.log("p is identical to y: ", p === y);
+
+console.log("p is not equal to y: ", p != y);
+console.log("p is not identical to y: ", p !== y);
+
+
+
+// Logical Operator: 
+
+/**
+ * 1. AND Operator && (binary Operator) 
+ * 2. OR Operator  || (binary operator)
+ * 3. NOT operator !  (unary operator)
+ * 
+ * Logical operator are normally  used with conditional statements and used to combine 
+ * multiple conditions.
+ * 
+ * 
+ * 
+ * 
+ */
+
+p = 10;
+q = 40;
+r = 30;
+
+console.log("q is greater than p and less than r: ", q > p && q < r)
+
+
