@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Introduction</title>
+</head>
+
+<body>
+
+    <!-- to make a form we use <form> element. -->
+    <form id="myform">
+
+        <!-- label: a string annotation for the input button
+        increase the accessability of the input button. -->
+        <label for="firstName">FirstName: </label>
+        <input type="text" id="firstName" name="firstName">
+
+        <br><br>
+        <label for="secondName">SecondName: </label>
+        <input type="text" id="secondName" name="secondName">
+
+        <br><br>
+
+        <!-- in every form we have a submit button (the special one.) -->
+        <input type="submit" value="Login">
+
+    </form>
+
+    <script>
+        const form = document.forms['myform'];
+        console.log(form)
+
+        form.onsubmit = function (event) {
+            console.log("Submit function is called..")
+            console.log("Submitting form with event: ", event);
+            event.preventDefault(); // first stopping the default
+            // behavior of the submit button.
+
+            console.log("\n Event target: ", event.target);
+
+            // Now capture the form into the variable.
+            let myForm = event.target;
+            console.log("Inputted FirstName: ", myForm['firstName'].value)
+            console.log("Inputted SecondName: ", myForm['secondName'].value)
+            x
+        }
+
+
+
+
+    </script>
+
+</body>
+
+</html>
