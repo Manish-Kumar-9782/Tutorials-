@@ -17,7 +17,9 @@
  *      4. * : multiply operator
  *      5. % : modulus operator
  */
-
+function displaySep() {
+    console.log("---------------------------------------\n\n");
+}
 // Working with Number , integer (whole number), floating point number (decimal number)
 
 let a = 10;
@@ -31,13 +33,13 @@ let b = 20;
 
 console.log("a :", a);
 console.log("b :", b);
-console.log("\n");
+displaySep();
 // -----------------------
 console.log("adding a + b:", a + b);
 console.log("subtracting a - b:", a - b);
 console.log("subtracting a * b:", a * b);
 console.log("subtracting a / b:", a / b);
-console.log("\n");
+displaySep();
 // -------------------------
 
 // Now we will see the modulus operator
@@ -57,8 +59,9 @@ console.log("\n");
 let width = 100; // 100px
 console.log("Container Width: ", width);
 // first we will compute the width of the box
-let boxWidth = 100 / 4;
-console.log("Each box width in container: ", boxWidth);
+// let boxWidth = 100 / 4;
+let boxn = 4;
+console.log("Each box width in container: ", width / boxn);
 
 // Now suppose that we have 10 box in a row.
 // Now we want to put 4 box in each row.
@@ -69,17 +72,16 @@ let line = '';
 for (let i = 1; i <= 10; i++) {
     line += " " + i + " ";
 
-    if (i % 3 == 0) {
+    if (i % boxn == 0) {
         console.log(line);
         line = "";
     }
-
 }
 console.log(line);
 
 console.log("\n\n");
 
-
+displaySep()
 
 // Assignment Operators
 
@@ -111,7 +113,7 @@ console.log("A is : ", a);
 a = 20;
 console.log("+= add & assignment Operator: a+=20: ", a += 20);
 console.log("a is :", a);
-
+displaySep()
 
 // Increment & Decrement Operator
 
@@ -128,7 +130,7 @@ console.log("a is :", a);
 // Now creating x
 
 let x = 10;
-console.log("\n\n");
+
 console.log("x at beginning: ", x);
 
 // Post Increment: increasing x by one with post increment
@@ -139,7 +141,7 @@ console.log("After Post Increment: ", x);
 console.log("Post Decrement of x: ", x--);
 console.log("After Post Decrement: ", x);
 
-console.log("\n\n");
+displaySep()
 // Pre Increment: Increasing x by one with pre increment
 console.log("Pre Increment of x: ", ++x);
 console.log("After Pre Increment: ", x);
@@ -147,7 +149,7 @@ console.log("After Pre Increment: ", x);
 // Post Decrement: Decreasing x by one with pre increment
 console.log("Pre Decrement of x: ", --x);
 console.log("After Pre Decrement: ", x);
-console.log("\n\n");
+displaySep()
 
 // ========================================================= //
 // Comparison Operator:
@@ -206,7 +208,7 @@ console.log("p is not identical to y: ", p !== y);
  */
 
 p = 10;
-q = 40;
+q = 20;
 r = 30;
 
 console.log("q is greater than p and less than r: ", q > p && q < r)
