@@ -41,17 +41,38 @@ let fullName = firstName + " " + secondName
 // Concatenation operation with concat method.
 console.log("FirstName: ", firstName);
 console.log("SecondName: ", secondName);
-console.log("Concatenation of firstName and secondName: ", firstName.concat(secondName));
+console.log("fullName: ", fullName)
+console.log("Concatenation of firstName and secondName: ",
+    firstName.concat(secondName));
 
 displaySep();
 
 // String Case Conversion UpperCase or LowerCase.
 
 
-// 1. Upper case : by using the String.toUpperCase()
-// Lower case: by using the String.toLowerCase()
+// 1. Upper case : by using the String.toUpperCase();
+// Lower case: by using the String.toLowerCase();
 console.log("Original FullName: ", fullName);
 console.log("fullName to LowerCase: ", fullName.toLowerCase());
 console.log("fullName to UpperCase: ", fullName.toUpperCase());
 displaySep();
+
+
+// 2. startWith and endsWith methods.
+
+// to check that a string starts or ends with a 
+// given substring.
+
+// startWith : To check that a string start with a
+// given String.
+
+let number = "+91-7894563214";
+
+// Now we want to test that our number is starts from +91.
+console.log("Phone Number: ", number);
+console.log("is starts with +91: ", number.startsWith("+91"));
+
+// testing that our number ends with "978" number.
+console.log("is ends with 978: ", number.endsWith("978"));
+
 
