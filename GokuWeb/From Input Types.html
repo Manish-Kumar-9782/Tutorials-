@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+    In this section we will work on the input types.
+
+    tel: for phone number.
+    email: for email address.
+    text: for normal details.
+    range: for a range selection.
+    number: for number input.
+    checkbox: for making a checkbox input.
+    radio: for making the radio button input.
+    date: for getting the date type input.
+
+    other selector:
+    <select> element., <textarea> element.
+
+        <select>:
+            |
+            |----<option>
+            |
+            |----<optgroup>
+            |
+            |----<datalist>
+                
+ -->
+
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Input types.</title>
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        form {
+            border: 2px solid #5BC0F8;
+            background-color: #5BC0F8;
+            color: lightcyan;
+            padding: 20px;
+            width: 400px;
+            border-radius: 5px;
+        }
+
+        input {
+            width: 90%;
+            height: 30px;
+            font-size: larger;
+        }
+
+        input[type="radio"] {
+            width: 30px;
+            height: 30px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        label {
+            font-size: x-large;
+        }
+
+        .form-block {
+            margin: 10px;
+        }
+
+        .flex-row {
+            display: flex;
+        }
+
+        .jc-center {
+            align-items: center;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <form id="myForm">
+
+        <div class="form-block">
+            <label for="firstName">First Name</label> <br>
+            <input type="text" name="firstName" id="firstName">
+        </div>
+
+
+        <div class="form-block">
+            <label for="secondName">Second Name</label> <br>
+            <input type="text" name="secondName" id="secondName">
+        </div>
+
+        <!-- for email address type email -->
+        <div class="form-block">
+            <label for="email">Email Address</label> <br>
+            <input type="email" name="email" id="email">
+        </div>
+
+        <!-- for pass type is password. -->
+        <div class="form-block">
+            <label for="password">User Password</label> <br>
+            <input type="password" name="password" id="password">
+        </div>
+
+        <div class="form-block flex-row jc-center">
+            <label for="Gender">Sex Gender: </label>
+            <input type="radio" name="gender" value="Male" id="gender1">
+            <label for="gender1">Male</label>
+            <input type="radio" name="gender" value="Female" id="gender2">
+            <label for="gender2">Female</label>
+        </div>
+
+        <div class="form-block flex-row jc-center">
+            <label for="">User has Mobile Number: </label>
+            <input type="checkbox" name="isMobile" value="true" style="width: 30px; height:30px">
+        </div>
+
+        <div class="form-block">
+            <label for="mobileNumber">Mobile Number</label>
+            <input type="tel" name="mobileNumber" id="mobileNumber" maxlength="10">
+        </div>
+
+        <div class="form-block ">
+            <label for="age">User Age:</label>
+            <input type="number" name="age" id="age" style="width: 50%; margin-left: 10px">
+        </div>
+
+        <div class="form-block">
+            <label for="dob">User DOB: </label>
+            <input type="date" name="dob" id="dob" style="width: 50%; margin-left: 10px;">
+        </div>
+    </form>
+
+
+    <script>
+
+        // first getting the form
+        const form = document.forms["myForm"];
+
+        const handleSubmit = function (e) {
+            // first prevent the submission of the form
+            e.preventDefault();
+
+        }
+
+        form.addEventListener("submit", handleSubmit)
+
+    </script>
+
+</body>
+
+</html>
