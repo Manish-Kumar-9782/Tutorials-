@@ -18,7 +18,24 @@
 12. String.trimRight() method.
 13. String.padEnd() method.
 14. String.padStart() method.
+15. String.split() method.
 
 ### String Properties
 
 1. String.length
+
+## Array in JavaScript
+
+### Array Methods
+
+1. Array.at()
+2. Array.concat()
+3. Array.join()
+4. Array.push()
+5. Array.pop()
+6. Array.shift()
+7. Array.unshift()
+
+### Array Properties
+
+1. Array.length
