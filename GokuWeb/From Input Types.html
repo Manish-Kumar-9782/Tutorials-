@@ -37,8 +37,6 @@
         body {
             display: flex;
             justify-content: center;
-            align-items: center;
-            height: 100vh;
         }
 
         form {
@@ -50,10 +48,22 @@
             border-radius: 5px;
         }
 
+        textarea {
+            font-size: large;
+            padding: 10px;
+        }
+
         input {
             width: 90%;
             height: 30px;
             font-size: larger;
+        }
+
+        .form-block select {
+            width: 100%;
+            height: 30px;
+            font-size: large;
+            padding: 3px;
         }
 
         input[type="radio"] {
@@ -62,6 +72,8 @@
             padding-left: 10px;
             padding-right: 10px;
         }
+
+
 
         label {
             font-size: x-large;
@@ -111,15 +123,15 @@
 
         <div class="form-block flex-row jc-center">
             <label for="Gender">Sex Gender: </label>
-            <input type="radio" name="gender" value="Male" id="gender1">
+            <input type="radio" name="gender" value="Male" id="gender1" checked>
             <label for="gender1">Male</label>
             <input type="radio" name="gender" value="Female" id="gender2">
             <label for="gender2">Female</label>
         </div>
 
         <div class="form-block flex-row jc-center">
-            <label for="">User has Mobile Number: </label>
-            <input type="checkbox" name="isMobile" value="true" style="width: 30px; height:30px">
+            <label for="isMobile">User has Mobile Number: </label>
+            <input type="checkbox" name="isMobile" id="isMobile" value="true" style="width: 30px; height:30px" checked>
         </div>
 
         <div class="form-block">
@@ -129,12 +141,33 @@
 
         <div class="form-block ">
             <label for="age">User Age:</label>
-            <input type="number" name="age" id="age" style="width: 50%; margin-left: 10px">
+            <input type="number" name="age" id="age" min="0" style="width: 50%; margin-left: 10px">
         </div>
 
         <div class="form-block">
             <label for="dob">User DOB: </label>
             <input type="date" name="dob" id="dob" style="width: 50%; margin-left: 10px;">
+        </div>
+
+        <div class="form-block">
+            <label for="fruit">Favorite Fruit</label>
+            <select name="fruit" id="fruit">
+                <option value="" disabled selected>Select a Fruit</option>
+                <option value="Orange">Orange</option>
+                <option value="Apple">Apple</option>
+                <option value="Grapes">Grapes</option>
+                <option value="Banana">Banana</option>
+                <option value="Mango">Mango</option>
+            </select>
+        </div>
+
+        <div class="form-block">
+            <label for="description">Description</label>
+            <textarea name="description" id="description" cols="40" rows="10"></textarea>
+        </div>
+
+        <div class="form-block">
+            <input type="submit" value="submit">
         </div>
     </form>
 
@@ -147,6 +180,21 @@
         const handleSubmit = function (e) {
             // first prevent the submission of the form
             e.preventDefault();
+
+            let myform = e.target; // retrieving the form
+
+            console.log("First Name: ", myform["firstName"].value)
+            console.log("Second Name: ", myform["secondName"].value)
+            console.log("Email: ", myform["email"].value)
+            console.log("Password: ", myform["password"].value)
+            console.log("Gender: ", myform["gender"].value)
+            console.log("Has Mobile: ", myform["isMobile"].value)
+            console.log("Mobile Number: ", myform["mobileNumber"].value)
+            console.log("Age: ", myform["age"].value)
+            console.log("Date of Birth: ", myform["dob"].value)
+            console.log("Favorite Fruit: ", myform["fruit"].value)
+            console.log("Description: ", myform["description"].value)
+
 
         }
 
