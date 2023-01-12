@@ -35,6 +35,10 @@
 5. Array.pop()
 6. Array.shift()
 7. Array.unshift()
+8. Array.slice()
+9. Array.splice()
+10. Array.sort()
+11. Array.reverse()
 
 ### Array Properties
 
