@@ -1,3 +1,23 @@
+<?php
+require_once "SQLUtility.php";
+// first we will test for any existing Cookies
+$host = "localhost";
+$user = "root";
+$password = "";
+$db_name = "libmanagement";
+$table = "users";
+
+
+// echo "<pre>", print_r($_COOKIE), "</pre>";
+if (isset($_COOKIE['user']) && !empty($_COOKIE["user"])) {
+    // echo "user cookie is found";
+    use_cookies_login($host, $user, $password, $db_name, $table, $_COOKIE["user"]);
+} else {
+    // echo "user cookies not found..";
+
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -50,66 +70,9 @@
 
     <?php
 
-    include "SQLUtility.php";
-
-    $host = "localhost";
-    $user = "root";
-    $password = "";
-    $db_name = "libmanagement";
-    $table = "users";
-
-
     if ($_SERVER["REQUEST_METHOD"] == 'POST') {
-
-
-
-        $con = connect_db($host, $user, $password, $db_name);
-
-        if ($con) {
-            // first we will escape our string
-            $email = mysqli_real_escape_string($con, $_POST['lemail']);
-
-            // Now we will validate our email
-            filter_var($_POST['lemail'], FILTER_VALIDATE_EMAIL);
-
-            // getting password form post method.
-            $pass = $_POST['lpassword'];
-
-            // Now we will get data using the given information.
-            $data = sql_get($con, $table, 'Gmail', $email, 's');
-
-            // now if we have data then we need to verify the data.
-            if ($data) {
-
-                // Now we will match the data
-
-                if ($data['Password'] == $pass) {
-
-                    // Now we will create a Session
-                    init_session([
-                        "user-id" => $data['id'],
-                        "user-FirstName" => $data['FirstName'],
-                        "user-LastName" => $data['LastName'],
-                        "user-IsSuper" => $data['IsSuper'] ? true : false,
-                        "user-IsActive" => true,
-                        "user-AccessLevel" => $data["AccessLevel"],
-                        "user-Type" => $data["Type"],
-                        "user-Permissions" => $data["Permissions"],
-                        "user-auth" => true
-                    ]);
-
-                    // after setting all these setting to the session we will redirect to the dashboard 
-                    header("Location: dashboard.php");
-                } else {
-                    display("p", "UserName or Password is not Matched.");
-                    die();
-                }
-            } else {
-                display("p", "UserName or Password is not Matched.");
-                die();
-            }
-            // show_array($data);
-        }
+        // setcookie("userName", "Manish");
+        process_login($host, $user, $password, $db_name, $table);
     }
 
 

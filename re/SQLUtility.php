@@ -296,6 +296,97 @@ function has_permission($perm)
     return false;
 }
 
+function process_login($host, $user, $password, $db_name, $table)
+{
+    $con = connect_db($host, $user, $password, $db_name);
+
+    if ($con) {
+        // first we will escape our string
+        $email = mysqli_real_escape_string($con, $_POST['lemail']);
+
+        // Now we will validate our email
+        filter_var($_POST['lemail'], FILTER_VALIDATE_EMAIL);
+
+        // getting password form post method.
+        $pass = $_POST['lpassword'];
+
+        // Now we will get data using the given information.
+        $data = sql_get($con, $table, 'Gmail', $email, 's');
+
+        // now if we have data then we need to verify the data.
+        if ($data) {
+
+            // Now we will match the data
+
+            if ($data['Password'] == $pass) {
+
+                // Now we will create a Session
+                init_session([
+                    "user-id" => $data['id'],
+                    "user-FirstName" => $data['FirstName'],
+                    "user-LastName" => $data['LastName'],
+                    "user-IsSuper" => $data['IsSuper'] ? true : false,
+                    "user-IsActive" => true,
+                    "user-AccessLevel" => $data["AccessLevel"],
+                    "user-Type" => $data["Type"],
+                    "user-Permissions" => $data["Permissions"],
+                    "user-auth" => true
+                ]);
+
+                assert(setcookie("user", $data['Gmail'], time() + 3600, "/re", "localhost", false, true));
+
+                // after setting all these setting to the session we will redirect to the dashboard 
+                header("Location: dashboard.php");
+            } else {
+                display("p", "UserName or Password is not Matched.");
+                die();
+            }
+        } else {
+            display("p", "UserName or Password is not Matched.");
+            die();
+        }
+    }
+}
+
+function use_cookies_login($host, $user, $password, $db_name, $table, $email)
+{
+    $con = connect_db($host, $user, $password, $db_name);
+
+    if ($con) {
+        // Now we will get data using the given information.
+        $data = sql_get($con, $table, 'Gmail', $email, 's');
+
+        // now if we have data then we need to verify the data.
+        if ($data) {
+            // Now we will create a Session
+            try {
+                init_session([
+                    "user-id" => $data['id'],
+                    "user-FirstName" => $data['FirstName'],
+                    "user-LastName" => $data['LastName'],
+                    "user-IsSuper" => $data['IsSuper'] ? true : false,
+                    "user-IsActive" => true,
+                    "user-AccessLevel" => $data["AccessLevel"],
+                    "user-Type" => $data["Type"],
+                    "user-Permissions" => $data["Permissions"],
+                    "user-auth" => true
+                ]);
+                // after setting all these setting to the session we will redirect to the dashboard 
+                header("Location: dashboard.php");
+            } catch (Exception $e) {
+                echo $e;
+            }
+        } else {
+            display("p", "UserName or Password is not Matched.");
+            die();
+        }
+    } else {
+        display("p", "UserName or Password is not Matched.");
+        die();
+    }
+}
+
+
 ?>
 
 <?php

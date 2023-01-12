@@ -12,9 +12,15 @@ session_unset();
 // destroying the session
 session_destroy();
 
+if (isset($_COOKIE['user'])) {
+    assert(setcookie("user", "", time() - 60), '/re');
+    unset($_COOKIE['user']);
+}
+
+
+
 // Now we will redirect to the login page
 
 // print_r($_SESSION);
-
 header("Location: login.php");
 die();
