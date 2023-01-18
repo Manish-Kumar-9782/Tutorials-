@@ -101,11 +101,13 @@
             border-radius: 10px;
         }
 
-        .validate:valid {
+        .validate:valid,
+        .valid {
             border-color: green;
         }
 
-        .validate:invalid {
+        .validate:invalid,
+        .invalid {
             border-color: red;
         }
     </style>
@@ -136,7 +138,7 @@
         <!-- for pass type is password. -->
         <div class="form-block">
             <label for="password">User Password</label> <br>
-            <input type="password" name="password" id="password" required>
+            <input type="password" name="password" id="password" minlength="12" required>
         </div>
 
         <div class="form-block flex-row jc-center">
@@ -154,7 +156,7 @@
 
         <div class="form-block">
             <label for="mobileNumber">Mobile Number</label>
-            <input type="tel" name="mobileNumber" id="mobileNumber" maxlength="10">
+            <input type="tel" name="mobileNumber" id="mobileNumber" maxlength="10" minlength="10">
         </div>
 
         <div class="form-block ">
@@ -188,51 +190,7 @@
             <input type="submit" value="submit">
         </div>
     </form>
-
-
-    <script>
-
-        // first getting the form
-        const form = document.forms["myForm"];
-        let inputs = new Array(...form.getElementsByTagName("input"))
-        inputs.forEach(function (input) {
-            input.addEventListener("change", function () {
-                input.classList.add("validate");
-            })
-        })
-        function displayData(myform) {
-            console.log("First Name: ", myform["firstName"].value)
-            console.log("Second Name: ", myform["secondName"].value)
-            console.log("Email: ", myform["email"].value)
-            console.log("Password: ", myform["password"].value)
-            console.log("Gender: ", myform["gender"].value)
-            console.log("Has Mobile: ", myform["isMobile"].value)
-            console.log("Mobile Number: ", myform["mobileNumber"].value)
-            console.log("Age: ", myform["age"].value)
-            console.log("Date of Birth: ", myform["dob"].value)
-            console.log("Favorite Fruit: ", myform["fruit"].value)
-            console.log("Description: ", myform["description"].value)
-        }
-
-        const handleSubmit = function (e) {
-            // first prevent the submission of the form
-            e.preventDefault();
-
-            let myform = e.target; // retrieving the form
-            //displayData(myform);
-
-
-
-
-            console.log(myform)
-
-
-        }
-
-        form.addEventListener("submit", handleSubmit)
-
-    </script>
-
+    <script src="./Form Validate & Save.js"></script>
 </body>
 
 </html>
