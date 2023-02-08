@@ -11,6 +11,10 @@
  * 6. Symbol
  * 7. BigInt
  * 8. Object
+ * 
+ * 
+ * To display the message/logs on the console interface on developer tools we 
+ * will use console.log() function.
  */
 
 // an student information
