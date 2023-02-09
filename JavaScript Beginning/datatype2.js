@@ -22,8 +22,34 @@ console.log("Height: ", height);
  *          -> % : modulus operator.
  * 
  *  2. Assignment Operators
+ *      -> += : add and assignment operator.
+ *      -> -= : subtract and assignment operator.
+ *      -> *= : multiply and assignment operator.
+ *      -> /= : divide and assignment operator.
+ *      -> %= : modulus and assignment operator.
+ * 
+ *       x = x + 10;  ---> x += 10; 
+ * // we have x (integer or float) and we want update our x values by adding 10 itself.
+ * 
  *  3. Comparison/Relational Operators
+ * 
+*       == Comparison Operator (equal equal Operator)
+        != Not equal operator
+        === Identical Operators
+        !== Not Identical Operators
+        <= less than equal operator
+        >= greater than equal operator
+        < less than operator
+        > greater than operator
+
+        
  *  4. Logical Operators
+
+
+    5. Increment and Decrement Operators.
+
+        ++ : increment Operators
+        -- : decrement Operators
  */
 
 // making new variables to store some numbers.
@@ -50,3 +76,25 @@ console.log("x: " * x)
 console.log("x: " / x)
 console.log("x: " - x)
 console.log("x: " % x)
+
+
+// Assignment Operator
+
+
+// we have x , if we want to add some values to x as expression x + 10;
+// this will not update the value of x, it will just give us the result value.
+// if we want to update the value of x then we need to assign the result value to x
+// by using the assignment operator =, like this: x = x + 10;
+
+// to short this operator we have add and assignment operators, x += 10; 
+
+console.log("before add and assignment operators x is: ", x);
+console.log("adding some value with x + 10: ", x + 10);
+console.log("after adding value 10 with x is: ", x, "\t x is not updated.");
+// to update the value of x we can use += add and assignment operators.
+console.log("updating value of x with 10: ", x += 10);
+console.log("After updating value of x with 10: ", x, "\t x is updated");
+
+
+// ======================================= //
+// Relational Operators
