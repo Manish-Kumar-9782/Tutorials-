@@ -5,6 +5,76 @@ const listContainer = document.getElementById('listContainer');
 
 // Now after getting this list container will make a class to create the list blocks.
 
+class InputAdd {
+    /*
+        This will create an input element with add button.
+    */
+
+    #input = null;
+    #btnAdd = null;
+    #divContainer = null;
+    #parentContainer = null;
+
+    constructor(parentContainer, bindTo) {
+        this.#parentContainer = parentContainer;
+
+        // Now we will create a div element in which we will put our input element
+        // and button element.
+
+        this.#divContainer = document.createElement("div");
+
+        // Now we need to create an input element
+        this.#input = document.createElement("input"); // input is an inline element
+        this.#input.type = "text";
+        this.#divContainer.appendChild(this.#input); // putting our input element
+        // into the div container.
+
+        // now we need to add a button 
+        this.#btnAdd = document.createElement("button");
+        this.#btnAdd.textContent = "Add";
+        this.#divContainer.appendChild(this.#btnAdd);
+
+        // Now we will put the div container inside the parentContainer.
+        this.#parentContainer.appendChild(this.#divContainer);
+
+
+        // Now we will add an EventListener to the the button
+        this.#btnAdd.addEventListener("click", (e) => this.addTo(bindTo))
+
+        // adding another event listener on input , to add the item
+        // when hit Enter
+        this.#input.addEventListener("keypress", (e) => this.btnEnter(e, bindTo))
+
+
+    }
+
+
+    addTo(listElement) {
+        let value = this.getText()
+        listElement.addItem(value)
+        this.setText("");
+    }
+
+    btnEnter(e, bindTo) {
+        // this function is the event handler for key press events if our key is Enter.
+        // console.log(e, e.key)
+        if (e.key === "Enter") {
+            this.addTo(bindTo);
+        }
+    }
+
+    getText() {
+        // this method will get the text from the input.
+        return this.#input.value;
+    }
+
+    setText(value) {
+        this.#input.value = value;
+    }
+
+
+}
+
 class List {
 
     #parentContainer = null;
@@ -17,6 +87,8 @@ class List {
     #listStyleType = null; // to store the list style type.
     #listElements = []; // an array to store the list elements.
 
+    #input = null; // to take the input for next list item.
+
     constructor(parentContainer, type = 'ul') {
         // first we will set the parent Container and then we will set the
         // list element type.
@@ -26,6 +98,9 @@ class List {
         // Now we will make the list.
         this.#element = document.createElement(this.#elementType)
 
+
+        // Now just before the list element we will put our InputAdd Object.
+        this.#input = new InputAdd(this.#parentContainer, this)
 
         // Now we will put our list into it's parent container.
         this.#parentContainer.appendChild(this.#element);
