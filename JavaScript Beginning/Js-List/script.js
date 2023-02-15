@@ -15,7 +15,7 @@ class InputAdd {
     #divContainer = null;
     #parentContainer = null;
 
-    constructor(parentContainer, bindTo) {
+    constructor(parentContainer, list) {
         this.#parentContainer = parentContainer;
 
         // Now we will create a div element in which we will put our input element
@@ -39,27 +39,32 @@ class InputAdd {
 
 
         // Now we will add an EventListener to the the button
-        this.#btnAdd.addEventListener("click", (e) => this.addTo(bindTo))
+        this.#btnAdd.addEventListener("click",
+            (e) => this.addTo(list)
+        )
 
         // adding another event listener on input , to add the item
         // when hit Enter
-        this.#input.addEventListener("keypress", (e) => this.btnEnter(e, bindTo))
+        this.#input.addEventListener("keypress",
+
+            (e) => this.btnEnter(e, list)
+        )
 
 
     }
 
 
     addTo(listElement) {
-        let value = this.getText()
-        listElement.addItem(value)
-        this.setText("");
+        let value = this.getText() // getting text from the input element.
+        listElement.addItem(value) // method of list element.
+        this.setText(""); // making empty to input element value.
     }
 
-    btnEnter(e, bindTo) {
+    btnEnter(e, list) {
         // this function is the event handler for key press events if our key is Enter.
         // console.log(e, e.key)
         if (e.key === "Enter") {
-            this.addTo(bindTo);
+            this.addTo(list);
         }
     }
 
@@ -70,6 +75,7 @@ class InputAdd {
 
     setText(value) {
         this.#input.value = value;
+        // setting the text to input .
     }
 
 
