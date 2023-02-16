@@ -57,4 +57,59 @@ another_Array.unshift("Kushal")
 console.log(another_Array)
 // Array.shift() method: remove the value form the beginning of the array.
 another_Array.shift();
-console.log(another_Array)
+console.log("another Array: ", another_Array)
+
+//================================================================//
+//================================================================//
+// push method.
+
+// first adding values individually.
+console.log("Array Push Operation\n-----------------------\n----------------------------\n");
+console.log("Array push with individual values")
+// -------------------------------------------------------//
+another_Array.push("lokesh", 20, 5.6);  // <-----------------------------
+
+console.log("Another Array:", another_Array);
+
+// Now adding values by using arrays.
+console.log("\n-----------------------\n");
+console.log("Array push with another array.")
+
+
+another_Array.push([1, 2, 3], [4, 5, 6, 7]); // <-----------------------------
+
+console.log("Another Array:", another_Array);
+
+//================================================================//
+//================================================================//
+// new array with concate method.
+let newArray = ['Kuldeep', 'Manish', 21, 5, 6, 'O-'];
+console.log("New Array:", newArray);
+
+// Concatenating values with individually specified.
+console.log("\n-----------------------\n----------------------------\n");
+let updated = newArray.concat("lokesh", 20, 5.6)
+console.log("Original Array:", newArray);
+console.log("Updated Array :", updated);
+
+//
+console.log("\n-----------------------\n");
+
+updated = newArray.concat(["lokesh", 20, 5.6], [0, 9, 8])
+console.log("Original Array:", newArray);
+console.log("Updated Array :", updated);
+//================================================================//
+//================================================================//
+
+// Object Introduction
+
+// Object --> Properties
+// Object --> methods/ behavior
+let student = {
+    Name: "manish",
+    Age: 27,
+    Height: 5.6,
+    BloodGroup: "O-"
+}
+
+console.log(student);
