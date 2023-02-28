@@ -74,6 +74,30 @@ switch(light){
         break;
 } */
 
-for(let i=0; i <= 5; i++){
-        console.log(i)
+function StartPattern1() {
+
+    // first we will make variable to store the string in which we will create the pattern.
+
+    let pattern = "";
+
+    let pattern2 = "";
+    let lines = 5;
+
+    // Now we will outer loop for each row.
+    for (let row = 0; row < lines; row++) {
+
+        // Now in each row we will put some starts.
+        for (let columns = 0; columns <= row; columns++) {
+            pattern += "🐹";
+            pattern2 += "🐹";
+        }
+        pattern += "\n";
+        pattern2 += "<br/>";
     }
+
+    console.log(pattern);
+    document.write(pattern2)
+
+}
+
+StartPattern1();
