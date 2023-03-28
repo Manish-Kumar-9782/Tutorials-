@@ -6,18 +6,28 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS DOM</title>
-
+    <script src="./List.js"></script>
 </head>
 
 <body>
 
     <h1 id="myheading">This is h1 heading.</h1>
 
-    <div id="mydiv">
+    <div id="mydiv"></div>
 
-    </div>
+    <div id="list-container"></div>
 
-    <script src="./dom-intro.js"></script>
+
+    <script>
+
+        let container = document.getElementById("list-container");
+
+        let ul = new ListContainer(container)
+
+        ul.addItem("This is item 1 from ul list element")
+        ul.addItem("This is farzi item")
+    </script>
+
 </body>
 
 </html>
