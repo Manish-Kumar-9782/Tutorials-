@@ -7,20 +7,54 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JS DOM</title>
     <script src="./List.js"></script>
+
+    <style>
+        .box {
+            width: 100px;
+            height: 100px;
+            background-color: rgb(30, 144, 255);
+        }
+    </style>
 </head>
 
 <body>
 
     <h1 id="myheading">This is h1 heading.</h1>
 
-    <div id="mydiv"></div>
+    <div id="mydiv" class="box"></div>
 
     <div id="list-container"></div>
+
+    <button id="button">
+        Change Color
+    </button>
 
 
     <script>
 
         let container = document.getElementById("list-container");
+
+        let ulList = new ListContainer(container)
+        let olList = new ListContainer(container, listType = 'ol')
+        ulList.addItem("ul list item 1")
+        ulList.addItem("ul list item 2")
+
+        olList.addItem("ol list item 1")
+        olList.addItem("ol list item 2")
+
+
+        let div = document.getElementById("mydiv");
+        let button = document.getElementById("button");
+        button.onclick = () => { changeColor(); }
+
+        let changeColor = function () {
+            let r = Math.round(Math.random() * 255);
+            let g = Math.round(Math.random() * 255);
+            let b = Math.round(Math.random() * 255);
+            let color = `rgb(${r},${g},${b})`
+            div.style.backgroundColor = color;
+        }
+
 
         let ul = new ListContainer(container)
 

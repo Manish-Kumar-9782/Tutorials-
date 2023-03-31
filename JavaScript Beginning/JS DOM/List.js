@@ -26,12 +26,12 @@ class ListElement {
 // ul, ol
 class ListContainer {
 
-    static LIST = []; // an array to hold all the list elements.
+    // static LIST = []; // an array to hold all the list elements.
 
     constructor(parent, listType = 'ul') {
         this.listType = listType;
         this.parent = parent;
-
+        this.items = [];
         // first we will create a new list element.
         this.listContainer = document.createElement(this.listType);
 
@@ -43,12 +43,12 @@ class ListContainer {
 
     addItem(content) {
         let li = new ListElement(this.listContainer, content);
-        ListContainer.LIST.push(li);
+        this.items.push(li);
     }
 
     deleteItem(index) {
-        let element = ListContainer.LIST[index];
+        let element = this.items[index];
         element.liElement.remove();// remove method on element 
-        ListContainer.LIST.splice(index, 1);
+        this.items.splice(index, 1);
     }
 }
