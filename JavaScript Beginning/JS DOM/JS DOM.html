@@ -25,12 +25,26 @@
 
     <div id="list-container"></div>
 
+    <input type="text" id="myInput">
+
     <button id="button">
         Change Color
     </button>
 
 
     <script>
+        let myInput = document.getElementById("myInput");
+
+        myInput.addEventListener("keyup", function (e) {
+            console.log(e);
+
+            if (e.key == "Enter") {
+                console.log("Enter is pressed");
+                console.log("Input Value: ", myInput.value);
+                myInput.value = "";
+            }
+        })
+
 
         let container = document.getElementById("list-container");
 

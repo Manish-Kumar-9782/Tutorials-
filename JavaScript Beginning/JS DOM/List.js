@@ -1,6 +1,33 @@
 // Create a list block or a container.
 
 // li 
+
+class InputElement {
+    constructor(parent, list) {
+        this.parent = parent;
+        this.list = list;
+
+
+        this.input = document.createElement('input');
+        this.input.type = 'text';
+        this.parent.appendChild(this.input);
+
+        this.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.getText(this.list)
+            }
+        });
+    }
+
+    getText(list) {
+        // list is an instance of ListElement
+        list.addItem(this.input.value);
+        this.input.value = ""; // resetting value of 
+        // input element.
+    }
+}
+
+
 class ListElement {
 
     constructor(parent, content) {
@@ -36,6 +63,7 @@ class ListContainer {
         this.listContainer = document.createElement(this.listType);
 
         // now append this element inside the parent.
+        this.input = new InputElement(this.listContainer, this)
         this.parent.appendChild(this.listContainer);
 
 
