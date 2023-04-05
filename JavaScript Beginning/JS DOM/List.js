@@ -39,15 +39,35 @@ class ListElement {
         this.parent = parent;
         this.content = content;
 
+
         // first creating the li element
         this.liElement = document.createElement("li");
-
+        this.span = document.createElement("span");
+        this.button = document.createElement("button");
         // now putting some text content inside that element.
-        this.liElement.innerText = this.content;
+        this.span.innerText = this.content;
+        this.button.innerText = "Delete";
+
+        this.liElement.classList.add("d-flex");
+        this.liElement.classList.add("justify-content-between");
+
+        this.liElement.appendChild(this.span);
+        this.liElement.appendChild(this.button);
 
         // now append this element inside the parent.
         this.parent.appendChild(this.liElement);
+
+
+        this.button.addEventListener("click", (e) => {
+            this.liElement.remove();
+            delete this;
+        })
     }
+
+    setId(index) {
+        this.button.dataset.id = index;
+    }
+
 }
 
 // ul, ol
@@ -63,15 +83,37 @@ class ListContainer {
         this.listContainer = document.createElement(this.listType);
 
         // now append this element inside the parent.
-        this.input = new InputElement(this.listContainer, this)
+        this.input = document.createElement("input");
+        // appending the element to the list container.
+        this.listContainer.appendChild(this.input);
+
+        this.input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                this.getText()
+            }
+        });
+
         this.parent.appendChild(this.listContainer);
+    }
 
+    setClass(str) {
+        this.listContainer.classList.add(str);
+    }
 
+    setClasses(class_array) {
+        class_array.forEach((cls) => this.setClass(cls));
+    }
+    getText() {
+        // list is an instance of ListElement
+        this.addItem(this.input.value);
+        this.input.value = ""; // resetting value of 
+        // input element.
     }
 
     addItem(content) {
         let li = new ListElement(this.listContainer, content);
         this.items.push(li);
+        li.setId(this.items.indexOf(li));
     }
 
     deleteItem(index) {
