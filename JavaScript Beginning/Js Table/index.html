@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table</title>
+    <script src="./Table.js"></script>
+
+    <style>
+        table,
+        td,
+        th {
+            border: 1px solid black;
+            ;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container"></div>
+
+    <script>
+        let container = document.getElementById("container");
+        let table = new Table(container, 0, 4, ["Name", "Age", "Height", "BloodGroup"]);
+        table.addRowColumns(["Kushal", 19, 5.6, "B+"]);
+        table.addRowColumns(["Kuldeep", 21, 5.5, "A+"]);
+        table.addRowColumns(["Karan", 19, 5.6, "O+"]);
+        table.addRowColumns(["Kursheed", 22, 5.7, "AB-"]);
+    </script>
+</body>
+
+</html>
