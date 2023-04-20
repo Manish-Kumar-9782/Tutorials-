@@ -15,15 +15,59 @@
             border: 1px solid black;
             ;
         }
+
+        .flex-row {
+            display: flex;
+            gap: 50px;
+        }
     </style>
 </head>
 
 <body>
-    <div id="container"></div>
+    <div class="flex-row">
+
+        <form id="PersonForm">
+            <label for="name">Person Name: </label>
+            <input id="name" name="name" type="text">
+            <br>
+
+            <label for="age">Person Age: </label>
+            <input id="age" name="age" type="text">
+            <br>
+
+            <label for="height">Person Height: </label>
+            <input id="height" name="height" type="text">
+            <br>
+
+            <label for="bloodGroup">Person BloodGroup: </label>
+            <input id="bloodGroup" name="bloodGroup" type="text">
+            <br>
+
+            <button id="addButton" type="button">Add</button>
+        </form>
+
+        <div id="container"></div>
+
+    </div>
 
     <script>
-        let container = document.getElementById("container");
-        let table = new Table(container, 0, 4, ["Name", "Age", "Height", "BloodGroup"]);
+        const container = document.getElementById("container");
+        const table = new Table(container, 0, 4, ["Name", "Age", "Height", "BloodGroup"]);
+
+        const form = document.forms['PersonForm']
+        const addButton = document.getElementById('addButton');
+
+        addButton.addEventListener("click", function (e) {
+            let name = form['name'].value;
+            let age = form['age'].value;
+            let height = form['height'].value;
+            let bloodGroup = form['bloodGroup'].value;
+
+            table.addRowColumns([name, age, height, bloodGroup]);
+            form.reset(); // to make empty 
+        })
+
+
         table.addRowColumns(["Kushal", 19, 5.6, "B+"]);
         table.addRowColumns(["Kuldeep", 21, 5.5, "A+"]);
         table.addRowColumns(["Karan", 19, 5.6, "O+"]);
