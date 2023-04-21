@@ -8,6 +8,15 @@
     <title>Table</title>
     <script src="./Table.js"></script>
 
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ"
+        crossorigin="anonymous">
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
     <style>
         table,
         td,
@@ -24,26 +33,35 @@
 </head>
 
 <body>
-    <div class="flex-row">
+    <div class="flex-row container py-4">
 
-        <form id="PersonForm">
-            <label for="name">Person Name: </label>
-            <input id="name" name="name" type="text">
-            <br>
+        <form id="PersonForm" class="border bg-secondary w-50 px-3 py-4">
 
-            <label for="age">Person Age: </label>
-            <input id="age" name="age" type="text">
-            <br>
+            <div class="form-floating mb-3">
+                <input type="text" name="name" class="form-control" id="name"
+                    placeholder="Person Name">
+                <label for="name">Person Name</label>
+            </div>
 
-            <label for="height">Person Height: </label>
-            <input id="height" name="height" type="text">
-            <br>
+            <div class="form-floating mb-3">
+                <input type="text" name="age" class="form-control" id="age"
+                    placeholder="Person Age">
+                <label for="age">Person Age</label>
+            </div>
 
-            <label for="bloodGroup">Person BloodGroup: </label>
-            <input id="bloodGroup" name="bloodGroup" type="text">
-            <br>
+            <div class="form-floating mb-3">
+                <input type="text" name="height" class="form-control" id="height"
+                    placeholder="Person Height">
+                <label for="height">Person Height</label>
+            </div>
 
-            <button id="addButton" type="button">Add</button>
+            <div class="form-floating mb-3">
+                <input type="text" name="bloodGroup" class="form-control" id="bloodGroup"
+                    placeholder="Person BloodGroup">
+                <label for="bloodGroup">Person BloodGroup</label>
+            </div>
+
+            <button id="addButton" type="button" class="btn btn-primary w-100">Add</button>
         </form>
 
         <div id="container"></div>
@@ -52,9 +70,9 @@
 
     <script>
         const container = document.getElementById("container");
-        const table = new Table(container, 0, 4, ["Name", "Age", "Height", "BloodGroup"]);
-
         const form = document.forms['PersonForm']
+        const table = new Table(container, 0, 4, ["Name", "Age", "Height", "BloodGroup"], form);
+
         const addButton = document.getElementById('addButton');
 
         addButton.addEventListener("click", function (e) {
@@ -66,7 +84,6 @@
             table.addRowColumns([name, age, height, bloodGroup]);
             form.reset(); // to make empty 
         })
-
 
         table.addRowColumns(["Kushal", 19, 5.6, "B+"]);
         table.addRowColumns(["Kuldeep", 21, 5.5, "A+"]);
