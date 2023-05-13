@@ -13,6 +13,8 @@
 // character: char
 // boolean: true-> 1, false-> 0
 
+const PI = 3.14;  // global to all function.
+
 // to modify the range for each data type, unsigned, short, long
 
 // syntax: <data-type> <variable>;  declaring our varible.
@@ -27,13 +29,17 @@ void main(){
 	
 	int number = 4; // 4byte
 	// %d --> signed integer, int
-	char ch= 'a';
+	char ch= 'a';  // char --> 1 byte
 	
 	// floating point number with float and double
 	float fNumber = 3.14; // pi
 	
 	// double number
 	double dNumber = 3.14; // double pi
+	
+	// sizeof() operator gives us values in bytes.
+	
+	printf("first value int:%d, second value float:%f ",10, 20.4);
 	
 	printf("Size of our number %d\n", sizeof(number));
 	
@@ -42,6 +48,7 @@ void main(){
 	printf("Size of our float number %d \n", sizeof(fNumber));
 	
 	printf("Size of our double number %d \n", sizeof(dNumber));
+	
 		
 }
 
