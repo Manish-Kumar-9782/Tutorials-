@@ -10,7 +10,6 @@ void main(){
 	
 	long long unsigned int fact = 0;
 	
-	
 	for(i=1; i<=value; i++){
 		
 		fact = factorial2(i);
