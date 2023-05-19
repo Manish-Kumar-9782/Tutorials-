@@ -58,7 +58,7 @@ class CSVReader(Utility):
         if self.checkIntegrity(file):
             self.file = open(file)
         else:
-            print("file Integrity Error: file or root dir not found")
+            raise Exception("file Integrity Error: file or root dir not found")
 
     def __readline__(self):
         """
@@ -84,9 +84,39 @@ class CSVReader(Utility):
             raise Exception("Header is not found, file might be empty..?")
 
 
+class CSVWriter(Utility):
+
+    def __init__(self,file,header:list=None,filemode="w",delimiter=','):
+        super().__init__()
+        if self.checkIntegrity(file,True,True):
+            self.file = file
+            self.filemode = filemode
+        self.header = self.__parse_row(header)
+        self.delimiter = delimiter
+
+    def __parse_row(self,row:list or tuple):
+        if not isinstance(row, (list,tuple)):
+            raise TypeError("row must be an instance of list or tuple")
+        return row
+
+    def __write_row(self,row):
+        row = self.__parse_row(row)
+        # first convert our seq into the string
+        line = self.delimiter.join(row) + "\n"
+        self.file.write(line)
+
+    def write_row(self,row):
+        self.file = open(self.file, self.filemode)
+        self.__write_row(row)
+        self.file.close()
+
+    def write_rows(self, rows):
+        self.file = open(self.file, self.filemode)
+        for row in rows:
+            self.__write_row(row)
+        self.file.close()
+
+
 if __name__ == "__main__":
     print("current file location: ", os.getcwd())
-    utility   = Utility()
-    print("root dir: ", utility.root)
-    print("Data dir: ", utility.data)
-    utility._Utility__check_data_dir()
+    reader = CSVReader("myfile.csv")

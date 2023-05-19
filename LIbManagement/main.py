@@ -1,16 +1,13 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
+# This is a sample Python script
+from Utility import *
+from config import BLOCK_LENGTH
 # Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    displaySep("=", BLOCK_LENGTH)
+    displayTitle("WELCOME TO LIBRARY MANAGEMENT SYSTEM", BLOCK_LENGTH)
+    displaySep('-', BLOCK_LENGTH)
+    showOptions()
+    displaySep("-", BLOCK_LENGTH)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
