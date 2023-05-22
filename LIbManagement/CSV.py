@@ -1,6 +1,7 @@
 import os
 from config import *
 
+
 class Utility:
 
     def __init__(self, root=None, data=None):
@@ -42,16 +43,15 @@ class Utility:
                 file.close();
             return False
 
-    def checkIntegrity(self,file, create_dir=False, create_file=False):
+    def checkIntegrity(self, file, create_dir=False, create_file=False):
         if self.__check_data_dir(create_dir) and self.__check_file(file, create_file):
             return True
         return False
 
 
-
 class CSVReader(Utility):
 
-    def __init__(self,file,header=None,delimiter=','):
+    def __init__(self, file, header=None, delimiter=','):
         super().__init__()
         self.header = header
         self.delimiter = delimiter
@@ -78,7 +78,7 @@ class CSVReader(Utility):
         # first we are going to save our output from readline into the
         # header
         header = self.__readline__()
-        if header: # if header is row
+        if header:  # if header is row
             self.header = header
         else:
             raise Exception("Header is not found, file might be empty..?")
@@ -86,26 +86,26 @@ class CSVReader(Utility):
 
 class CSVWriter(Utility):
 
-    def __init__(self,file,header:list=None,filemode="w",delimiter=','):
+    def __init__(self, file, header: list = None, filemode="w", delimiter=','):
         super().__init__()
-        if self.checkIntegrity(file,True,True):
+        if self.checkIntegrity(file, True, True):
             self.file = file
             self.filemode = filemode
         self.header = self.__parse_row(header)
         self.delimiter = delimiter
 
-    def __parse_row(self,row:list or tuple):
-        if not isinstance(row, (list,tuple)):
+    def __parse_row(self, row: list or tuple):
+        if not isinstance(row, (list, tuple)):
             raise TypeError("row must be an instance of list or tuple")
         return row
 
-    def __write_row(self,row):
+    def __write_row(self, row):
         row = self.__parse_row(row)
         # first convert our seq into the string
         line = self.delimiter.join(row) + "\n"
         self.file.write(line)
 
-    def write_row(self,row):
+    def write_row(self, row):
         self.file = open(self.file, self.filemode)
         self.__write_row(row)
         self.file.close()
@@ -116,7 +116,11 @@ class CSVWriter(Utility):
             self.__write_row(row)
         self.file.close()
 
+    def write_header(self):
+        self.write_row(self.header)
+
 
 if __name__ == "__main__":
     print("current file location: ", os.getcwd())
-    reader = CSVReader("myfile.csv")
+    writer = CSVWriter('books.csv', ['id','title','author'])
+    writer.write_header()
