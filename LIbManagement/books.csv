@@ -1,1 +1,3 @@
-id,title,author
+id,title,author,subject,pages,price
+1,python,mansi,how to learn python,234,345
+1,python,mansi,how to learn python,235,345

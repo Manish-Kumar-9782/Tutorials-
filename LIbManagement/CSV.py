@@ -40,11 +40,11 @@ class Utility:
         else:
             if create:
                 file = open(file, "w")
-                file.close();
+                file.close()
             return False
 
     def checkIntegrity(self, file, create_dir=False, create_file=False):
-        if self.__check_data_dir(create_dir) and self.__check_file(file, create_file):
+        if self.__check_data_dir(create_dir) and self.__check_file(file,  create_file):
             return True
         return False
 
@@ -55,20 +55,35 @@ class CSVReader(Utility):
         super().__init__()
         self.header = header
         self.delimiter = delimiter
+        self.file_pos = 0
         if self.checkIntegrity(file):
-            self.file = open(file)
+            self.file = file   # it contains path for file
         else:
             raise Exception("file Integrity Error: file or root dir not found")
 
-    def __readline__(self):
+    def __readline__(self, header=False, reset=False):
         """
         this will read line from file and return as array by splitting using
         delimiter. if line is empty then it will return False, else we will have
         a list of single row data items.
         :return: list or False
         """
+        temp = None
+        if header:
+            temp = self.file_pos
 
-        line = self.file.readline().strip("\n")
+        if reset or header:
+            self.file_pos = 0
+
+        file = open(self.file, 'r')  ## opening file for each line
+        file.seek(self.file_pos)  # save the file pointer position
+        line = self.file.readline().strip("\n")  # read one line at a time
+        self.file_pos = file.tell()  # updating the file position
+
+        # if header is true then reassign the file_pos with temp
+        if header:
+            self.file_pos = temp
+
         if line:
             row = line.split(self.delimiter)
             return row
@@ -77,7 +92,7 @@ class CSVReader(Utility):
     def __getHeader__(self):
         # first we are going to save our output from readline into the
         # header
-        header = self.__readline__()
+        header = self.__readline__(header=True)
         if header:  # if header is row
             self.header = header
         else:
@@ -88,33 +103,39 @@ class CSVWriter(Utility):
 
     def __init__(self, file, header: list = None, filemode="w", delimiter=','):
         super().__init__()
-        if self.checkIntegrity(file, True, True):
-            self.file = file
-            self.filemode = filemode
+        self.filemode = filemode
         self.header = self.__parse_row(header)
         self.delimiter = delimiter
+
+        if self.checkIntegrity(file, True):
+            self.file = file
+        else:
+            wfile = open(file, 'w')
+            self.__write_row(wfile, header)
+            wfile.close()
+            self.file = file
 
     def __parse_row(self, row: list or tuple):
         if not isinstance(row, (list, tuple)):
             raise TypeError("row must be an instance of list or tuple")
         return row
 
-    def __write_row(self, row):
+    def __write_row(self,file, row):
         row = self.__parse_row(row)
         # first convert our seq into the string
         line = self.delimiter.join(row) + "\n"
-        self.file.write(line)
+        file.write(line)
 
     def write_row(self, row):
-        self.file = open(self.file, self.filemode)
-        self.__write_row(row)
-        self.file.close()
+        file = open(self.file, self.filemode)
+        self.__write_row(file,row)
+        file.close()
 
     def write_rows(self, rows):
-        self.file = open(self.file, self.filemode)
+        file = open(self.file, self.filemode)
         for row in rows:
-            self.__write_row(row)
-        self.file.close()
+            self.__write_row(file, row)
+        file.close()
 
     def write_header(self):
         self.write_row(self.header)
@@ -122,5 +143,4 @@ class CSVWriter(Utility):
 
 if __name__ == "__main__":
     print("current file location: ", os.getcwd())
-    writer = CSVWriter('books.csv', ['id','title','author'])
-    writer.write_header()
+    writer = CSVWriter('books.csv', ['id', 'title', 'author'])
