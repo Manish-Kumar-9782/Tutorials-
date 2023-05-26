@@ -22,17 +22,18 @@ class Utility:
         if os.path.isdir(self.root):
 
             if os.path.isdir(self.data):
-                print("data dir is found")
+                # print("data dir is found")
                 return True
             else:
-                print("data dir is not found")
-                print("creating a new data dir.")
+                # print("data dir is not found")
+                # print("creating a new data dir.")
                 if create:
                     os.mkdir(self.data)
                     self.__check_data_dir()  # calling recursively
                 return False
         else:
-            print("root dir is not found.")
+            # print("root dir is not found.")
+            raise NotADirectoryError(DATA_PATH +" is not found..!")
 
     def __check_file(self, file, create=True):
         if os.path.isfile(file):
@@ -142,5 +143,5 @@ class CSVWriter(Utility):
 
 
 if __name__ == "__main__":
-    print("current file location: ", os.getcwd())
+    # print("current file location: ", os.getcwd())
     writer = CSVWriter('books.csv', ['id', 'title', 'author'])

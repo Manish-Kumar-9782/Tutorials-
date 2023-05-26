@@ -41,11 +41,16 @@ class BookDatabase:
 
     def createBook(self, title, author, subject, pages, price):
         # now create a new book
-        book = Book(self.current_id, title, author, subject, pages, price)
-        self.books.append(book)
-        self.current_id += 1  # increasing the id for next book
-        # save the book into the file
-        self.writer.write_row(book.to_list())
+        try:
+            book = Book(self.current_id, title, author, subject, pages, price)
+            self.books.append(book)
+            self.current_id += 1  # increasing the id for next book
+            # save the book into the file
+            self.writer.write_row(book.to_list())
+            return True
+        except Exception:
+            return False
+
 
 
 if __name__ == "__main__":
