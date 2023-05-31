@@ -56,13 +56,15 @@ class CSVReader(Utility):
         super().__init__()
         self.header = header
         self.delimiter = delimiter
+        self.__header_length = 0
         self.file_pos = 0
         if self.checkIntegrity(file):
             self.file = file   # it contains path for file
         else:
             raise Exception("file Integrity Error: file or root dir not found")
+        self.__getHeader()
 
-    def __readline__(self, header=False, reset=False):
+    def __readline(self, header=False, reset=False):
         """
         this will read line from file and return as array by splitting using
         delimiter. if line is empty then it will return False, else we will have
@@ -72,32 +74,43 @@ class CSVReader(Utility):
         temp = None
         if header:
             temp = self.file_pos
-
-        if reset or header:
             self.file_pos = 0
+
+        if reset:
+            self.file_pos = 0 + self.__header_length
 
         file = open(self.file, 'r')  ## opening file for each line
         file.seek(self.file_pos)  # save the file pointer position
-        line = self.file.readline().strip("\n")  # read one line at a time
+        line = file.readline().strip("\n")  # read one line at a time
         self.file_pos = file.tell()  # updating the file position
 
         # if header is true then reassign the file_pos with temp
         if header:
-            self.file_pos = temp
+            self.__header_length = self.file_pos
+            self.file_pos = self.__header_length if reset else temp
 
         if line:
             row = line.split(self.delimiter)
             return row
         return False
 
-    def __getHeader__(self):
+    def __getHeader(self):
         # first we are going to save our output from readline into the
         # header
-        header = self.__readline__(header=True)
+        header = self.__readline(header=True, reset=True)
         if header:  # if header is row
             self.header = header
         else:
             raise Exception("Header is not found, file might be empty..?")
+
+    def read(self):
+        line = self.__readline()
+        data = []
+        while line:
+            data.append(line)
+            line = self.__readline()
+
+        return data
 
 
 class CSVWriter(Utility):
@@ -144,4 +157,6 @@ class CSVWriter(Utility):
 
 if __name__ == "__main__":
     # print("current file location: ", os.getcwd())
-    writer = CSVWriter('books.csv', ['id', 'title', 'author'])
+    reader = CSVReader('books.csv')
+    print("header: ", reader.header)
+    print("data: ", reader.read())

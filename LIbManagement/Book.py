@@ -26,6 +26,14 @@ class Book:
     def to_list(self):
         return [str(self.book_id), self.title, self.author, self.subject, str(self.pages), str(self.price)]
 
+    def row_display(self,columns_offset=10):
+        row_string = ""
+        for row_item in self.to_list():
+            row_string += row_item.ljust(len(row_item)+columns_offset)
+        print(row_string)
+
+    def inline_display(self, format=None):
+        print("%-4s %-20s %-20s %-30s %-10s %-10s" % tuple(self.to_list()))
 
 class BookDatabase:
 
@@ -51,10 +59,17 @@ class BookDatabase:
         except Exception:
             return False
 
+    def readBooks(self):
+        for row in self.reader.read():
+            bk = Book(*row)
+            self.books.append(bk)
+        return self.books
+
 
 
 if __name__ == "__main__":
     header = ["id", 'title', 'author', 'subject', 'pages', 'price']
     bk_db = BookDatabase('books.csv', header)
-    bk_db.createBook('python', "mansi", 'how to learn python', 235, 345)
-    print("Totoal books: ", bk_db.books)
+    books =  bk_db.readBooks()
+    for book in books:
+        book.inline_display()
