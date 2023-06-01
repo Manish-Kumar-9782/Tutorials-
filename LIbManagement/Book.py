@@ -1,5 +1,8 @@
 from CSV import CSVReader, CSVWriter
 
+def displaySep(sep="=", length=10):
+    string = sep*length
+    print(string)
 
 class Book:
 
@@ -15,13 +18,11 @@ class Book:
         return f"Book<{self.book_id}:{self.title}>"
 
     def show_details(self):
-        print(f"""id: {self.book_id} \
-        title: {self.title}\
-        author: {self.author}\
-        subject : {self.subject} \
-        pages: {self.pages}\
-        price: {self.price}
-""")
+        header = ["Book Id", "Title", "Author", "Subject", "Pages" "Prices"]
+        displaySep("-",100)
+        for key, value in zip(header, self.to_list()):
+            print(f"{key:15s}{value}")
+        displaySep("-", 100)
 
     def to_list(self):
         return [str(self.book_id), self.title, self.author, self.subject, str(self.pages), str(self.price)]
@@ -31,6 +32,21 @@ class Book:
         for row_item in self.to_list():
             row_string += row_item.ljust(len(row_item)+columns_offset)
         print(row_string)
+
+    @staticmethod
+    def fInline_display(sequence, column_len=20, str_len=18):
+        row_string = ""
+
+        # f"{variable:width.precision format_specifier}"
+        # f"{var:{width}.{pre}s}" --> f"{row_item:{column_width}.{str_len}s}"
+
+        str_len = str_len if isinstance(str_len,(list,tuple)) else [str_len]*6
+        column_len = column_len if isinstance(column_len,(list,tuple)) else [column_len]*6
+
+        for row_item, col_size, str_size in zip(sequence,column_len, str_len):
+            row_string += f"{row_item:{col_size}.{str_size}s}"
+        print(row_string)
+
 
     def inline_display(self, format=None):
         print("%-4s %-20s %-20s %-30s %-10s %-10s" % tuple(self.to_list()))
@@ -43,9 +59,13 @@ class BookDatabase:
         self.current_id = 1  # to maintain the id for each book.
         self.writer = CSVWriter(file, header, filemode="a")
         self.reader = CSVReader(file, header)
+        self.column_sizes = [4,20,15,20,7,7]
+        self.str_lengths = [i-2 for i in self.column_sizes]
 
         if initial:
             self.writer.write_header()
+
+
 
     def createBook(self, title, author, subject, pages, price):
         # now create a new book
@@ -65,11 +85,18 @@ class BookDatabase:
             self.books.append(bk)
         return self.books
 
-
+    def displayBooks(self):
+        displaySep("=",100)
+        Book.fInline_display(self.reader.header, self.column_sizes, self.str_lengths)
+        displaySep("=", 100)
+        for book in self.books:
+            Book.fInline_display(book.to_list(),self.column_sizes, self.str_lengths)
+            displaySep("-",100)
+        print(f"Total Entries: {len(self.books)}")
+        displaySep("=",100)
 
 if __name__ == "__main__":
     header = ["id", 'title', 'author', 'subject', 'pages', 'price']
     bk_db = BookDatabase('books.csv', header)
-    books =  bk_db.readBooks()
-    for book in books:
-        book.inline_display()
+    books = bk_db.readBooks()
+    bk_db.displayBooks()

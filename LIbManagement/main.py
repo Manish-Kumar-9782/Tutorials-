@@ -7,6 +7,10 @@ from config import BLOCK_LENGTH
 
 if __name__ == '__main__':
 
+    header = ["id", 'title', 'author', 'subject', 'pages', 'price']
+    bk_db = BookDatabase('books.csv', header)
+    bk_db.readBooks()
+
     while True:
         displaySep("=", BLOCK_LENGTH)
         displayTitle("WELCOME TO LIBRARY MANAGEMENT SYSTEM", BLOCK_LENGTH)
@@ -14,7 +18,7 @@ if __name__ == '__main__':
         showOptions()
         displaySep("-", BLOCK_LENGTH)
         command = int(input("Select Option: "))
-        selectOption(command)
+        selectOption(command, bk_db)
         input("Press Enter To continue..")
         os.system("cls")
 

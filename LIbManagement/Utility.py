@@ -43,16 +43,24 @@ def displayTitle(title,length):
         raise TypeError("title must be an string..")
     print(title.center(length))
 
-def selectOption(option):
+def selectOption(option, database):
     """
     This function is used to select and run the given option.
     :param option:
     :return:
     """
     if option == 1:
-        pass
+
+        database.displayBooks()
     elif option == 2:
         # id,title,author,subject,pages,price
         addBook()
+
+    elif option == 4:
+            bookId = input("Enter Book id to view: ")
+            for book in database.books:
+                if book.book_id == bookId:
+                    book.show_details()
+                    break
     else:
         print("wrong option")
