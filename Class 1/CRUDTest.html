@@ -39,18 +39,101 @@
                 console.log("BloodGroup:".padEnd(15, " "), `${this.bloodgroup}`)
             }
 
+            inline_display(...args) {
+                console.log(
+                    `${this.primarykey}`.padEnd(args[0], " "),
+                    `${this.name}`.padEnd(args[1], " "),
+                    `${this.age}`.padEnd(args[2], " "),
+                    `${this.height}`.padEnd(args[3], " "),
+                    `${this.bloodgroup}`.padEnd(args[4], " "),
+                )
+            }
+
+            static ShowDatabase(...args) {
+                // this ShowDatabase is common to each person because it is 
+                // a static function.
+                // displaying the column heading
+                console.log(
+                    `PrimaryKey`.padEnd(args[0], " "),
+                    `Name`.padEnd(args[1], " "),
+                    `Age`.padEnd(args[2], " "),
+                    `Height`.padEnd(args[3], " "),
+                    `BloodGroup`.padEnd(args[4], " "),
+                )
+
+                for (let i = 0; i < Person.countStudent; i++) {
+                    Person.StDatabase[i].inline_display(...args);
+                }
+            }
+
             // 3. update the object.
 
             update(obj) {
 
-                // retrieve the keys and value.
                 let keys = Object.keys(obj);
                 let values = Object.values(obj);
+
+                for (let i = 0; i < keys.length; i++) {
+                    //console.log("testing key: ---> ", keys[i]);
+                    if (!this.#isValidKey(keys[i])) {
+                        console.log(`Error: ${keys[i]} is not a valid key!..`);
+                        return -1;
+                    }
+                }
+
+                // Now after testing al the keys
 
                 for (let i = 0; i < keys.length; i++) {
                     this[keys[i]] = values[i];
                 }
             }
+
+            // #isValidKey is private member
+
+            #isValidKey(key) {
+                /** 
+                This method is used to test that a key is present to that particular person.
+                */
+                let personKeys = Object.keys(this);
+
+                for (let i = 0; i < personKeys.length; i++) {
+                    if (personKeys[i] === key)
+                        return true;
+                }
+                return false;
+            }
+
+            isvalidkey(key) {
+                this.#isValidKey(key);
+            }
+
+            static serachPerson(value = null, by = "primarykey") {
+                // valid values for by parameter..
+                // primarykey, name, age, height, bloodgroup
+                //console.log("value: ", value);
+                let result = [];
+
+                // if value is null or undefined then
+                if (value == null) {
+                    console.log("Error: value can't be null")
+                    return -1
+                }
+
+                for (let i = 0; i < Person.countStudent; i++) {
+                    //Person.PersonDatabase.length 
+                    if (Person.StDatabase[i][by] === value) {
+                        result.push(Person.StDatabase[i])
+                    }
+                }
+
+                if (by == "primarykey") {
+                    return result[0];
+                }
+                else {
+                    return result;
+                }
+            }
+
         };
 
         function curd_update(st_obj) {
@@ -71,15 +154,24 @@
 
         };
 
-        function crud_create_student() {
-            let name = prompt("Enter the name of student: "); // getting the student name
-            let age = prompt("Enter the age of student: "); // getting the student age
-            let height = prompt("Enter the height of student: "); // getting the student height
-            let bloodgroup = prompt("Enter the bloodgroup of student: "); // getting the student bloodgroup
 
-            let st = new Person(name, age, height, bloodgroup); // creating a new student.
-            return st; // returning the student object.
+        function create_person() {
+
+            let name = prompt("Enter the name of Person");
+            let age = prompt("Enter the age of Person");
+            let height = prompt("Enter the height of Person");
+            let bloodgroup = prompt("Enter the bloodgroup of Person");
+
+            let person = new Person(name, age, height, bloodgroup);
+
+            return person;
         }
+
+        new Person("manish", 26, 5.6, "O-");
+        new Person("Abhishek", 19, 5.7, "AB+");
+        new Person("varsha", 22, 5.5, "A-");
+        new Person("komal", 21, 5.3, "B+");
+        new Person("manish", 31, 5.7, "O+");
 
     </script>
 

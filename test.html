@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .input-tags {
+            border: 1px solid black;
+            padding: 10px;
+        }
+
+        .input-tags ul.tag-list {
+            list-style-type: none;
+            display: flex;
+            gap: 10px;
+            margin: 0px;
+            height: 30px;
+            padding: 0px;
+            margin-bottom: 5px;
+        }
+
+        .input-tags ul.tag-list .tag-item {
+            padding: 2px 0px 2px 4px;
+            background-color: rgba(119, 136, 153, 0.69);
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .input-tags ul.tag-list button {
+            background-color: transparent;
+            border: 0px;
+            color: #830404;
+            padding: 6px;
+            margin: 0px 2px;
+            font-weight: bold;
+        }
+
+        .input-tags ul.tag-list button:hover {
+            color: rgb(236, 2, 2);
+
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div id="tag-list1" class="input-tags">
+        <ul class="tag-list"></ul>
+        <input type="text">
+    </div>
+
+    <div id="tag-list2" class="input-tags">
+        <ul class="tag-list"></ul>
+        <input type="text">
+    </div>
+
+
+    <script src="test.js"></script>
+</body>
+
+</html>

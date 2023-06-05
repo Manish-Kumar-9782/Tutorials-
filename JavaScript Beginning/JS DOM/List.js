@@ -42,24 +42,28 @@ class ListElement {
         this.liElement = document.createElement("li"); // list item
         this.spanContent = document.createElement("span"); // span for text
         this.actions = document.createElement("div"); // actions a dive to contain 
-        // the buttons 
-        this.deleteButton = document.createElement("button"); // delete button
+
+        // putting spanContent and actions into the li Element
+        this.liElement.appendChild(this.spanContent);
+        this.liElement.appendChild(this.actions)
+
+        // creating the edit and delete button 
         this.editButton = document.createElement("button"); // edit button
+        this.deleteButton = document.createElement("button"); // delete button
+
+
+        // inserting the delete and edit button inside the actions.
+        this.actions.appendChild(this.editButton);
+        this.actions.appendChild(this.deleteButton);
 
         // now putting some text content inside that element.actions
         this.spanContent.innerText = this.content;
         this.deleteButton.innerText = "Delete";
         this.editButton.innerText = "edit";
 
+        // Optional
         this.liElement.classList.add("d-flex");
         this.liElement.classList.add("justify-content-between");
-
-        this.liElement.appendChild(this.spanContent);
-        this.liElement.appendChild(this.actions)
-
-        // inserting the delete and edit button inside the actions.
-        this.actions.appendChild(this.editButton);
-        this.actions.appendChild(this.deleteButton);
 
         // now append this element inside the parent.
         this.parent.appendChild(this.liElement);
@@ -77,8 +81,9 @@ class ListElement {
     }
 
     delete(e) {
-        this.liElement.remove();
-        delete this;
+        let index = this.listContainer.items.indexOf(this)
+        this.listContainer.deleteItem(index);
+
     }
 
     edit(e) {
@@ -91,8 +96,9 @@ class ListElement {
 
 // ul, ol
 // static LIST = []; // an array to hold all the list elements.
-class ListContainer {
+class ListContainer extends LocalDatabase {
     constructor(parent, listType = 'ul') {
+        super({})
         this.listType = listType;
         this.parent = parent;
         this.items = [];
@@ -147,5 +153,14 @@ class ListContainer {
         this.addItem(this.input.value);
         this.input.value = ""; // resetting value of 
         // input element.
+    }
+
+    getItems() {
+        return this.items.map((item) => item.spanContent.innerText);
+    }
+
+    save() {
+
+        this.constructor.setRecord(`List-${this.constructor.Records.indexOf(this)}`, this.getItems())
     }
 }
