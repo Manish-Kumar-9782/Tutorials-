@@ -14,6 +14,12 @@
         console.log("Hello this is test again")
 
         /*
+
+            keyword: words those are already defined inside the javascript with specific meaning
+                and operation.
+
+            identifier: it is the name (word) which is defined by the user. it can be name of variable, function, object, array, class, interface etc.
+
            data : information for computer in binary form.
            data-type : different format of binary data for different kind of values.
            
@@ -34,7 +40,31 @@
            }
 
            null, undefined.
+
+
+           to create a variable: var, let, const
+
+           var: 
+           var variable_name = value;
         */
+
+        let number2 = 20;
+
+        console.log("Type of number2 variable: ", typeof number2);
+        console.log("Value of number2 variable: ", number2);
+
+        number2 = 30;
+
+        console.log("Updated value of number2 variable: ", number2);
+
+        let number3 = 30;
+
+        const pi = 3.14;
+        console.log("Value of pi variable: ", pi);
+
+        // trying to update the pi value
+        pi = 3.21  // Error: Assignment to constant variable
+        console.log("Updated value of pi variable: ", pi);
     </script>
 </head>
 
