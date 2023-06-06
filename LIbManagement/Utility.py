@@ -29,6 +29,15 @@ def addBook():
     displaySep('-', 100)
     return
 
+
+def delete_book(database):
+    book_id = input("Enter book id to delete: ")
+    result = database.deleteBook(book_id)
+    if result:
+        print(f"----------------------<<<  Deleted: {result} >>>----------------------")
+    else:
+        print("Unable to delete the book with id: ",book_id)
+
 def showOptions():
 
     print("Select an Option...")
@@ -55,6 +64,10 @@ def selectOption(option, database):
     elif option == 2:
         # id,title,author,subject,pages,price
         addBook()
+
+    elif option == 3:
+        # delete a book with given id.
+        delete_book(database)
 
     elif option == 4:
             bookId = input("Enter Book id to view: ")

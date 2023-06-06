@@ -140,13 +140,19 @@ class CSVWriter(Utility):
         line = self.delimiter.join(row) + "\n"
         file.write(line)
 
-    def write_row(self, row):
+    def write_row(self, row, header=None):
         file = open(self.file, self.filemode)
+        if header:
+            self.__write_row(header)
         self.__write_row(file,row)
         file.close()
 
-    def write_rows(self, rows):
+    def write_rows(self, rows, header=None):
         file = open(self.file, self.filemode)
+
+        if header:
+            self.__write_row(file, header)
+
         for row in rows:
             self.__write_row(file, row)
         file.close()

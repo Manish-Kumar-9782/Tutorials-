@@ -17,6 +17,9 @@ class Book:
     def __str__(self):
         return f"Book<{self.book_id}:{self.title}>"
 
+    def __repr__(self):
+        return f"Book<{self.book_id}:{self.title}>"
+
     def show_details(self):
         header = ["Book Id", "Title", "Author", "Subject", "Pages" "Prices"]
         displaySep("-",100)
@@ -53,18 +56,18 @@ class Book:
 
 class BookDatabase:
 
-    def __init__(self, file, header, delimiter=',', initial=False):
+    def __init__(self, file, delimiter=',', initial=False):
         self.__file = file
+        self.header = ["id", 'title', 'author', 'subject', 'pages', 'price']
         self.books = []  # in this we will store all the books
         self.current_id = 1  # to maintain the id for each book.
-        self.writer = CSVWriter(file, header, filemode="a")
-        self.reader = CSVReader(file, header)
+        self.writer = CSVWriter(file, self.header, filemode="a")
+        self.reader = CSVReader(file, self.header)
         self.column_sizes = [4,20,15,20,7,7]
         self.str_lengths = [i-2 for i in self.column_sizes]
 
         if initial:
             self.writer.write_header()
-
 
 
     def createBook(self, title, author, subject, pages, price):
@@ -95,8 +98,35 @@ class BookDatabase:
         print(f"Total Entries: {len(self.books)}")
         displaySep("=",100)
 
+
+    def findBook(self,book_id):
+        # book_id : an integer number as id of book
+        book = False
+        for book in self.books:
+            if book.book_id == str(book_id):
+                return book
+        return False
+
+    def deleteBook(self,book_id):
+        book = self.findBook(book_id)
+        if book:
+            self.books.remove(book)
+            self.__saveDatabase()
+            return book
+        return False
+
+
+
+    def __saveDatabase(self):
+        self.writer = CSVWriter(self.__file, self.header, 'w')
+        self.writer.write_rows(list(map(lambda x: x.to_list(), self.books)), self.header)
+
+
 if __name__ == "__main__":
     header = ["id", 'title', 'author', 'subject', 'pages', 'price']
-    bk_db = BookDatabase('books.csv', header)
-    books = bk_db.readBooks()
-    bk_db.displayBooks()
+    database = BookDatabase('books.csv')
+    database.readBooks()
+    book_id = 4
+    print("All books: ", database.books)
+    print("Book: ", database.findBook(book_id))
+    print("Books after deleting: ", database.deleteBook(book_id))
