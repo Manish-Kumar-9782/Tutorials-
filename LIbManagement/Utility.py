@@ -1,4 +1,6 @@
 # show all optons
+import os
+
 from Book import BookDatabase
 
 
@@ -6,6 +8,32 @@ def displaySep(sep="=", length=10):
 
     string = sep*length
     print(string)
+
+
+def showBook(database,book_id):
+    os.system("cls")
+    offset = 20
+    flag = False  # if flat is set then only we will show the edit, delete, update options.
+    bookObject = None
+    for book in database.books:
+        if book.book_id == book_id:
+            book.show_details()
+            bookObject = book
+            flag = True
+            break
+    if flag:
+        print("u:update".ljust(offset), "d:delete".ljust(offset), "q:quit".ljust(offset))
+        displaySep("-", 100)
+        cmd = input("Select Option: ").lower()
+
+        if(cmd == "q"):
+            database.saveDatabase()
+            return
+        elif(cmd == "u"):
+            bookObject.edit()
+        return showBook(database,book_id)
+
+    return
 
 def addBook():
     displaySep('-', 100)
@@ -58,6 +86,7 @@ def selectOption(option, database):
     :param option:
     :return:
     """
+    os.system("cls")
     if option == 1:
 
         database.displayBooks()
@@ -67,13 +96,13 @@ def selectOption(option, database):
 
     elif option == 3:
         # delete a book with given id.
+
         delete_book(database)
 
     elif option == 4:
-            bookId = input("Enter Book id to view: ")
-            for book in database.books:
-                if book.book_id == bookId:
-                    book.show_details()
-                    break
+        # view
+        bookId = input("Enter Book id to view: ")
+        showBook(database, bookId)
+
     else:
         print("wrong option")

@@ -21,7 +21,7 @@ class Book:
         return f"Book<{self.book_id}:{self.title}>"
 
     def show_details(self):
-        header = ["Book Id", "Title", "Author", "Subject", "Pages" "Prices"]
+        header = ["Book Id", "Title", "Author", "Subject", "Pages", "Prices"]
         displaySep("-",100)
         for key, value in zip(header, self.to_list()):
             print(f"{key:15s}{value}")
@@ -50,6 +50,19 @@ class Book:
             row_string += f"{row_item:{col_size}.{str_size}s}"
         print(row_string)
 
+    def edit(self):
+        offset = 20
+        print("EntryName".ljust(offset), "oldValue".ljust(offset), "newValue".ljust(offset))
+        data = {"Title":self.title, "Author":self.author, "Subject":self.subject,
+                "Pages": self.pages, "Price":self.price}
+
+        for key,value in data.items():
+            newValue = input(key.ljust(offset)+f"{value}".ljust(offset))
+            if len(newValue) == 0:
+                print(value)
+            else:
+                setattr(self,key.lower(), newValue)
+            displaySep("-",100)
 
     def inline_display(self, format=None):
         print("%-4s %-20s %-20s %-30s %-10s %-10s" % tuple(self.to_list()))
@@ -68,7 +81,6 @@ class BookDatabase:
 
         if initial:
             self.writer.write_header()
-
 
     def createBook(self, title, author, subject, pages, price):
         # now create a new book
@@ -98,7 +110,6 @@ class BookDatabase:
         print(f"Total Entries: {len(self.books)}")
         displaySep("=",100)
 
-
     def findBook(self,book_id):
         # book_id : an integer number as id of book
         book = False
@@ -111,13 +122,11 @@ class BookDatabase:
         book = self.findBook(book_id)
         if book:
             self.books.remove(book)
-            self.__saveDatabase()
+            self.saveDatabase()
             return book
         return False
 
-
-
-    def __saveDatabase(self):
+    def saveDatabase(self):
         self.writer = CSVWriter(self.__file, self.header, 'w')
         self.writer.write_rows(list(map(lambda x: x.to_list(), self.books)), self.header)
 
