@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Guessing Game</title>
+
+    <script>
+
+        let random_number = Math.round(Math.random() * 10);
+
+        let input = prompt("What is your number: ");
+
+        if (input <= random_number) {
+            console.log("You have guessed right number. The number is " + random_number)
+        }
+        else {
+            console.log("You have guessed wrong number. The number was ", random_number);
+        }
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>

@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible"
+    <meta http-equiv="X-UA-Compatible"      
           content="IE=edge">
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
@@ -18,13 +18,76 @@
                 2. Assignment Operators
                     =, +=, -=, *=, /=,, %=
                 3. Comparison Operators
-                    <, >, >=, <= , ==(equal), === (identical)  -> boolean
+                    <, >, >=, <= , ==(equal),
+                     === (identical)  -> boolean
                 4. Logical Operators
                     &&(AND), ||(OR), !(NOT)
                 5. Ternary Operator
                     expression ? true statement : false statement (?:) 
-
+                6. Increment and decrement operator
+                    Increment and decrement
+                        var++ , ++var -- increment
+                        var-- , --ver -- decrement
         */
+
+        // Arithmetic Operators
+        let a = 10;
+        let b = 20;
+
+        let c = a + b; // saving result into variable c.
+
+        console.log("sum of a+b: ", c);
+        console.log("sum of a+b: ", a + b);
+        console.log(`subtraction of ${b}-${a}: `, b - a);
+        console.log(`Multiple of ${a}*${b}: `, a * b);
+        console.log(`Division of ${a}/${b}: `, a / b);
+
+        console.log(`modulus of ${a}%${b}: `, a % b);
+        // if numerator < denominator
+        // result --> numerator
+
+        // if numerator > denominator
+        // result --> remainder
+
+        console.log(`modulus of ${7}%${5}: `, 7 % 5);
+
+        // ===========//
+        // Assignment Operator
+        // += first add then assign
+        // -= first minus then assign
+        // /= first divide then assign.
+        // *= first multiply then assign.
+        // %= first find modulus then assign.
+        console.log("\n\n");
+
+        console.log("Adding a and b: ", a + b)
+        console.log(`a:${a}, b:${b}`);
+
+        // result value --> assign to a or b.
+
+        // a = a+b; --> a += b;
+
+        console.log("updating a with b: ", a += b)
+        console.log("Updated value of a: ", a)
+
+        console.log("\n\n")
+
+        // comparison Operators
+        // html -> <br>
+        // js -> \n
+        let d = 40;
+        let e = 30;
+
+        console.log(`a:${a}, b:${b}, c:${c}, d:${d}, e:${e}`)
+
+        console.log("is a < b: ", a < b);
+        console.log("is a > b: ", a > b);
+
+        console.log("is a < c or equal to c: ", a <= c);
+        console.log("is b > c or equal to c: ", b >= c);
+
+        console.log("a is equal to b: ", a == b);
+        console.log("a is equal to c: ", a == c);
 
     </script>
 </head>
