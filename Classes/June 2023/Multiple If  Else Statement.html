@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Traffic signal</title>
+
+    <script>
+
+        let number = Math.round(Math.random() * 10);
+
+        const signals = ["red", "red", "red", "green", "green", "green", "orange", "orange", "orange", undefined, undefined]
+
+
+        if (signals[number] === "green") {
+            console.log("Signal is green, you can go!!")
+        }
+        else if (signals[number] === "red") {
+            console.log("Signal is red, please wait...")
+        }
+        else if (signals[number] === "orange") {
+            console.log("Signaled signal is orange, move carefully...!!")
+        }
+        else {
+            console.log("Signal is broken, please call the traffic police.")
+        }
+
+        /*setInterval(() => {
+            let number = Math.round(Math.random() * 10);
+            if (signals[number] === "green") {
+                console.log("Signal is green, you can go!!")
+            }
+            else if (signals[number] === "red") {
+                console.log("Signal is red, please wait...")
+            }
+            else if (signals[number] === "orange") {
+                console.log("Signaled signal is orange, move carefully...!!")
+            }
+            else {
+                console.log("Signal is broken, please call the traffic police.")
+            }
+        }, 200) */
+
+    </script>
+</head>
+
+<body>
+
+</body>
+
+</html>
