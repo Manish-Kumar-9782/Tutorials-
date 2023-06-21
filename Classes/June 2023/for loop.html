@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+    "
+    *
+    * *
+    * * *
+    * * * * *
+    * * * * * *
+    "
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>For loop in JavaScript</title>
+</head>
+
+<body>
+
+    <script>
+
+        for (let i = 1; i < 10; i++) {
+            console.log(`${i} ===> ${i ** 3}`);
+        }
+    </script>
+
+    <script>
+        // for loop
+        // initialization; condition; increment/decrement
+        let pattern = ""
+        for (let i = 1; i <= 5; i++) {
+
+            for (let j = 1; j <= i; j++) {
+                pattern += "* ";
+            }
+            pattern += '\n';
+        }
+
+        console.log(pattern)
+
+
+    </script>
+
+</body>
+
+</html>
