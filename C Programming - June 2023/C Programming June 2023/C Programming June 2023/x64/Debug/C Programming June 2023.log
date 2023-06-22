@@ -1,0 +1,8 @@
+﻿  if_else_statement.c
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): warning C4477: 'scanf_s' : format string '%c' requires an argument of type 'char *', but variadic argument 1 has type 'int *'
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): message : this argument is used by a conversion specifier
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): warning C4473: 'scanf_s' : not enough arguments passed for format string
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): message : placeholders and their parameters expect 2 variadic arguments, but 1 were provided
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): message : the missing variadic argument 2 is required by format string '%c'
+G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\C Programming June 2023\if_else_statement.c(58,10): message : this argument is used as a buffer size
+  C Programming June 2023.vcxproj -> G:\WorkData\Programming\C\C Tutorials\C Programming - June 2023\C Programming June 2023\x64\Debug\C Programming June 2023.exe
