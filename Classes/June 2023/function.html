@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Functions</title>
+</head>
+
+<body>
+
+    <!-- function intro 
+    
+        function <function-name>(parameter list){
+                // body block of function
+            }
+    -->
+
+    <!-- <script>
+
+        function greeting(name) {
+            console.log(`Hi, My name is ${name} , i am very goo today, how about you.`)
+        }
+
+        function compareNumber(a, b) {
+
+            if (a > b) {
+                console.log("a is greater than b;")
+            }
+            else if (a < b) {
+                console.log("a is less than b;")
+            }
+            else {
+                console.log("a is equal to b;")
+            }
+        }
+
+
+        greeting("Dinesh");
+
+        greeting("manish");
+        compareNumber(a = 30, b = 20);
+    </script> -->
+
+
+    <script>
+
+        // In this we are going to create a fake lazy traffic system.
+
+        function trafficSystem(signal) {
+
+            switch (signal) {
+                case 'green':
+                    console.log("Signal is green, you can go, safe ride...")
+                    break;
+                case 'orange':
+                    console.log("Signal is orange please slow down, and pass carefully.")
+                    break;
+                case 'red':
+                    console.log("Signal is red, pleas wait for green signal.")
+                    break;
+                default:
+                    console.log("Traffic system has been failed.")
+            }
+        }
+
+        const signals = ["green", "orange", "red", 'failed']
+
+        const intervalId = setInterval(() => {
+            let number = Math.round(Math.random() * 3);
+            trafficSystem(signals[number]); // calling function.
+        }, 3000)
+
+
+        // arrow function.
+
+        // unnamed function.
+
+        let byebye = function (name) {
+            console.log(`Hi, My name is ${name} , i am very goo today, how about you.`)
+        }
+
+
+
+        // arrow function: 
+        /*
+            ()=>{}
+        */
+
+        let hello = (name) => console.log(`Hi, My name is ${name} , i am very goo today, how about you.`)
+
+        let hi = name => console.log(`Hi, My name is ${name} , i am very goo today, how about you.`)
+
+    </script>
+</body>
+
+</html>
