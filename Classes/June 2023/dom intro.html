@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>HTML Dom</title>
+
+    <style>
+        #container {
+            width: 300px;
+            padding: 10px;
+            border: 10px groove goldenrod;
+        }
+
+        #container li {
+            background-color: rgb(30, 46, 30);
+            color: lightgray;
+            margin: 4px;
+            padding: 4px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+
+    </div>
+
+    <script>
+        function create_list(parent, type = "ul") {
+            // 1. create a new list
+            const u_list = document.createElement(type)
+            // 2. append the list to the parent
+            parent.appendChild(u_list);
+
+            // 3. return the list
+            return u_list;
+        }
+
+        function addList_item(parentList, text) {
+            // 1. create list item
+            const listItem = document.createElement('li');
+            // 2. append the list item to the parent list.
+            parentList.appendChild(listItem);
+            // 3. set the text content to the list item
+            listItem.innerText = text;
+
+            // 4. return the list item
+            return listItem;
+        }
+    </script>
+
+    <script>
+
+        const items = ["hello how are you", "This is new list item", "This list created by the function"]
+
+        const listContainer = document.getElementById("container")
+
+        const list = create_list(listContainer);
+
+        items.forEach(item => addList_item(list, item))
+
+    </script>
+
+</body>
+
+</html>
