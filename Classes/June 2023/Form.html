@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+    form:
+        input
+        label
+        textarea
+        select
+        option
+        optgroup
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>HTML FORM</title>
+
+    <style>
+        .d-flex {
+            display: flex;
+        }
+
+        .gap-3 {
+            gap: 30px;
+        }
+
+        .form {
+            width: 600px;
+            padding: 10px;
+        }
+
+        .border {
+            border: 1px solid black;
+        }
+
+        .form-input {
+            margin: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form action=""
+          class="border form">
+
+        <div class="form-input">
+            <label for="firstname">First Name: </label>
+            <input type="text"
+                   id="firstname"
+                   name="firstname">
+        </div>
+
+
+        <div class="form-input">
+            <label for="secondname">Second Name: </label>
+            <input type="text"
+                   id="secondname"
+                   name="secondname">
+        </div>
+
+        <div class="form-input">
+            <label for="age">Age: </label>
+            <input type="number"
+                   id="age"
+                   name="age"
+                   min="18"
+                   max="100">
+        </div>
+
+        <div class="form-input">
+            <label for="height">Height: </label>
+            <input type="number"
+                   min="5.0"
+                   max="8.0"
+                   step=".1">
+        </div>
+
+
+        <div class="form-input">
+            Gender: <br>
+            <div class="d-flex gap-3">
+                <div class="form-input">
+                    <label for="gender-male">Male: </label>
+                    <input type="radio"
+                           name="gender"
+                           id="gender-male">
+                </div>
+
+                <div class="form-input">
+                    <label for="gender-female">Female: </label>
+                    <input type="radio"
+                           name="gender"
+                           id="gender-female">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-input">
+            <label for="married">Is Married: </label>
+            <input type="checkbox"
+                   id="married"
+                   name="married">
+        </div>
+
+
+
+        <div class="from-input">
+            <label for="description">Description</label> <br>
+            <textarea name="description"
+                      id="description"
+                      cols="30"
+                      rows="10">Lorem ipsum dolor sit amet consectetur adipisicing elit. Odio, neque?    
+                </textarea>
+        </div>
+
+        <div class="form-input">
+            <label for="subject">Select Subject</label>
+            <select id="subject"
+                    name="subject">
+                <option value="Hindi">Hindi</option>
+                <option value="English">English</option>
+                <option value="Physics">Physics</option>
+                <option value="Match">Match</option>
+                <option value="Chemistry">Chemistry</option>
+            </select>
+        </div>
+
+        <input type="submit">
+    </form>
+
+</body>
+
+</html>
