@@ -44,6 +44,7 @@
 <body>
 
     <form action=""
+          id="myform"
           class="border form">
 
         <div class="form-input">
@@ -75,7 +76,9 @@
             <input type="number"
                    min="5.0"
                    max="8.0"
-                   step=".1">
+                   step=".1"
+                   name="height"
+                   id="height">
         </div>
 
 
@@ -86,14 +89,16 @@
                     <label for="gender-male">Male: </label>
                     <input type="radio"
                            name="gender"
-                           id="gender-male">
+                           id="gender-male"
+                           value="male">
                 </div>
 
                 <div class="form-input">
                     <label for="gender-female">Female: </label>
                     <input type="radio"
                            name="gender"
-                           id="gender-female">
+                           id="gender-female"
+                           value="female">
                 </div>
             </div>
         </div>
@@ -102,7 +107,8 @@
             <label for="married">Is Married: </label>
             <input type="checkbox"
                    id="married"
-                   name="married">
+                   name="married"
+                   value="Yes">
         </div>
 
 
@@ -131,6 +137,8 @@
         <input type="submit">
     </form>
 
+
+    <script src="./form.js"></script>
 </body>
 
 </html>
