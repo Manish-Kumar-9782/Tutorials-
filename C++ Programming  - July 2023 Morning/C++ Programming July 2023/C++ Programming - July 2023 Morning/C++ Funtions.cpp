@@ -1,7 +1,12 @@
 #include<iostream>
 #include<string>
+#include<limits>
 
 using namespace std;
+
+typedef unsigned long long int  UL_int;
+
+const UL_int MAX_LEN = numeric_limits<streamsize>::max();
 
 struct Student {
 	string name;
