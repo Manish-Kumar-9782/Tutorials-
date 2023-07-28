@@ -64,9 +64,27 @@ function save_toLocalStorage(form) {
 }
 
 myForm.addEventListener("submit", (e) => {
+
     e.preventDefault();
     displayFormData(myForm);
 
+    let localData = getLocalData("LocalData", true);
+    localData.push(getFormData(myForm));
 
+    saveToLocal("LocalData", localData);
+
+    myForm.reset();
 })
 
+
+
+// getting data from local storage
+const localData = getLocalData("LocalData")
+
+const header = Object.keys(localData[0])
+
+const localDataTable = new createTable(document.body, header)
+
+localData.forEach((item) => {
+    localDataTable.addRow(Object.values(item))
+})
