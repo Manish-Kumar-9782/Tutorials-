@@ -6,6 +6,8 @@ using namespace std;
 
 typedef unsigned long long int  UL_int;
 
+using ul_int = unsigned long long int;
+
 const UL_int MAX_LEN = numeric_limits<streamsize>::max();
 
 struct Student {
