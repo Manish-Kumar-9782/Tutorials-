@@ -49,6 +49,246 @@
         console.log("remainder of y / x: ", y % x)
 
 
+        //p/q   => if p< q ---> p
+        //p/q => if p > q ---> remainder 
+
+
+        let row = "";
+        for (let i = 1; i <= 70; i++) {
+
+            if (i % 8 == 0) {
+                row = row + "🪑\n";
+
+            }
+            else {
+                row = row + "🪑 ";
+            }
+
+        }
+
+        console.log(row);
+
+
+        // assignment operator.
+        /*
+        = assign operator
+        += plus and assign operator
+        -= minus and assign operator
+        *= multiply and assign operator
+        /= divide and assign operator
+        %= modulus and assign operator
+
+        one variable (main).
+
+        one more variable or value (other);
+
+        main value +/-* other value --> new value;
+
+        main <-- new value;
+
+
+        */
+
+        let p = 100;  // main variable.
+        let q = 245;  // other variable or value.
+
+        console.log("before += operator p is: ", p);
+        p = p + q; // adding p and q and assigning new value to p.
+        // we can write the above equation
+        // p +=  q;
+        console.log("after += operator p is: ", p);
+
+
+
+        let name = "Aashish pathak";
+        let age = 20;
+
+        console.log("hello my name is " + name + " and age is " + age);
+
+
+        /*
+            logical operators
+
+            1. && and operator
+            2. || or operator
+            3. ! not operator
+
+            1. && and operator
+
+                true and false --> false;
+                true and false --> false;
+        */
+
+    </script>
+
+
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- 
+    Arithmetic Operators
+        1. + : plus operator
+        2. - : minus operator
+        3. / : divisor operator
+        4. % : modulus operator
+        5. * : multiplication operator 
+ -->
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Js Arithmetic Operator</title>
+</head>
+
+<body>
+
+    <script>
+        let x = 10;
+        let y = 20;
+        console.log("x: " + x + " y: " + y);
+        // using plus operator in b/w the integer and string.
+
+        // string:
+
+        // 1. double quotes string:
+        let double_quotes_string = "this is a double quote string.";
+
+        // 2. single quotes string:
+        let single_quotes_string = 'this is a single quote string.';
+
+        console.log(double_quotes_string);
+        console.log(single_quotes_string);
+
+        // merged string with double quotes and single quotes
+        let merged_string = "hello my name is 'manish' and I am 20 years old.";
+
+        // arithmetic operators
+
+        console.log("adding x and y: ", x + y)
+        console.log("subtracting x and y: ", x - y)
+        console.log("multiplying x and y: ", x * y)
+        console.log("dividing x by y: ", x / y)
+        console.log("remainder of x / y: ", x % y)
+        console.log("remainder of y / x: ", y % x)
+
+
+        //p/q   => if p< q ---> p
+        //p/q => if p > q ---> remainder 
+
+
+        let row = "";
+        for (let i = 1; i <= 70; i++) {
+
+            if (i % 8 == 0) {
+                row = row + "🪑\n";
+
+            }
+            else {
+                row = row + "🪑 ";
+            }
+
+        }
+
+        console.log(row);
+
+
+        // assignment operator.
+        /*
+        = assign operator
+        += plus and assign operator
+        -= minus and assign operator
+        *= multiply and assign operator
+        /= divide and assign operator
+        %= modulus and assign operator
+
+        one variable (main).
+
+        one more variable or value (other);
+
+        main value +/-* other value --> new value;
+
+        main <-- new value;
+
+
+        */
+
+        let p = 100;  // main variable.
+        let q = 245;  // other variable or value.
+
+        console.log("before += operator p is: ", p);
+        p = p + q; // adding p and q and assigning new value to p.
+        // we can write the above equation
+        // p +=  q;
+        console.log("after += operator p is: ", p);
+
+
+
+        //let name = "Aashish pathak";
+        //let age = 20;
+
+        console.log("hello my name is " + name + " and age is " + age);
+
+
+        /*
+            logical operators
+
+            1. && and operator
+            2. || or operator
+            3. ! not operator
+
+            1. && and operator
+
+                true and false --> false;
+                false and true --> false;
+                false and false --> false;
+                true and true --> true;
+
+
+            2. || or operator
+
+                true and false --> true;
+                false and true --> true;
+                false and false --> false;
+                true and true --> true;
+
+            3. Not operator
+
+                !true -> false
+                !false -> true
+
+        */
+
+        /*
+            Bike condition  want to go to college.
+
+            1. do you have bike keys. --> true
+            2. is there any fuel into bike. --> false
+
+            bike keys(true) && bike fuel (false) --> false
+        
+        
+             want to go to college.
+
+
+                1. bike  --> true
+                2. bus --> true
+
+                bike(true) || bus(true) --> college(true)
+                bike(false) || bus(true) --> college(true)
+                bike(false) || bus(false) --> college(false)
+
+
+                bike (false) || bus(false) || friends_bike(true) -->  true
+
+                false || friends_bike(true) -->  true
+
+
+
+            */
 
     </script>
 
