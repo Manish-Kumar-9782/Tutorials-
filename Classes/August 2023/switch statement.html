@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Switch Statement</title>
+</head>
+
+<body>
+    <script>
+
+        let signal = prompt("Enter Signal: ");
+
+        switch (signal) {
+
+            case "green":
+                console.log("Signal is green, you can go.");
+                break;
+
+            case "orange":
+                console.log("Signal is orange, please slow down.");
+                break;
+
+            case "red":
+                console.log("Signal is red, please stop.");
+                break;
+
+            default:
+                console.log("traffic system failed, call traffic police.");
+        }
+
+    </script>
+</body>
+
+</html>
