@@ -48,3 +48,59 @@ for (let i = 0; i < names.length; i++) {
     greeting2(names[i], names[names.length - 1 - i])
     console.log("\n");
 }
+
+
+// =================================================================
+
+// function parameters and positional arguments.
+
+function add(a, b) {
+    return a + b;
+    // function with return value.
+}
+
+
+function add_show(a, b) {
+    console.log("result a+b: ", a + b);
+    // function with no return value. (only logging.)
+}
+
+// function to test that a number is prime or not.
+
+function isPrime(number) {
+
+    // if given number is 0 or 1 then return false. 
+    if (number == 0 || number == 1) {
+        return false;
+    }
+
+    // now test number by dividing and testing the remainder.
+
+    // number%n where 
+    // n is positive number n<number and n > 1
+    // 7  > n< 7, n > 1
+
+    for (let n = 2; n < number; n++) {
+        if (number % n == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+console.log("================================")
+console.log("Prime Numbers in b/w 1, 100");
+
+
+const PrimeNumbers = []
+
+for (let i = 0; i <= 100; i++) {
+
+    if (isPrime(i)) {
+        PrimeNumbers.push(i)
+    }
+}
+
+console.log(PrimeNumbers)
