@@ -23,5 +23,30 @@ let Student2 = {
     bloodGroup: "B+",
 }
 
+function createStudent() {
+
+    const student = {} // blank object
+
+    let name = prompt("Enter Student name ")
+    student.name = name; // adding a property to student called name.
+
+    let age = prompt("Enter Student age ")
+    student.age = age; // adding a property to student called age
+
+    let height = prompt("Enter Student height ")
+    student.height = height; // adding a property to student called height
+
+    return student;
+}
+
+const Students = []; // empty array
+
+for (let i = 0; i < 3; i++) {
+
+    let st = createStudent();
+    Students.push(st);
+}
+
+
 
 
