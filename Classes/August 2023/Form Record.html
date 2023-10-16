@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Form Record</title>
+</head>
+
+<body>
+
+    <form action="#"
+          id="studentForm">
+        <label for="name">Name: </label>
+        <input type="text"
+               id="name"> <br>
+
+        <label for="age">Age: </label>
+        <input type="text"
+               name="age"
+               id="age"> <br>
+
+        <label for="height">Height: </label>
+        <input type="text"
+               id="height"> <br>
+
+        <input type="submit">
+
+    </form>
+
+    <script>
+        function Student(input_name, input_age, input_height) {
+            // initialize the Student object values with the given arguments.
+            this.name = input_name;
+            this.age = input_age;
+            this.height = input_height;
+        }
+    </script>
+
+    <script>
+
+        const form = document.forms["studentForm"];
+
+
+
+
+        form.addEventListener("submit", (e) => {
+            e.preventDefault(); // do not submit the form
+            console.log(e); // print the event object on console.
+
+            const input_name = form["name"].value;
+            const input_age = form["age"].value;
+            const input_height = form["height"].value;
+
+            console.log("Name: ", input_name)
+            console.log("Age: ", input_age)
+            console.log("Height: ", input_height)
+
+            let st = new Student(input_name, input_age, input_height)
+            console.log(st)
+        })
+
+    </script>
+
+</body>
+
+</html>
