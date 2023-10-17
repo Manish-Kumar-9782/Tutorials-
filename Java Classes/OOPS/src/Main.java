@@ -13,10 +13,22 @@ public class Main {
 //        Person pr_st = new Student("Khursheed", 22, 5.7, 3243,
 //                "English", "B2");
 
-        Employee emp = new Employee("Khursheed", 22, 5.7,
-                "English", 191, 26000, "Developer");
+//        Employee emp = new Employee("Khursheed", 22, 5.7,
+//                "English", 191, 26000, "Developer");
+//
+//        System.out.println("Employee is also is an instance of Person: " +
+//                (emp instanceof Person));
 
-        System.out.println("Employee is also is an instance of Person: " +
-                (emp instanceof Person));
+        // Hierarchical Inheritance
+        Car car = new Car();
+        System.out.println("Car: " + car);
+
+        // hyundai car
+        HyundaiCar hcar = new HyundaiCar();
+        System.out.println("Hyundai car: " + hcar);
+
+        // bmw car
+        BMWCar bcar = new BMWCar();
+        System.out.println("BMW Car: " + bcar);
     }
 }
