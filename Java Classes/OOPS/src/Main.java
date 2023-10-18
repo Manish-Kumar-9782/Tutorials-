@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+
 public class Main {
 
     public static void main(String[] args) {
@@ -19,16 +21,30 @@ public class Main {
 //        System.out.println("Employee is also is an instance of Person: " +
 //                (emp instanceof Person));
 
-        // Hierarchical Inheritance
-        Car car = new Car();
-        System.out.println("Car: " + car);
+        //============================================================
 
-        // hyundai car
-        HyundaiCar hcar = new HyundaiCar();
-        System.out.println("Hyundai car: " + hcar);
+//        // Hierarchical Inheritance
+//        Car car = new Car();
+//        System.out.println("Car: " + car);
+//
+//        // hyundai car
+//        HyundaiCar hcar = new HyundaiCar();
+//        System.out.println("Hyundai car: " + hcar);
+//
+//        // bmw car
+//        BMWCar bcar = new BMWCar();
+//        System.out.println("BMW Car: " + bcar);
 
-        // bmw car
-        BMWCar bcar = new BMWCar();
-        System.out.println("BMW Car: " + bcar);
+        //============================================================
+
+        PersonX pr = new PersonX(
+                "Bhanu",
+                LocalDate.of(2003,9,24),
+                new Address("plot no 20, vikas colony near station","Dausa","Dausa",
+                        "Rajasthan","Indian",303303),
+                Gender.Male,
+                new AadharNumber("4352-4567-4567") );
+
+        System.out.println("Person: \n" + pr);
     }
 }
