@@ -1,0 +1,150 @@
+body{
+    margin: 20px;
+
+}
+
+.element.tag, .element{
+    box-sizing: border-box;
+    height: fit-content;
+    background-color: rgb(251 196 148 / 20%);
+    border: 1px solid rgb(251 196 148 / 20%);
+    border-radius: 5px;
+    color: #d06c41d9;
+    
+}
+
+.element.tag.h1 {
+    background-color: lightblue;
+    color: #fb6d30d9;
+    border: 1px solid lightblue;
+    border-radius: 5px;
+}
+
+.element, .tag{
+    font-weight: bold;
+    font-family: 'Courier New', Courier, monospace;
+    padding-left: 3px;
+    padding-bottom: 0px;
+    font-size: 1.0em;
+}
+
+.tag::before{
+    content: "<";
+    background-color:none;
+}
+
+.tag::after{
+    content: ">";
+    background-color:none;
+}
+
+.tag.h1::before {
+    content: "<";
+    background-color: inherit;
+    color: inherit;
+}
+
+.tag.h1::after {
+    content: ">";
+    background-color: inherit;
+    color: inherit;
+}
+
+/* Now we will change the font of the for all p element content */
+
+p{
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    line-height: 1.4rem;
+}
+
+htmlcode{
+    color:black;
+    border: 1px solid;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+}
+
+htmlcode.plain{
+    color:teal;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border: 0px solid;
+
+}
+
+htmlcode.plain *{
+    color:teal;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border: 0px solid;
+    
+}
+
+/* htmlcode::before{
+    content:"<";
+    color: purple;
+    font-size: 1.5em;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+    
+}
+
+htmlcode::after{
+    content:">";
+    color: purple;
+    font-size: 1.5em;
+    font-family: Georgia, Times, 'Times New Roman', serif;
+    
+} */
+
+/*heading properties.*/
+
+h4{
+    margin-bottom: 0px;
+    margin-top: 30px;
+    
+}
+
+div h2, div h2 code.element.tag{
+    color:chocolate
+}
+div h2 code.element.tag{
+    background-color: wheat;
+    border: 1px solid wheat;
+    border-radius: 6px;
+}
+
+h3 code.element.tag.h1{
+    color:inherit;
+    background-color: inherit;
+    border-color: inherit;
+}
+
+/* Style for footer also */
+footer{
+    text-align: center;
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    font-size: large;
+    background-color: beige;
+    padding: 15px;
+    margin: 15px;
+}
+
+/* a style for body */
+
+body{
+    background-color: rgb(241, 241, 252);
+}
+
+div{
+    background-color: rgb(241, 241, 252);
+    border:5px solid white;
+    padding-left:10px;
+    padding-right:10px;
+}
+
+table{
+    border: 1px solid;
+    border-collapse: collapse;
+}
+
+table th,td{
+    border: 1px solid;
+    padding: 5px;
+}

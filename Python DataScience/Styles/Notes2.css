@@ -1,0 +1,380 @@
+@import url(colors.css);
+
+code.element.tag{
+    padding-top: 0px;
+    padding-bottom: 0px;
+    /* color: red; */
+}
+
+header h1{
+    margin: 0px;
+    padding: 5px;
+    color: #2b6567;
+
+}
+
+header p, header ul{
+    background-color: floralwhite;
+    margin: 0px;
+    padding: 10px;
+
+}
+
+header ul{
+   padding-left:50px;
+
+}
+
+header p:first-of-type{
+    padding-top: 30px;
+}
+
+
+
+h1{
+    text-align: center;
+    background-color: papayawhip;
+}
+
+li,dd{
+    margin-top: 10px;
+    font-family: system-ui, 'Segoe UI', 'Open Sans', 'Helvetica Neue', sans-serif;
+    line-height: 1.4em;
+}
+
+/* A class to apply the highlight on the element*/
+.hlight{
+    background-color: rgba(250, 156, 122, 0.16);
+    color: rgb(158, 48, 103);
+    font-family:  Arial, sans-serif;
+    
+}
+
+code.hlight{
+    font-family: monospace;
+    font-size: large;
+}
+
+.attr{
+    background-color: rgba(122, 209, 250, 0.16);
+    color: rgb(7, 157, 191);
+    font-family:  Arial, sans-serif;
+    
+}
+
+/* css property content styles */
+.prprty{
+    color: #2b6567;
+    background-color: rgba(43, 101, 103, 0.162);
+}
+
+/* css property value content styles. */
+.prval{
+    color: rgb(47 72 115);
+    background-color: rgba(38, 100, 63, 0.17);
+}
+
+code.attr, code.prprty, code.prval{
+    font-family: monospace;
+    font-size: 1.0rem;
+}
+
+b.hlight{
+    color: rgb(188, 29, 29);
+    background-color: rgba(249, 83, 83, 0.186);
+}
+
+/* A class to apply the highlight marking on the element*/
+.mark{
+    color: rgb(42, 107, 150);
+    background-color: rgba(113, 146, 235, 0.108);
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode';
+}
+
+.heading{
+    padding-left: 5px;
+    border-left: 4px solid #800077b0;
+    /* font-family: 'Courier New', Courier, monospace;
+    font-size: 40px; */
+    font-weight: bold;
+
+}
+
+/* type of html tag specifically the type of input tag*/
+.type{
+    color: var(--lazurite-blue);
+    background-color: var(--lazurite-blue-transparent);
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* CLI command */
+.cmd{
+    color: #4d0d75;
+    background-color: #006c8433;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+
+/*A class to remove the color from the element (no background color)*/
+.nbg{
+    background-color: inherit;
+}
+
+h3 code.element.tag{
+    color: inherit;
+    padding: 0px 3px;
+    background-color: inherit;
+}
+
+code{
+    padding: 0px 5px;
+    border-radius: 4px;
+}
+
+div h3{
+    margin-top: 50px;
+    color: #006c84;
+    background-color: inherit;
+    font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+    border-color: inherit;
+}
+div{
+    border-radius: 10px;
+}
+
+.tab{
+    border: 0px;
+    margin-left: 35pt;
+}
+.tab8{
+    border: 0px;
+    margin-left: 10pt;
+}
+
+table th, td{
+    border: 2px solid rgb(129, 189, 193);
+}
+
+th, td{
+    line-height: 1.5em;}
+.inherit{
+    border-color: inherit;
+    background-color: inherit;
+    color: inherit;
+}
+
+.initial{
+    border-color: initial;
+    background-color: initial;
+    color: initial;
+}
+
+.flarge{
+    font-size: large;
+}
+
+dl dt{
+    margin-top: 50px;
+}
+
+header p#content{
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+code.html{
+    margin-left: 40px;
+    background-color: #e2f6af;
+    font-size: medium;
+    font-family: 'Courier New', Courier, monospace;
+    color: #800077;
+}
+
+
+/* A code block to show the html or css codes. */
+div.codeblock{
+
+    font-family: monospace;
+    /* font-size: large; */
+    background-color: #2b656745;
+    margin-left: 30px;
+    padding-left: 30px;
+    padding-top: 20px;
+    max-width: 300px;
+    min-width: fit-content;
+    border: 1px solid white;
+}
+
+div.codeblock .prprty, div.codeblock .prval{
+    background-color: inherit;
+}
+
+/* codeblock comment paragraph */
+div.codeblock p.comment{
+    margin: 1px;
+    padding: 1px;
+    color: rgb(71, 126, 177);
+}
+
+div.codeblock p{
+    margin-top: 1px;
+}
+
+var{
+    font-family: 'math';
+    font-size: large;
+    font-weight: bold;
+}
+
+kbd{
+    color:#800077;
+    text-decoration: dashed;
+    font-size: large;
+}
+
+/* A setting for Note section */
+
+.Note::before{
+    content: "Note: ";
+    font-size: large;
+    font-weight: bold;
+    color: rgba(71, 16, 148);
+
+}
+
+.Note{
+    
+    border: 1px solid rgba(113, 156, 194, 0.514);
+    border-left: 5px solid rgba(71, 16, 148, 0.674);
+    background-color: #4a9ea12b;  
+    border-radius: 5px;
+    padding: 15px;
+    line-height: 1.4;
+    font-family:sans-serif;
+    margin: 30px 40px; 
+}
+
+/* A setting for the warning section. */
+.Warning::before{
+    content: "Warning: ";
+    font-size: large;
+    font-weight: bold;
+    color: rgb(146, 0, 0);
+
+}
+
+.Warning{
+    
+    border: 1px solid rgba(128, 43, 42, 0.514);
+    border-left: 5px solid rgb(116, 0, 0);
+    background-color: #e300005d;  
+    border-radius: 5px;
+    padding: 15px;
+    line-height: 1.4;
+    font-family:sans-serif;
+    margin: 30px 40px; 
+}
+
+/* A setting for the example */
+
+.Example::before{
+    content: "For example: ";
+    font-size: large;
+    font-weight: bold;
+    color: rgb(50, 2, 98);
+
+}
+
+.Example{
+    
+    border: 1px solid rgba(38, 78, 137, 0.514);
+    border-left: 5px solid rgb(17, 0, 101);
+    background-color: #009be333;  
+    border-radius: 5px;
+    padding: 15px;
+    line-height: 1.4;
+    font-family:sans-serif;
+    margin: 30px 40px; 
+}
+/* javaScript code style */
+
+.kword{
+    color: var(--ruby-dust);
+    font-size: 1rem;
+    font-weight: bold;
+
+}
+
+.str{
+    color: rgb(2, 118, 8);
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.member{
+    color: rgb(0, 95, 146);
+    font-size: 0.9rem;
+    font-weight: bold;
+}
+
+.js::after{
+    content: '*/';
+}
+.js::before{
+    content: "/*";
+}
+
+/* .codeblock{
+    white-space: pre-line;
+} */
+
+.jscode{
+    color: #2b6567;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1rem;
+    font-weight: bold;
+    /* border: 1px solid; */
+    
+}
+
+span.jscode{
+    border: 0px;
+    background-color: inherit;
+    white-space: pre;
+}
+
+span.jscode::before{
+    content: "\A";
+    /* \A is to create a new line */
+}
+
+.inbrkit::after{
+    content: ")";
+    color: initial;
+    background-color: initial;
+}
+
+.inbrkit::before{
+    content: "(";
+    color: initial;
+    background-color: unset;
+}
+/* ---------------------- */
+
+/* A table which expend and cover all the width of the container.  */
+
+table.expend{
+    text-align: center;
+    width: 80%;
+    margin: 0% 10%;
+
+}
+
+/* summary  */
+
+summary{
+    background-color: #006c8433;
+
+}

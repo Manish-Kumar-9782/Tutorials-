@@ -1,0 +1,19 @@
+.green{
+    color: rgb(15, 96, 15);
+    background-color: rgba(0, 128, 0, 0.215);
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+    height: fit-content;
+    padding-top: 0px;
+}
+
+.gray{
+    color: darkslategray;
+    background-color: rgba(47, 79, 79, 0.195);
+    /* font-family: inherit; */
+    font-size: large;
+    box-sizing: border-box;
+    height: fit-content;
+    padding-top: 0px;
+}
