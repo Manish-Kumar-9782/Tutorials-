@@ -50,19 +50,30 @@ public class Main {
         //=============================================================
         // Static method and Data members.
 
-        School.addStudent("kuldeep", 21, 5.5,
-                1234, "English", "B2");
+//        School.addStudent("kuldeep", 21, 5.5,
+//                1234, "English", "B2");
+//
+//        School.addStudent("bhanu", 19, 5.6,
+//                2341, "Hindi", "B1");
+//
+//        School.addStudent("kursheed", 22, 5.7,
+//                1341, "Physics", "B4");
+//
+//        School.addStudent("Kush", 23, 5.6,
+//                1321, "Chemistry", "B3");
+//
+//        System.out.println("Students: " + School.showStudents());
 
-        School.addStudent("bhanu", 19, 5.6,
-                2341, "Hindi", "B1");
+        //=============================================================
+        // Abstraction
 
-        School.addStudent("kursheed", 22, 5.7,
-                1341, "Physics", "B4");
 
-        School.addStudent("Kush", 23, 5.6,
-                1321, "Chemistry", "B3");
+//        Automobile a = new Automobile();
 
-        System.out.println("Students: " + School.showStudents());
+        Automobile car = new CarX(4, 180, 4, "Petrol", 26);
 
+        car.start();
+        car.move();
+        car.stop();
     }
 }
