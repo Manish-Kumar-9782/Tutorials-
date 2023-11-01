@@ -1,20 +1,6 @@
-// single level inheritance
-class Person {
+package human;
 
-    public String name;
-    private int age;
-    private double height;
-
-    Person(String name, int age, double height){
-        this.name = name;
-        this.age = age;
-        this.height = height;
-        System.out.println("Person Constructor is called....");
-    }
-
-}
-
-class Student extends Person{
+class Student extends Person {
     private int rollNo;
     private String subject;
     private String section;

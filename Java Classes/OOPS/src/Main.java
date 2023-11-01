@@ -70,10 +70,43 @@ public class Main {
 
 //        Automobile a = new Automobile();
 
-        Automobile car = new CarX(4, 180, 4, "Petrol", 26);
+//        Automobile car = new CarX(4, 180, 4, "Petrol", 26);
+//
+//        car.start();
+//        car.move();
+//        car.stop();
 
-        car.start();
-        car.move();
-        car.stop();
+        //=============================================================
+        // Interface
+
+        // Creating a SmartPerson object
+
+
+        // suppose we have person who buys a Iphone
+//        SmartPerson pr = new SmartPerson("Kuldeep", 20, 5.5);
+//        Iphone ip = new Iphone();
+//        pr.makeCall(ip);
+//        System.out.println("==========================\n");
+//        // suppose we have a person who buys a Samsung
+//        SmartPerson pr2 = new SmartPerson("Bahanu", 21, 5.6);
+//        Samsung sm = new Samsung();
+//        pr2.makeCall(sm);
+
+
+//        SmartPerson pr = new SmartPerson("Kuldeep", 20, 5.5);
+//        Iphone ip = new Iphone();
+//        pr.make_wifiCall(ip);
+//        System.out.println("==========================\n");
+//        // suppose we have a person who buys a Samsung
+//        SmartPerson pr2 = new SmartPerson("Bahanu", 21, 5.6);
+//        Samsung sm = new Samsung();
+//        pr2.make_wifiCall(sm);
+
+
+        //=============================================================
+        // packages
+
+        // human :
+//        human.Person = new human.Person();
     }
 }
