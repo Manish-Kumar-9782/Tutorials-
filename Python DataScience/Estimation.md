@@ -21,4 +21,12 @@ ${\bar{x}}$ is the point estimate for ${\mu}$.
 
 when using the $\bar{x}$ as a point estimate of $\mu$, the **margin of error** is the magnitude of $\bar{x} - \mu$ or $|\bar{x} - \mu|$
 
-`Note: ` We cannot say exactly how close $\bar{x}$ is to $\mu$ is unknown. Therefore, the exact margin of error is unknown when the population parameter is unknown.
+`Note: ` We cannot say exactly how close $\bar{x}$ is to $\mu$ is unknown. Therefore, the exact margin of error is unknown when the population parameter is unknown. therefore we need to learn the about the range in which our $\bar{x}$ lies.
+
+**Confidence Level:**\
+To estimate the range in which $\bar{x}$ will lies, we must be confident about the estimation. The reliability of an estimate will be measured by the _confidence level_.
+
+Theoretically, we can choose c to be any value between 0 and 1, but usually c is equal to a number such as 0.90, 0.95, 0.99.
+
+**Critical Value:**\
+If we have a confidence level value then also we can have a z-score value using the z-score table (on standard normal distribution), that value denoted by $z_c$ and called critical value. This value determines the range of the values in which our point estimate lies.

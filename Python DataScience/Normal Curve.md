@@ -227,3 +227,23 @@ Where n is the sample size $\mu$ is the mean of the x distribution, $\sigma$ is 
 if x possesses any distribution with mean $\mu$ and standard deviation $\sigma$, then the sample mean $\bar{x}$ based on a random sample of size n will have a distribution that approaches the distribution of a normal random variable with mean $\mu$ and standard deviation $\frac{\sigma}{\sqrt{n}}$ as n increases without limit.
 
 The central limit theorem says that x can have any distribution whatsoever, but that as the sample size gets larger and larger, the distribution of $\bar{x}$ will approach a normal distribution.
+
+`Note:` In Practice, it is a good idea, when possible, to make a histogram of sample x values. if the histogram is approximately mound-shaped, and if it is more or less symmetric, then we may be assured that, for all practical purpose, the $\bar{x}$ distribution will be well approximated by a normal distribution and the central limit theorem will apply when the sample size is 30 or larger.
+
+> ### What Does the central limit theorem tells us.
+>
+> The central limit theorem gives us information about the characteristics of the $\bar{x}$ sampling distribution based on all samples of size $n$. When $n$ is sufficiently large $n \ge 30 \text{in most cases}$, the central limit theorem tells us that.
+>
+> - the $\bar{x}$ distribution is approximately normal.
+> - the mean of the $\bar{x}$ distribution is $\mu$, the mean of the original x distribution.
+> - the satandard deviation (also know as the standard error) of the $\bar{x}$ distribution is $\frac{\sigma}{\sqrt{n}}$, where $\sigma$ is the standard deviation of the x distribution.
+
+### Bias and Variability
+
+> Wherever we use a sample statistic as an estimate of population parameter, we need to consider boh bias and variability of the static.
+>
+> A sample statistic is unbiased if the main of its sampling distribution equals the value of the parameter being estimated.
+>
+> The spread of the sampling distribution indicates the variability of the statistic. the spread is affected by the sampling method and the sampling method and the sample size. Statistics from a larger random sample have spreads that are smaller.
+>
+> we see from central limit theorem that the sample mean $\bar{x}$ is an unbiased estimator of the mean $\mu$ when $n \ge 30$. The variability of $\bar{x}$ decreases as the sample size increases.
