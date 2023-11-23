@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Intro</title>
+</head>
+
+<body>
+
+    <script>
+        /*
+            variable, statement
+
+            identifier, keywords
+
+            identifier: user-defined name/word for variable, object, class, function.
+
+            keyword: predefined name/word for specific operation.
+
+            operator: predefined symbol or keyword for operation.
+
+            variable:
+                1. no special characters.
+                2. no whitespace in b/w word.
+                    - (my name )  wrong syntax.
+                    - (myName or my_name) right syntax.
+                3. variable name can't be prefixed by any number.
+
+        */
+
+        // keywords to create variables.
+        // declaration & Initialization syntax: keyword identifier = value;
+
+        // declaration: var/let/const var_name;
+
+        // creating variable with var keyword.
+        var my_var1 = 20;
+
+        // creating variable with let keyword.
+        let my_var2 = 50;
+
+        // creating variable with const keyword.
+        const PI = 3.14;
+
+        console.log("Hello world...");
+        console.log("my_var1: ", my_var1);
+        console.log("my_var2: ", my_var2);
+        console.log("PI: ", PI);
+
+
+        // Data types
+        /*
+            data types:
+                1. number: integer and float.
+                2. boolean: true, false
+                3. string: sequence of characters, '', "", ``
+                4. array
+                5. object
+                6. undefined
+                7. null
+
+        */
+
+        // numbers: calculate the area of circle.
+        let radius = 10;  // inch
+
+        // expression:
+        let area = PI * radius ** 2;
+        console.log("Area of a circle with radius ", radius, ": ", area, " inch squares");
+
+
+        // string: creation of string.
+        let string1 = 'single quote string'; // single quote string
+        let string2 = "double quote string"; // double quote string
+        let string3 = `this is a backtick string`; // backtick string.
+
+        let number = "9876543243";
+        let days = 56;
+        let data_amount = 5;
+        let message_amount = 300;
+        let recharge_amount = 289;
+
+        let message1 = "offer only for " + number + " Recharge now and get the benefits of unlimited call upto " + days + " with " + data_amount + " GB and " + message_amount + " in Rs: " + recharge_amount;
+
+        let message2 = `offer only for ${number} Recharge now and get the benefits of unlimited call upto ${days} with ${data_amount} GB and ${message_amount} in Rs: ${recharge_amount}.`
+
+        console.log(message1)
+        console.log(message2)
+
+        // operation on string.
+        console.log("length of the message: ", message2.length);
+
+    </script>
+</body>
+
+</html>
