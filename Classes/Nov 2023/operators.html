@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Introduction To Operator</title>
+</head>
+
+<body>
+
+    <!-- 
+        1. Arithmetic Operators: +,-,/,*,%  |==> some value
+        2. Assignment Operators: =, +=,-=,*=,/=,%=  |==> some value
+        3. comparison Operators: <, > , <=, >=, ==, ===, !=, !==  |==> boolean value
+        4. logical operator: &&, ||, ! |==> boolean value
+        5. binary operator: &, |, !, <<, >>
+    -->
+
+    <script>
+
+        let x = 10;
+        let y = 20;
+
+        let z = x + y; // adding x and y value.
+        // storing the returned value of x+y into z variable.
+        // x + y -----> return some value.
+        // z += x;
+
+        console.log(`x: ${x}, y: ${y}`)
+        console.log("The value of x+y : ", z);
+        console.log("The value of x - y: ", x - y);
+        console.log("The value of x * y: ", x * y);
+        console.log("The value of x / y: ", x / y);
+
+        console.log("\n\nmodulus operator: ");
+        console.log("The value of x % y: ", x % y);
+        console.log("The value of x % y: ", y % x);
+        console.log("The value of 7 % 3: ", 7 % 3);
+
+
+        // Assignment operators
+        // add and assign operator
+        console.log("\n\nAssignment operators")
+        console.log("z current value: ", z);
+        z += x + y;
+        // z = z + x + y
+        z /= x;
+        // z = z/x;
+        console.log("z new value: ", z);
+
+
+
+        // comparison Operators
+        console.log("\n\nComparison operators")
+        console.log("is x greater than y : ", x > y);
+        console.log("is x less than y : ", x < y);
+        console.log("is x greater than or equal to y : ", x >= y);
+        console.log("is x less than or equal to y : ", x <= y);
+
+        x = y; // assigning the value of y to x variable.
+        console.log("is x greater than or equal to y : ", x >= y);
+        console.log("is x less than or equal to y : ", x <= y);
+    </script>
+
+</body>
+
+</html>
