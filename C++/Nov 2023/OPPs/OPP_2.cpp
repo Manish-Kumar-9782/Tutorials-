@@ -64,6 +64,7 @@ int main()
     Student st2("Aashu", 20, 5.7);
 
     st.show_info();
+
     st2.show_info();
 
     return 0;

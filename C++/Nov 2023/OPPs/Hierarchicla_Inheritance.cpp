@@ -57,7 +57,7 @@ public:
 
 // ================================================================= //
 
-// Single level Inheritance
+// Inheriting Automobile by Car
 class Car : public Automobile
 {
     // car has no data members
@@ -74,6 +74,44 @@ public:
 
 // ================================================================= //
 
+// Inheriting Automobile by Truck
+class Truck : public Automobile
+{
+public:
+    // Truck constructor
+    Truck(string name, int wheels, double weight, double length,
+          double height, int speed)
+        : Automobile(name, wheels, weight, length, height, speed)
+    {
+        this->name = name;
+        cout << "Truck is created...." << endl;
+    }
+
+    // overriding the move
+    void move()
+    {
+        string str = "";
+
+        for (int i = 1; i < 60; i++)
+        {
+
+            if (i % 2 == 0)
+            {
+                str += "-";
+            }
+            else
+            {
+                str += "_";
+            }
+            cout << str << "|*|>"
+                 << "\r";
+            this->delay(10000);
+        }
+    }
+
+    // over
+};
+
 int main()
 {
 
@@ -82,7 +120,13 @@ int main()
     am.start();
     am.move();
 
+    cout << "================================================================" << endl;
     Car car("MyCar", 5, 180.5, 10, 6, 60);
     car.start();
     car.move();
+
+    cout << "================================================================" << endl;
+    Truck truck("menna di Gaddi", 5, 180.5, 10, 6, 60);
+    truck.start();
+    truck.move();
 }
