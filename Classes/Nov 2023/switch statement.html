@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Switch Statement</title>
+</head>
+
+<body>
+
+    <script>
+
+        /*
+            here 'variable' must contain a constant value.
+            switch(variable/constant_value){
+
+                case constant_value_1:
+                    // statements
+                    break;
+
+                case constant_value_2:
+                    // statements
+                    break;
+
+                case constant_value_3:
+                    // statements
+                    break;
+
+                default:
+                    // default case like else statement in if else.
+                    // no break keyword is required.
+            }
+        */
+
+        signal = 'fads';
+
+        switch (my_value) {
+            case 'green':
+                console.log("signal is green... you can go..");
+                break;
+            case 'orange':
+                console.log("signal is orange... please slow down..");
+                break;
+            case 'red':
+                console.log("signal is red.. please stop..")
+                break;
+            default:
+                console.log("system failed: call traffic police");
+
+
+        }
+
+    </script>
+</body>
+
+</html>
