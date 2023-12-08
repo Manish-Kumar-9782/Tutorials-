@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Loop Introduction</title>
+</head>
+
+<body>
+    <script>
+        // introduction to the loop
+
+        // for loop and while loop
+        // for-loop -> counter controlled loop.
+        // while-loop -> sentinel loop.
+
+
+        /*
+            for loop process:
+            1. initializing counter variable
+            2. testing counter variable or other variable
+            3. executing the inner statements.
+            4. increment or decrement of the counter variable or other variable
+            5. testing counter variable or other variable
+        */
+        console.log("for loop")
+
+        for (let i = 0; i <= 10; i++) {
+
+            console.log(i);
+        }
+
+        console.log("\n\nWhile loop")
+        let i = 0;
+        while (i < 10) {
+            console.log(i);
+            i++;
+        }
+
+
+        // creating an array of items.
+        let subjects = ["hindi", "english", "math", "science", "history"]
+        console.log("\n\nSubjects")
+        for (let i = 0; i < subjects.length; i++) {
+            console.log(subjects[i])
+            // print(item, end="\t")
+        }
+
+
+        console.log("\n\nSubjects line")
+        let subject_line = ""
+        for (let i = 0; i < subjects.length; i++) {
+            subject_line += subjects[i] + '\t'
+            // print(item, end="\t")
+        }
+        // here after creating the single line, printing the line.
+        console.log(subject_line)
+
+    </script>
+</body>
+
+</html>

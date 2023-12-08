@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Function Intro</title>
+</head>
+
+<body>
+
+    <script>
+
+        let subjects = ["hindi", "english", "math", "science", "history"]
+
+        let line_str = "" // to hold the all the subjects in one line.
+
+        for (let i = 0; i < subjects.length; i++) {
+            line_str += subjects[i] + "\t"
+        }
+
+        console.log(line_str)
+
+
+        // Function
+        /*
+            function <function_name>(parameter_list){
+
+                // statements 1
+                // statements 2
+
+                return value
+                }
+        */
+
+        // function definition
+        function printLine(sequence) {
+            let line_str = "";
+
+            for (let i = 0; i < sequence.length; i++) {
+                line_str += sequence[i] + "\t";
+            }
+            console.log(line_str);
+            // this function does not return anything
+            return null;
+        }
+
+        // function call
+        printLine(subjects);
+
+        // inserting an item in array at the end of the array.
+        // by using the push method.
+        subjects.push("Geography"); // inserting item at the end of the array
+
+        // inserting an item at the beginning of the array
+        // by using the unshift method.
+
+        subjects.unshift("physics") // inserting item at the beginning of the array
+
+
+        // removing an item from the beginning by using the shift method.
+        // removing an item from the end by using the pop method
+
+        // Note: both method does not take any arguments
+    </script>
+</body>
+
+</html>
