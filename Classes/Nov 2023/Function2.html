@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Function 2</title>
+</head>
+
+<body>
+
+    <script>
+        // function arguments list.
+        function person_info(name, age, height) {
+            console.log("My name is: ", name);
+            console.log("My age is: ", age);
+            console.log("My height is: ", height);
+        }
+
+        person_info("manish", 20, 5.6)//
+
+        // 1. if we miss an argument value, then we will have undefined for that argument value.
+        person_info("manish", 20)
+
+        // 2. if we miss match the order of the arguments list, then we will have wrong value for that argument.
+        person_info(20, "manish", 5.6)
+
+
+        // default value:
+        function decorate_name(name, length = 20, char = "-") {
+            len = name.length;
+            chars = (length - len) / 2
+
+            // length = 6
+            console.log("original name: ", name)
+
+            name = name.padEnd(len + chars, char) // 6+2
+            console.log("name1: ", name)
+
+            name = name.padStart(name.length + chars, char) // 8 +2
+            console.log("name2: ", name)
+
+            return name
+        }
+    </script>
+</body>
+
+</html>
