@@ -43,6 +43,32 @@
 
             return name
         }
+
+        // unnamed function
+
+        add = function (a, b) {
+
+            if (typeof (a) != "number" || typeof (b) != "number") {
+                console.error("Invalid data type, only numbers are allowed..!")
+                return null
+            }
+            return a + b;
+        }
+
+        multi = function (a, b) {
+            return a * b;
+        }
+
+        function list_apply(func, list_obj, init = 0) {
+
+            total = init;
+
+            for (let i = 0; i < list_obj.length; i++) {
+                total = func(total, list_obj[i])
+            }
+
+            return total;
+        }
     </script>
 </body>
 

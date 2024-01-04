@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Arrow Function</title>
+</head>
+
+<body>
+
+    <script>
+        function decorate_name(name, length = 20, char = "-") {
+            len = name.length;
+            chars = (length - len) / 2
+
+            // length = 6
+            //console.log("original name: ", name)
+
+            name = name.padEnd(len + chars, char) // 6+2
+            //console.log("name1: ", name)
+
+            name = name.padStart(name.length + chars, char) // 8 +2
+            //console.log("name2: ", name)
+
+            return name
+        }
+
+        function list_apply(func, list_obj, init = 0) {
+
+            total = init;
+
+            for (let i = 0; i < list_obj.length; i++) {
+                total = func(total, list_obj[i])
+            }
+
+            return total;
+        }
+
+        // arrow function.
+        /*
+            1. arrow function does not declared with function keyword.
+            2. it does not have any name.
+            3. syntax: (arg1, arg2) => return statement or {} 'body block'
+                i. return statement: () => return_value
+                ii. body block: () => {statements}
+                
+            4. if a function only take one argument then arrow function syntax:
+                syntax: arg => return_value
+
+            5. if no argument is passed then we must use round brackets
+                syntax: () => return_value
+        */
+        let add = (a, b) => a + b;
+        let multi = (a, b) => a * b;
+
+        let ratio = (a, b) => {
+            let product = a * b;
+            let sum = a + b;
+            return product / sum
+        }
+    </script>
+
+</body>
+
+</html>

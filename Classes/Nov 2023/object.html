@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Object</title>
+</head>
+
+<body>
+
+    <script>
+
+        // constructor function
+        function length(val, unit = "cm") {
+            this.value = val;
+            this.unit = unit;
+        }
+
+        function pencil(hardness, color, length) {
+            this.color = color;
+            this.hardness = hardness
+            this.length = length
+        }
+
+
+
+        let markerPen = {
+            name: 'marker-pen',
+            color: 'black',
+            height: new length(13),
+            capLength: new length(3 / 100, 'm'),
+        }
+
+        let PencilSet = {
+            pencil_H1: new pencil("h1", "black", 15),
+            pencil_H2: new pencil("h2", "black", 15),
+            pencil_H3: new pencil("h3", "black", 15),
+            pencil_H4: new pencil("h4", "black", 15),
+            pencil_H5: new pencil("h5", "black", 15),
+        }
+
+    </script>
+</body>
+
+</html>
