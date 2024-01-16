@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Reservation System</title>
+</head>
+
+<body>
+
+    <script>
+
+        let ReservationList = [] // an array for confirmed
+        let ReservationWaiting = [] // waiting list.
+        let ReservationFormSubmission = [] // an array for total number of form submission.  
+        let cancelledReservationList = []
+
+        let totalSeats = 2
+        let waitingLimit = 3
+        let limits = 5
+
+        function generateId() {
+            return Math.round(Math.random() * 10 ** 5)
+        }
+
+        function deletePerson(arr, person) {
+            let idx = arr.indexOf(person)
+            let item = arr.splice(idx, 1)
+
+            // confirming that our person is actually deleted
+            if (item[0] == person) {
+                return true
+            }
+            return false
+        }
+
+
+        /// a constructor to create Person type object.
+        function Person(name, age, destination) {
+            this.rid = generateId();
+            this.name = name
+            this.age = age
+            this.time = Date.now()
+            this.destination = destination
+            this.status = "waiting"
+        }
+
+
+
+        // a function to fill the reservation form
+        function reservation_form() {
+
+            if (ReservationFormSubmission.length >= limits) {
+                console.warn("No More Reservation Seats are available..")
+                return
+                // go out of the function
+            }
+
+            let person = new Person() // create a new person object
+            // with no information.
+
+            // now get and update the values of person properties.
+            person.name = prompt("Enter your name")
+            person.age = prompt("Enter your age")
+            person.destination = prompt("Enter your destination")
+
+            // adding to formSubmission array.
+            ReservationFormSubmission.push(person)
+
+            // starting the process of confirmation.
+            reservation_confirm(person);
+            console.log("rid: ", person.rid, "\n\n")
+        }
+        // a function to confirm a reservation
+
+        function reservation_confirm(person) {
+
+            if (ReservationList.length >= totalSeats) {
+                // if there is no seats are available to confirm
+                // then we will wait.
+                reservation_waiting(person)
+                // put into the waiting list.
+                return
+            }
+
+            // before pushing the person to List.
+            // update the status.
+            person.status = "confirmed"
+            ReservationList.push(person)
+            console.info("Your reservation has been confirmed")
+        }
+
+        // a function for to put the reservation into the waiting list
+        function reservation_waiting(person) {
+
+            if (ReservationWaiting.length >= waitingLimit) {
+                console.log("All Seats are reserved..")
+                return
+            }
+
+            ReservationWaiting.push(person)
+            console.log("Your reservation completed and being waiting for confirmation...")
+        }
+
+
+        // a function to search a person reservation is confirmed.
+
+        function search_person(person_rid) {
+            result = ReservationFormSubmission.find(
+                // find will pass each person to the below function.
+                (person) => {
+                    // this arrow function will compare the input_rid with
+                    // person_rid
+                    if (person.rid == person_rid) {
+                        // if both id's matched then return the person
+                        return person
+                    }
+                })
+
+            return result
+        }
+
+        // a function to check that Reservation is confirmed or not of a person.
+
+        function isReservationConfirmed(person_rid) {
+            // first search the person.
+            let person = search_person(person_rid)
+            // this  person variable may have both undefined and Person object.
+
+            if (person) {
+                return person.status
+            }
+            console.log("Person rid not found: " + person_rid)
+
+        }
+
+
+        function cancelReservation(person_rid) {
+            // first find the person.
+            let person = search_person(person_rid)
+            if (person) {
+                // first check that a person is in waiting list of confirm list.
+
+                if (ReservationList.includes(person)) {
+                    var isDeleted = deletePerson(ReservationList, person)
+                }
+                else if (ReservationWaiting.includes(person)) {
+                    var isDeleted = deletePerson(ReservationWaiting, person)
+                }
+
+                if (isDeleted) {
+                    deletePerson(ReservationFormSubmission, person)
+                    let pr = ReservationWaiting.shift()
+                    reservation_confirm(person);
+                    console.log(`Reservation id  ${person_rid} Canceled`)
+                    return
+                }
+                return console.log(`Reservation id ${person_rid} no canceled..`)
+
+            }
+            console.log("Person rid not found: " + person_rid)
+        }
+
+
+    </script>
+</body>
+
+</html>
