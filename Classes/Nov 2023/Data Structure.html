@@ -6,9 +6,101 @@
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0">
     <title>Reservation System</title>
+
 </head>
 
 <body>
+
+    <!-- Reservation form -->
+    <form action="#"
+          id="reservation-form">
+        <label for="name">Name:</label>
+        <input id="name"
+               type="text"> <br>
+
+        <label for="age">Age:</label>
+        <input id="age"
+               type="text"><br>
+
+        <label for="destination">Destination:</label>
+        <input id="destination"
+               type="text"><br>
+
+
+        <input type="submit">
+
+    </form>
+
+    <br>
+    <br>
+
+    <!-- Cancel-Reservation -->
+    <form action="#"
+          id="cancel-reservation">
+        <caption>cancel Reservation</caption>
+        <br>
+        <label for="reservation_id">reservation id</label>
+        <input id="reservation_id"
+               type="text"
+               placeholder="reservation id">
+        <input type="submit"
+               value="cancel reservation">
+    </form>
+
+    <br><br>
+    <!-- display record -->
+    <button id="display-record-button">Display Record</button>
+
+    <script async
+            defer>
+
+                let form = document.forms["reservation-form"]
+                let cancelForm = document.forms["cancel-reservation"]
+
+                form.addEventListener("submit", (e) => {
+                    e.preventDefault(); // to prevent reloading the page.
+
+                    let name = form["name"].value;
+                    let age = form["age"].value;
+                    let destination = form["destination"].value;
+
+                    if (ReservationFormSubmission.length >= limits) {
+                        console.warn("No More Reservation Seats are available..")
+                        return
+                        // go out of the function
+                    }
+
+                    let pr = new Person(name, age, destination)
+                    // adding to formSubmission array.
+                    ReservationFormSubmission.push(pr)
+
+                    // starting the process of confirmation.
+                    reservation_confirm(pr);
+                    console.log("rid: ", pr.rid, "\n\n")
+
+                })
+
+
+                cancelForm.addEventListener("submit", (e) => {
+                    e.preventDefault();
+
+                    let rid = cancelForm["reservation_id"].value
+                    cancelReservation(parseInt(rid));
+                })
+
+
+                let displayButton = document.getElementById("display-record-button");
+                displayButton.addEventListener("click", (e) => {
+                    console.info("Form Submissions")
+                    console.table(ReservationFormSubmission)
+
+                    console.info("Reservation Confirmed List")
+                    console.table(ReservationList)
+
+                    console.info("Reservation Waiting List")
+                    console.table(ReservationWaiting)
+                })
+            </script>
 
     <script>
 
@@ -153,12 +245,11 @@
                 if (isDeleted) {
                     deletePerson(ReservationFormSubmission, person)
                     let pr = ReservationWaiting.shift()
-                    reservation_confirm(person);
+                    reservation_confirm(pr);
                     console.log(`Reservation id  ${person_rid} Canceled`)
                     return
                 }
                 return console.log(`Reservation id ${person_rid} no canceled..`)
-
             }
             console.log("Person rid not found: " + person_rid)
         }
