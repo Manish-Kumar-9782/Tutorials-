@@ -122,10 +122,13 @@
             let item = arr.splice(idx, 1)
 
             // confirming that our person is actually deleted
+            /*
             if (item[0] == person) {
                 return true
             }
             return false
+            */
+            return item[0] == person ? true : false
         }
 
 

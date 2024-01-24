@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Prototypes</title>
+</head>
+
+<body>
+    <script>
+        // a 
+        function generateId() {
+            return Math.round(Math.random() * 10 ** 5)
+        }
+
+        /// a constructor to create Person type object.
+        function Person(name, age, destination) {
+            this.rid = generateId();
+            this.name = name
+            this.age = age
+            this.time = Date.now()
+            this.destination = destination
+            this.status = "waiting"
+        }
+
+        // a constructor for ReservationSystem
+        function Reservation(seat_limits = 3) {
+            this.slots = []; // it is the only record we have
+            this.seat_limits = seat_limits
+
+        }
+
+
+        //const proto_ = Reservation.prototype
+        Reservation.prototype.submitReservationForm = function (person) {
+            if (!person instanceof Person) {
+                console.error("the value of person argument must be an instance of Person")
+                return
+            }
+
+            if (this.slots.length >= this.seat_limits) {
+                // if length of the slots is greater than the seat limits
+                // then we will not confirm the seat.
+                this.waitingReservation(person)
+
+            }
+            else {
+                // if we have slots then we will confirm the seats.
+                this.confirmReservation(person)
+            }
+
+        }
+
+        // a method to fill the form
+        Reservation.prototype.fillReservationForm = function () {
+            let person = new Person();
+
+            person.name = prompt("Enter your name")
+            person.age = prompt("Enter your age")
+            person.destination = prompt("Enter your destination")
+
+            this.submitReservationForm(person);
+
+        }
+
+        // a method to handle the confirmation of a reservation
+        Reservation.prototype.confirmReservation = function (person) {
+            person.status = "confirm";
+            this.slots.push(person)
+        }
+
+        // a method to handle the waiting of a reservation.
+        Reservation.prototype.waitingReservation = function (person) {
+            person.status = "waiting";
+            this.slots.push(person)
+        }
+
+        Reservation.prototype.showRecord = function () {
+            console.table(this.slots)
+        }
+
+
+    </script>
+
+</body>
+
+</html>
