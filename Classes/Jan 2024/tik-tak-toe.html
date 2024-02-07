@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>Tik Tak toe</title>
+</head>
+
+<body>
+
+    <script>
+
+        let tikTakToe = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],]
+
+
+        // a function to display the grid
+        function displayGrid(grid_array) {
+            // gird_array: it is the input array to be displayed.
+
+            // test 1: if grid_array is not an object of Type Array.
+            if (!grid_array instanceof Array) {
+                console.error("input grid_array is not an Array type object")
+                return
+            }
+
+            // test 2: if grid_array is an object of Array but does not contain
+            // n x n shape. it means number of rows and number of columns 
+            // must be same.
+
+
+
+            // an empty string to store the grid pattern
+            let grid_str = "";
+
+            // printing the tikTak grid using for loop
+
+            // this is outer loop to handle the outer array (at depth 1)
+            for (let i = 0; i < grid_array.length; i++) {
+
+                let currentInnerArray = tikTakToe[i];
+                // this it inner loop to handle the inner array (at depth 2)
+                for (let j = 0; j < currentInnerArray.length; j++) {
+                    grid_str += currentInnerArray[j] + "\t";
+                }
+                grid_str += "\n";
+            }
+            console.log(grid_str)
+        }
+
+
+        function arrayShape(array) {
+
+            let rows = array.length;
+            let cols = [];
+
+
+        }
+
+    </script>
+
+</body>
+
+</html>

@@ -11,7 +11,7 @@ function generate_random_number() {
 
 // a function to get user input
 function user_input() {
-    let input_number = prompt("Enter a number: ");
+    let input_number = prompt("Enter a number [0,10]: ");
     input_number = parseInt(input_number)
     return input_number
 }
@@ -48,3 +48,7 @@ function run_turn() {
     let user_value = user_input()
     test_turn(random_number, user_value, USER_POINTS)
 }
+
+/*
+
+*/
