@@ -17,6 +17,11 @@
             [4, 5, 6],
             [7, 8, 9],]
 
+        let result = [
+            ["X", "O", "O"],
+            ["O", "X", "O"],
+            ["O", "X", "X"],]
+
 
         // a function to display the grid
         function displayGrid(grid_array) {
@@ -55,12 +60,83 @@
 
         function arrayShape(array) {
 
+            // length of the array
             let rows = array.length;
-            let cols = [];
+            let cols = array.map((rowItem) => rowItem.length);
+            // [3,3,3]
+            // here: rowItem is an inner Array of tikTakToe array.
 
+            // testing that we have equal number of items in 
+            // every row.
+            if (cols.every((x) => x == cols[0])) {
+                return [rows, cols[0]]
+            }
+            else {
+                console.error("each row must have the same number of items..")
+            }
 
         }
 
+
+        function get_i(array, input) {
+            let rows = arrayShape(array)[0] // -> [n,m]
+            return input % rows == 0 ? input / rows - 1 : parseInt(input / rows)
+        }
+
+        function get_j(array, input) {
+            let cols = arrayShape(array)[1] // -> [n,m]
+            return input % cols == 0 ? cols - 1 : input % cols - 1
+        }
+
+        function get_ij(array, input) {
+            let i = get_i(array, input)
+            let j = get_j(array, input)
+            return [i, j]
+        }
+
+
+        function update_array(array, index, value) {
+
+            // first we will unpack the index array into i and j.
+            [i, j] = index
+            // Now assign the value into the array using the index i and j.
+            array[i][j] = value
+        }
+
+
+        function get_row(array, index) {
+            return array[index]
+        }
+
+        function get_column(array, index) {
+            return array.map((row) => row[index])
+        }
+
+        function all(array, value) {
+            return array.every((item) => item == value)
+        }
+
+        function play_game() {
+            // creating an infinite loop for our game
+
+            let player = "X";
+            while (true) {
+                // first of all, display the grid
+                displayGrid(tikTakToe)
+
+                // now ask player to choose the input
+                let input = prompt(`Player ${player}:`)
+
+                // getting i and j values.
+                let index = get_ij(tikTakToe, input)
+
+                update_array(tikTakToe, index, player)
+
+                // switching the player.
+                player == "X" ? player = "O" : player = "X"
+
+            }
+        }
     </script>
 
 </body>
