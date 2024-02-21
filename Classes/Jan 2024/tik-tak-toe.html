@@ -18,10 +18,12 @@
             [7, 8, 9],]
 
         let result = [
-            ["X", "O", "O"],
-            ["O", "X", "O"],
-            ["O", "X", "X"],]
+            ["X", "O", "X"],
+            ["X", "O", "X"],
+            ["O", "X", "O"],]
 
+        const testCases = [3, 3, 2] // [nrows, ncols, diagonal]
+        const testFuncs = [get_row, get_column, get_diagonal]
 
         // a function to display the grid
         function displayGrid(grid_array) {
@@ -36,9 +38,6 @@
             // test 2: if grid_array is an object of Array but does not contain
             // n x n shape. it means number of rows and number of columns 
             // must be same.
-
-
-
             // an empty string to store the grid pattern
             let grid_str = "";
 
@@ -112,14 +111,57 @@
             return array.map((row) => row[index])
         }
 
+        function get_diagonal(array, index) {
+            // 0: first diagonal
+            // 1: second diagonal
+            switch (index) {
+                case 0:
+                    return array.map((innerArray, i) => innerArray[i])
+
+                case 1:
+                    return array.map((innerArray, i) => innerArray[array.length - i - 1])
+                default:
+                    console.error("Invalid index for diagonal")
+            }
+        }
+
         function all(array, value) {
             return array.every((item) => item == value)
         }
 
+
+        function test_result(array) {
+
+            let X = false
+            let O = false
+            // initially we don't have any winner.
+
+            // for all cases
+
+            for (let tests = 0; tests < testCases.length; tests++) {
+                let test_func = testFuncs[tests]
+
+                for (let test = 0; test < testCases[tests]; test++) {
+                    let arr = test_func(array, test)
+                    X = all(arr, "X") // if X is true, then X is winner
+                    O = all(arr, "O") // if O is true, then O is winner
+
+                    // only one of them will be winner at a time.
+                    if (X || O) {
+                        return X ? "X" : "O"
+                    }
+                }
+            }
+            // if in above for loop, we don't have any winner then we will return 
+            // false.
+            return false
+
+        }
+
         function play_game() {
             // creating an infinite loop for our game
-
             let player = "X";
+
             while (true) {
                 // first of all, display the grid
                 displayGrid(tikTakToe)
@@ -135,6 +177,14 @@
                 // switching the player.
                 player == "X" ? player = "O" : player = "X"
 
+                // testing the result
+                let winner = test_result(tikTakToe)
+
+                if (winner) {
+                    displayGrid(tikTakToe)
+                    console.log("Winner: ", winner)
+                    break;
+                }
             }
         }
     </script>
