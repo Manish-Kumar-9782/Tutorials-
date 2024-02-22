@@ -131,13 +131,11 @@
 
 
         function test_result(array) {
-
+            // initially we don't have any winner.
             let X = false
             let O = false
-            // initially we don't have any winner.
 
             // for all cases
-
             for (let tests = 0; tests < testCases.length; tests++) {
                 let test_func = testFuncs[tests]
 
@@ -151,11 +149,9 @@
                         return X ? "X" : "O"
                     }
                 }
-            }
-            // if in above for loop, we don't have any winner then we will return 
+            }// if in above for loop, we don't have any winner then we will return 
             // false.
             return false
-
         }
 
         function play_game() {

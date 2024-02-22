@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe play_game</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0px;
+            padding: 0px;
+        }
+
+        table td {
+            width: 70px;
+            height: 70px;
+            border: 3px solid rgb(75, 75, 75);
+        }
+    </style>
+</head>
+
+<body>
+
+    <table id="tic-tac-toe-grid-table">
+        <tbody id="tic-tac-toe-grid-table-body">
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+        </tbody>
+
+        <button id="play-button">Play</button>
+    </table>
+
+
+    <script>
+
+        let tikTakToe = [
+            [1, 2, 3],
+            [4, 5, 6],
+            [7, 8, 9],]
+
+        let result = [
+            ["X", "O", "X"],
+            ["X", "O", "X"],
+            ["O", "X", "O"],]
+
+
+        const gridBody = document.getElementById("tic-tac-toe-grid-table-body")
+        const gridBodyRows = Array(...gridBody.children)
+        const gridBodyItems = gridBodyRows.map((row) => Array(...row.children))
+        const playButton = document.getElementById("play-button")
+
+
+
+        function Game(grid) {
+
+            this.player = "X";
+            this.grid = grid;
+        }
+
+        // accessing the Game prototype
+        const proto = Game.prototype
+
+        proto.play_game = function () {
+
+            this.grid.flatMap((item) => item).map((item) => {
+                item.addEventListener("click", (event) => {
+                    event.currentTarget.innerText = this.player
+                })
+            })
+
+        }
+
+
+        let game = new Game(gridBodyItems)
+
+        playButton.addEventListener("click", () => {
+            game.play_game();
+        })
+
+    </script>
+
+</body>
+
+</html>
