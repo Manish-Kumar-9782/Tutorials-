@@ -164,70 +164,75 @@ class Utility:
 
 class CSVReader(Utility):
 
-    def __init__(self, file, header=None, delimiter=','):
+    def __init__(self, file, header=True, delimiter=','):
         super().__init__()
         self.header = header
         self.delimiter = delimiter
-        self.__header_length = 0
-        self.file_pos = 0
         if self.checkIntegrity(file):
-            self.file = file   # it contains path for file
+            self.file_path = file   # it contains path for file
         else:
             raise Exception("file Integrity Error: file or root dir not found")
-        self.__getHeader()
 
-    def __readline(self, header=False, reset=False):
-        """
-        this will read line from file and return as array by splitting using
-        delimiter. if line is empty then it will return False, else we will have
-        a list of single row data items.
-        :return: list or False
-        """
-        temp = None
-        if header:
-            temp = self.file_pos
-            self.file_pos = 0
+        self.file = None  # to contain the a File object.
 
-        if reset:
-            self.file_pos = 0 + self.__header_length
+    def __openFile__(self):
 
-        file = open(self.file, 'r')  # opening file for each line
-        file.seek(self.file_pos)  # save the file pointer position
-        line = file.readline().strip("\n")  # read one line at a time
-        self.file_pos = file.tell()  # updating the file position
+        if not self.file or self.file.closed:
 
-        # if header is true then reassign the file_pos with temp
-        if header:
-            self.__header_length = self.file_pos
-            self.file_pos = self.__header_length if reset else temp
+            try:
+                self.file = open(self.file_path, "r")
+            except OSError as e:
+                print(f"Error opening file: {e}")
+                # self.__closeFile__()
+            except Exception as e:
+                print(f"Unknown error encounter while opening file: {e}")
 
-        if line:
-            row = line.split(self.delimiter)
-            return row
-        return False
+    def __closeFile__(self):
+        try:
+            if self.file and not self.file.closed:
+                self.file.close()
+                self.file = None
 
-    def __getHeader(self):
-        # first we are going to save our output from readline into the
-        # header
-        header = self.__readline(header=True, reset=True)
-        if header:  # if header is row
-            self.header = header
-        else:
-            raise Exception("Header is not found, file might be empty..?")
+        except OSError as e:
+            print(f"Error closing file: {e}")
+        except Exception as e:
+            print(f"Unknown error encounter while closing file: {e}")
 
-    def read(self):
-        line = self.__readline()
-        data = []
-        while line:
-            data.append(line)
-            line = self.__readline()
+    def read_headers(self):
+        self.__openFile__()
+        if self.file:
+            try:
+                header = self.file.readline().strip().split(self.delimiter)
+                if header:
+                    self.header = header
+            except OSError as e:
+                print(f"Error reading header: {e}")
+            except Exception as e:
+                print(f"Unknown error encounter while reading header: {e}")
+            finally:
+                self.__closeFile__()
 
-        return data
+    def readRow(self):
+        self.__openFile__()
+        if self.file:
+            try:
+                self.file.readline()  # skipping first line as it is header
+                while True:
+                    line = self.file.readline()
+                    if not line:
+                        break
+                    yield line.strip().split(self.delimiter)
+
+            except OSError as e:
+                print(f"Error reading line: {e}")
+            finally:
+                self.__closeFile__()
+
 
 # =============================================================
 
 
-class CSVWriter(Utility):
+class CSVWriterX(Utility):
 
     def __init__(self, file, header: list = None, filemode="w", delimiter=','):
         super().__init__()
@@ -273,6 +278,21 @@ class CSVWriter(Utility):
 
     def write_header(self):
         self.write_row(self.header)
+
+
+class CSVWriter(Utility):
+
+    def __init__(self, filename, header=None, delimiter=','):
+        super().__init__()
+        self.filename = filename
+        self.rows = []
+        if header:
+            self.header = self.set_header(header)
+
+    def set_header(self, header):
+        if not isinstance(header, (list, tuple, set)):
+            raise TypeError("header must be an instance of list, tuple or set")
+        self.header = header
 
 
 if __name__ == "__main__":
