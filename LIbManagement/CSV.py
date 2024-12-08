@@ -3,6 +3,35 @@ from config import *
 
 
 class Utility:
+    """
+    Utility class for managing data directory and file operations in a CSV-based application.
+
+    This class provides methods for creating and checking the existence of data directories
+    and files, ensuring that the necessary resources are available for the application to function
+    correctly. It also handles error management related to file and directory operations.
+
+    Methods:
+        __createDataDir__():
+            Checks if the data directory exists and attempts to create it if it does not.
+            Returns True if the directory exists or was successfully created, otherwise False.
+
+        __createFile__(file):
+            Checks if a specified file exists and attempts to create it if it does not.
+            Returns True if the file exists or was successfully created, otherwise False.
+
+        __checkDataDir__(create=False):
+            Verifies the existence and accessibility of the specified data directory.
+            Optionally creates the directory if it does not exist, returning True if successful.
+
+        __check_file(file, create=True):
+            Checks if a specified file exists and optionally creates it if it does not.
+            Returns True if the file exists or was successfully created, otherwise False.
+
+        checkIntegrity(file, create_dir=False, create_file=False):
+            Verifies the existence and accessibility of a specified directory and file.
+            Optionally creates the directory and/or file if they do not exist, returning True
+            if both checks are successful.
+    """
 
     def __init__(self, root=None, data=None):
         self.error = None
@@ -17,37 +46,120 @@ class Utility:
         else:
             self.data = DATA_PATH
 
-    def __check_data_dir(self, create=False):
+    def __createDataDir__(self):
+        """
+        Checks if the data directory exists.
 
+        Args:
+            create (bool): If True, attempts to create the data directory if it does not exist.
+
+        Returns:
+            bool: True if the data directory exists (or was successfully created), False otherwise.
+
+        Raises:
+            NotADirectoryError: If the root directory does not exist.
+        """
+        try:
+            os.mkdir(self.data)
+            return True
+        except OSError as e:
+            print(f"Error creating data directory {self.data}: {e}")
+            return False
+
+    # ====================================
+
+    def __createFile__(self, file):
+        """
+        Checks if a file exists.
+
+        Args:
+            file (str): The path to the file to check.
+            create (bool): If True, attempts to create the file if it does not exist.
+
+        Returns:
+            bool: True if the file exists (or was successfully created), False otherwise.
+        """
+        try:
+            with open(file, 'w') as f:
+                pass
+            return True
+        except OSError as e:
+            print(f"Error creating file {file} : {e}")
+            return False
+
+    # ====================================
+
+    def __checkDataDir__(self, create=False):
+        """
+        Verifies the existence and accessibility of a specified directory and file.
+
+        Args:
+            file (str): The path to the file to check.
+            create_dir (bool): If True, attempts to create the data directory if it does not exist.
+            create_file (bool): If True, attempts to create the file if it does not exist.
+
+        Returns:
+            bool: True if both the data directory and file checks are successful, False otherwise.
+        """
         if os.path.isdir(self.root):
-
             if os.path.isdir(self.data):
                 # print("data dir is found")
                 return True
             else:
-                # print("data dir is not found")
-                # print("creating a new data dir.")
-                if create:
-                    os.mkdir(self.data)
-                    self.__check_data_dir()  # calling recursively
-                return False
+                return self.__createDataDir__() if create else False
         else:
             # print("root dir is not found.")
-            raise NotADirectoryError(DATA_PATH +" is not found..!")
+            raise NotADirectoryError(DATA_PATH + " is not found..!")
+
+    # ====================================
 
     def __check_file(self, file, create=True):
+        """
+        Checks if a specified file exists and optionally creates it if it does not.
+
+        Args:
+            file (str): The path to the file to check.
+            create (bool): If True, attempts to create the file if it does not exist. Default is True.
+
+        Returns:
+            bool: True if the file exists or was successfully created, False otherwise.
+
+        Raises:
+            OSError: If there is an error creating the file.
+
+        Notes:
+            This method is intended for internal use only (indicated by the leading underscore).
+        """
+
         if os.path.isfile(file):
             return True
         else:
-            if create:
-                file = open(file, "w")
-                file.close()
-            return False
+            return self.__createFile__() if create else False
+
+    # ====================================
 
     def checkIntegrity(self, file, create_dir=False, create_file=False):
-        if self.__check_data_dir(create_dir) and self.__check_file(file,  create_file):
+        """
+        Verifies the existence and accessibility of a specified directory and file.
+
+        Args:
+            file (str): The path to the file to check.
+            create_dir (bool): If True, attempts to create the data directory if it does not exist. Default is False.
+            create_file (bool): If True, attempts to create the file if it does not exist. Default is False.
+
+        Returns:
+            bool: True if both the data directory and file checks are successful, False otherwise.
+
+        Notes:
+            This method combines checks for both the data directory and the specified file.
+        """
+        if self.__checkDataDir__(create_dir) and self.__check_file(file,  create_file):
             return True
-        return False
+        else:
+            print("Integrity check failed: Directory or file not found..")
+            return False
+
+# =============================================================
 
 
 class CSVReader(Utility):
@@ -79,7 +191,7 @@ class CSVReader(Utility):
         if reset:
             self.file_pos = 0 + self.__header_length
 
-        file = open(self.file, 'r')  ## opening file for each line
+        file = open(self.file, 'r')  # opening file for each line
         file.seek(self.file_pos)  # save the file pointer position
         line = file.readline().strip("\n")  # read one line at a time
         self.file_pos = file.tell()  # updating the file position
@@ -112,6 +224,8 @@ class CSVReader(Utility):
 
         return data
 
+# =============================================================
+
 
 class CSVWriter(Utility):
 
@@ -134,7 +248,7 @@ class CSVWriter(Utility):
             raise TypeError("row must be an instance of list or tuple")
         return row
 
-    def __write_row(self,file, row):
+    def __write_row(self, file, row):
         row = self.__parse_row(row)
         # first convert our seq into the string
         line = self.delimiter.join(row) + "\n"
@@ -144,7 +258,7 @@ class CSVWriter(Utility):
         file = open(self.file, self.filemode)
         if header:
             self.__write_row(header)
-        self.__write_row(file,row)
+        self.__write_row(file, row)
         file.close()
 
     def write_rows(self, rows, header=None):
