@@ -33,18 +33,40 @@ class Utility:
             if both checks are successful.
     """
 
-    def __init__(self, root=None, data=None):
+    def __init__(self, root=None, data_dir=None, filemode='r'):
         self.error = None
+        self.root = root if root else ROOT
+        self.data_dir = data_dir if data_dir else DATA_PATH
+        self.filemode = filemode
 
-        if root:
-            self.root = root
+    def __set_write_mode__(self, append=True):
+        if append:
+            self.filemode = 'a'
         else:
-            self.root = ROOT
+            self.filemode = 'w'
 
-        if data:
-            self.data = data
-        else:
-            self.data = DATA_PATH
+    def __openFile__(self):
+
+        if not self.file or self.file.closed:
+
+            try:
+                self.file = open(self.file_path, self.filemode)
+            except OSError as e:
+                print(f"Error opening file: {e}")
+                # self.__closeFile__()
+            except Exception as e:
+                print(f"Unknown error encounter while opening file: {e}")
+
+    def __closeFile__(self):
+        try:
+            if self.file and not self.file.closed:
+                self.file.close()
+                self.file = None
+
+        except OSError as e:
+            print(f"Error closing file: {e}")
+        except Exception as e:
+            print(f"Unknown error encounter while closing file: {e}")
 
     def __createDataDir__(self):
         """
@@ -60,10 +82,10 @@ class Utility:
             NotADirectoryError: If the root directory does not exist.
         """
         try:
-            os.mkdir(self.data)
+            os.mkdir(self.data_dir)
             return True
         except OSError as e:
-            print(f"Error creating data directory {self.data}: {e}")
+            print(f"Error creating data directory {self.data_dir}: {e}")
             return False
 
     # ====================================
@@ -102,7 +124,7 @@ class Utility:
             bool: True if both the data directory and file checks are successful, False otherwise.
         """
         if os.path.isdir(self.root):
-            if os.path.isdir(self.data):
+            if os.path.isdir(self.data_dir):
                 # print("data dir is found")
                 return True
             else:
@@ -153,7 +175,10 @@ class Utility:
         Notes:
             This method combines checks for both the data directory and the specified file.
         """
-        if self.__checkDataDir__(create_dir) and self.__check_file(file,  create_file):
+        fpath = os.path.join(self.data_dir, file)
+        print("checking directory :", self.data_dir)
+        print("checking file in data directory: ", fpath)
+        if self.__checkDataDir__(create_dir) and self.__check_file(fpath,  create_file):
             return True
         else:
             print("Integrity check failed: Directory or file not found..")
@@ -164,47 +189,31 @@ class Utility:
 
 class CSVReader(Utility):
 
-    def __init__(self, file, header=True, delimiter=','):
-        super().__init__()
-        self.header = header
+    def __init__(self, file, headers=True, delimiter=',', root=None, data_dir=None):
+        super().__init__(root, data_dir)
+        self.headers = headers
         self.delimiter = delimiter
+        self.filemode = 'r'
+
         if self.checkIntegrity(file):
-            self.file_path = file   # it contains path for file
+            # it contains path for file
+            self.file_path = os.path.join(self.data_dir, file)
         else:
             raise Exception("file Integrity Error: file or root dir not found")
 
         self.file = None  # to contain the a File object.
 
-    def __openFile__(self):
-
-        if not self.file or self.file.closed:
-
-            try:
-                self.file = open(self.file_path, "r")
-            except OSError as e:
-                print(f"Error opening file: {e}")
-                # self.__closeFile__()
-            except Exception as e:
-                print(f"Unknown error encounter while opening file: {e}")
-
-    def __closeFile__(self):
-        try:
-            if self.file and not self.file.closed:
-                self.file.close()
-                self.file = None
-
-        except OSError as e:
-            print(f"Error closing file: {e}")
-        except Exception as e:
-            print(f"Unknown error encounter while closing file: {e}")
+        if headers:
+            self.read_headers()
 
     def read_headers(self):
         self.__openFile__()
+
         if self.file:
             try:
-                header = self.file.readline().strip().split(self.delimiter)
-                if header:
-                    self.header = header
+                headers = self.file.readline().strip().split(self.delimiter)
+                if headers:
+                    self.headers = headers
             except OSError as e:
                 print(f"Error reading header: {e}")
             except Exception as e:
@@ -282,21 +291,74 @@ class CSVWriterX(Utility):
 
 class CSVWriter(Utility):
 
-    def __init__(self, filename, header=None, delimiter=','):
-        super().__init__()
-        self.filename = filename
-        self.rows = []
-        if header:
-            self.header = self.set_header(header)
+    def __init__(self, filename, headers=None, delimiter=',', root=None, data_dir=None):
+        super().__init__(root, data_dir, "w")
+        if self.checkIntegrity(filename):
+            # it contains path for file
+            self.file_path = os.path.join(self.data_dir, filename)
+        else:
+            raise Exception("file Integrity Error: file or root dir not found")
 
-    def set_header(self, header):
-        if not isinstance(header, (list, tuple, set)):
+        self.file = None
+        self.delimiter = delimiter
+        self.rows = []
+        if headers:
+            self.set_header(headers)
+        else:
+            # if headers are not provided, we will fetch header from file
+            headers = CSVReader(
+                filename, delimiter=delimiter, root=root, data_dir=data_dir).headers
+            self.set_headers(headers)
+
+    def set_headers(self, headers):
+        if not isinstance(headers, (list, tuple, set)):
             raise TypeError("header must be an instance of list, tuple or set")
-        self.header = header
+        self.headers = headers
+
+    def add_row(self, row):
+
+        if isinstance(row, (list, tuple)):
+            if len(row) != len(self.headers):
+                raise ValueError("row length must be equal to header length")
+            self.rows.append(row)
+
+        elif isinstance(row, dict):
+            if not set(row.keys()).issubset(set(self.headers)):
+                raise ValueError("Row keys must match the headers keys")
+
+            ordered_row = [row.get(header, "") for header in self.headers]
+            self.rows.append(ordered_row)
+
+        else:
+            raise TypeError("Row must be a list, tuple or dictionary")
+
+    def save(self, append=False):
+        self.__set_write_mode__(append)
+        self.__openFile__()
+
+        if self.file:
+            try:
+                if self.headers:
+                    header_row = self.delimiter.join(self.headers)+'\n'
+                    self.file.write(header_row)
+
+                for row in self.rows:
+                    line = self.delimiter.join(
+                        (str(item) for item in row)) + '\n'
+                    self.file.write(line)
+
+            except OSError as e:
+                print(f"Error while saving the records: {e}")
+            except Exception as e:
+                print(f"Unknown error encounter while saving the records: {e}")
+
+            finally:
+                self.__closeFile__()
 
 
 if __name__ == "__main__":
     # print("current file location: ", os.getcwd())
-    reader = CSVReader('books.csv')
-    print("header: ", reader.header)
-    print("data: ", reader.read())
+    reader = CSVReader('book_x1.csv')
+
+    for row in reader.readRow():
+        print(row)
