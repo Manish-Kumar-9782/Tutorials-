@@ -1,5 +1,6 @@
 import os
 from config import *
+from errors import *
 
 
 class Utility:
@@ -35,9 +36,50 @@ class Utility:
 
     def __init__(self, root=None, data_dir=None, filemode='r'):
         self.error = None
-        self.root = root if root else ROOT
-        self.data_dir = data_dir if data_dir else DATA_PATH
         self.filemode = filemode
+        self.file_path = None
+        self._set_root_dir(root)
+        self._set_data_dir(data_dir)
+
+        self.__is_data_dir_missing = False
+        self.__is_data_file_missing = False
+
+    def _gen_abs_path(self, path):
+        if os.path.isabs(path):
+            return os.path.normpath(path)
+        else:
+            fpath = os.path.join(self.root, path)
+            return os.path.normpath(fpath)
+
+    def _gen_abs_file_path(self, file):
+        fpath = os.path.join(self.data_dir, file)
+        return os.path.normpath(fpath)
+
+    def _set_data_dir(self, data_dir):
+
+        # data_dir is not provided then use the default one
+        if not data_dir:
+            self.data_dir = DATA_PATH
+            return
+
+        # if data_dir is provided then it must a type of string.
+        if not isinstance(data_dir, str):
+            raise TypeError("Data directory must be a path string.")
+
+        self.data_dir = self._gen_abs_path(data_dir)
+
+    def _set_root_dir(self, root):
+
+        # root is not provided then use the default one
+        if not root:
+            self.root = ROOT
+            return
+
+        # if root is provided then it must a type of string.
+        if not isinstance(root, str):
+            raise TypeError("Root directory must be a path string.")
+
+        self.root = self._gen_abs_path(root)
 
     def __set_write_mode__(self, append=True):
         if append:
@@ -52,10 +94,10 @@ class Utility:
             try:
                 self.file = open(self.file_path, self.filemode)
             except OSError as e:
-                print(f"Error opening file: {e}")
-                # self.__closeFile__()
+                raise FileOpenError(f"Error opening file: {e}")
+
             except Exception as e:
-                print(f"Unknown error encounter while opening file: {e}")
+                DB_IOError(f"Unknown error encounter while opening file: {e}")
 
     def __closeFile__(self):
         try:
@@ -64,9 +106,9 @@ class Utility:
                 self.file = None
 
         except OSError as e:
-            print(f"Error closing file: {e}")
+            FileCloseError(f"Error closing file: {e}")
         except Exception as e:
-            print(f"Unknown error encounter while closing file: {e}")
+            DB_IOError(f"Unknown error encounter while closing file: {e}")
 
     def __createDataDir__(self):
         """
@@ -83,31 +125,32 @@ class Utility:
         """
         try:
             os.mkdir(self.data_dir)
+            self.__is_data_dir_missing = False
             return True
         except OSError as e:
-            print(f"Error creating data directory {self.data_dir}: {e}")
-            return False
+            raise DirectoryCreationError(
+                f"Error creating data directory {self.data_dir}: {e}")
 
     # ====================================
 
     def __createFile__(self, file):
         """
-        Checks if a file exists.
+        Creates a new file in writing mode.
 
         Args:
             file (str): The path to the file to check.
             create (bool): If True, attempts to create the file if it does not exist.
 
         Returns:
-            bool: True if the file exists (or was successfully created), False otherwise.
+            bool: True if the file  was successfully created, raise Error otherwise.
         """
         try:
             with open(file, 'w') as f:
                 pass
+            self.__is_data_file_missing = False
             return True
         except OSError as e:
-            print(f"Error creating file {file} : {e}")
-            return False
+            raise FileCreationError(f"Error creating file {file} : {e}")
 
     # ====================================
 
@@ -128,6 +171,7 @@ class Utility:
                 # print("data dir is found")
                 return True
             else:
+                self.__is_data_dir_missing = True
                 return self.__createDataDir__() if create else False
         else:
             # print("root dir is not found.")
@@ -156,7 +200,11 @@ class Utility:
         if os.path.isfile(file):
             return True
         else:
-            return self.__createFile__() if create else False
+            if create:
+                self.__createFile__()
+            else:
+                self.__is_data_file_missing = True
+                raise FileNotFoundError(f"File {file} not found..")
 
     # ====================================
 
@@ -175,34 +223,64 @@ class Utility:
         Notes:
             This method combines checks for both the data directory and the specified file.
         """
-        fpath = os.path.join(self.data_dir, file)
-        print("checking directory :", self.data_dir)
-        print("checking file in data directory: ", fpath)
+        fpath = self._gen_abs_file_path(file)
         if self.__checkDataDir__(create_dir) and self.__check_file(fpath,  create_file):
+            self.file_path = fpath
             return True
         else:
-            print("Integrity check failed: Directory or file not found..")
-            return False
+            if self.__is_data_dir_missing:
+                raise NotADirectoryError(
+                    "Integrity Check Failed: Data directory not found...")
+
+            elif self.__is_data_file_missing:
+                raise FileNotFoundError(
+                    "Integrity Check Failed: Data file not found...")
+
+            else:
+                raise DB_IOError(
+                    "Integrity Check Failed: Unknown Error occurred while checking data integrity...")
+
+    def check(self, data_dir=True, file=None):
+
+        if data_dir:
+            self.__checkDataDir__()
+
+        if file and isinstance(file, str):
+            fpath = self._gen_abs_file_path(file)
+            self.__check_file(fpath)
+        elif file is None:
+            return
+        else:
+            raise TypeError("argument file must type of string.")
+
+    def create(self, data_dir=True, file=None):
+
+        if data_dir:
+            self.__createDataDir__()
+
+        if file and isinstance(file, str):
+            fpath = self._gen_abs_file_path(file)
+            self.__createFile__(fpath)
+        elif file is None:
+            return
+        else:
+            raise TypeError("argument file must type of string.")
+
 
 # =============================================================
 
 
 class CSVReader(Utility):
 
-    def __init__(self, file, headers=True, delimiter=',', root=None, data_dir=None):
+    def __init__(self, file, headers=True, delimiter=',', root=None, data_dir=None, checkIntegrity=False):
         super().__init__(root, data_dir)
         self.headers = headers
         self.delimiter = delimiter
         self.filemode = 'r'
-
-        if self.checkIntegrity(file):
-            # it contains path for file
-            self.file_path = os.path.join(self.data_dir, file)
-        else:
-            raise Exception("file Integrity Error: file or root dir not found")
-
         self.file = None  # to contain the a File object.
 
+        if checkIntegrity:
+            self.checkIntegrity(file)
         if headers:
             self.read_headers()
 
@@ -241,74 +319,37 @@ class CSVReader(Utility):
 # =============================================================
 
 
-class CSVWriterX(Utility):
-
-    def __init__(self, file, header: list = None, filemode="w", delimiter=','):
-        super().__init__()
-        self.filemode = filemode
-        self.header = self.__parse_row(header)
-        self.delimiter = delimiter
-
-        if self.checkIntegrity(file, True):
-            self.file = file
-        else:
-            wfile = open(file, 'w')
-            self.__write_row(wfile, header)
-            wfile.close()
-            self.file = file
-
-    def __parse_row(self, row: list or tuple):
-        if not isinstance(row, (list, tuple)):
-            raise TypeError("row must be an instance of list or tuple")
-        return row
-
-    def __write_row(self, file, row):
-        row = self.__parse_row(row)
-        # first convert our seq into the string
-        line = self.delimiter.join(row) + "\n"
-        file.write(line)
-
-    def write_row(self, row, header=None):
-        file = open(self.file, self.filemode)
-        if header:
-            self.__write_row(header)
-        self.__write_row(file, row)
-        file.close()
-
-    def write_rows(self, rows, header=None):
-        file = open(self.file, self.filemode)
-
-        if header:
-            self.__write_row(file, header)
-
-        for row in rows:
-            self.__write_row(file, row)
-        file.close()
-
-    def write_header(self):
-        self.write_row(self.header)
-
-
 class CSVWriter(Utility):
 
-    def __init__(self, filename, headers=None, delimiter=',', root=None, data_dir=None):
+    def __init__(self, filename, headers=None, first_row_header=False,  delimiter=',', root=None, data_dir=None, checkIntegrity=False, ):
         super().__init__(root, data_dir, "w")
-        if self.checkIntegrity(filename):
-            # it contains path for file
-            self.file_path = os.path.join(self.data_dir, filename)
-        else:
-            raise Exception("file Integrity Error: file or root dir not found")
+
+        if checkIntegrity:
+            self.checkIntegrity(filename)
 
         self.file = None
         self.delimiter = delimiter
         self.rows = []
+
+        self._process_headers(headers, first_row_header)
+
+    def _process_headers(self, headers, first_row_header):
+
+        if headers and first_row_header:
+            raise ValueError(
+                "Arguments headers and first_row_header are mutually exclusive. please use one of the argument to set header.")
+
         if headers:
-            self.set_header(headers)
-        else:
-            # if headers are not provided, we will fetch header from file
-            headers = CSVReader(
-                filename, delimiter=delimiter, root=root, data_dir=data_dir).headers
             self.set_headers(headers)
+        elif first_row_header:
+            self.read_headers()
+        else:
+            self.headers = []
+
+    def read_headers(self):
+        headers = CSVReader(self.file, True, self.delimiter,
+                            self.root, self.data_dir).headers
+        self.set_headers(headers)
 
     def set_headers(self, headers):
         if not isinstance(headers, (list, tuple, set)):
