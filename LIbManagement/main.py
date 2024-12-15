@@ -7,9 +7,8 @@ from config import BLOCK_LENGTH
 
 if __name__ == '__main__':
 
-    header = ["id", 'title', 'author', 'subject', 'pages', 'price']
-    bk_db = BookDatabase('books.csv', header)
-    bk_db.readBooks()
+    bk_db = BookDatabase('books_db.csv')
+    bk_db.load()
 
     while True:
         displaySep("=", BLOCK_LENGTH)
@@ -21,5 +20,3 @@ if __name__ == '__main__':
         selectOption(command, bk_db)
         input("Press Enter To continue..")
         os.system("cls")
-
-

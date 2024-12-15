@@ -26,6 +26,14 @@ class DBIntegrityError(Exception):
     ...
 
 
+class BookFieldKeyError(ValueError):
+    ...
+
+
+class EntryNotFound(Exception):
+    ...
+
+
 class ValidationResult:
     def __init__(self):
         self.result = {

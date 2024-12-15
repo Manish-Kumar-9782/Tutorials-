@@ -1,7 +1,8 @@
 # show all optons
 import os
 
-from Book import BookDatabase
+from BookDB import BookDatabase
+from bk import Book
 
 
 def displaySep(sep="=", length=10):
@@ -10,10 +11,11 @@ def displaySep(sep="=", length=10):
     print(string)
 
 
-def showBook(database,book_id):
+def showBook(database, book_id):
     os.system("cls")
     offset = 20
-    flag = False  # if flat is set then only we will show the edit, delete, update options.
+    # if flat is set then only we will show the edit, delete, update options.
+    flag = False
     bookObject = None
     for book in database.books:
         if book.book_id == book_id:
@@ -22,18 +24,20 @@ def showBook(database,book_id):
             flag = True
             break
     if flag:
-        print("u:update".ljust(offset), "d:delete".ljust(offset), "q:quit".ljust(offset))
+        print("u:update".ljust(offset), "d:delete".ljust(
+            offset), "q:quit".ljust(offset))
         displaySep("-", 100)
         cmd = input("Select Option: ").lower()
 
-        if(cmd == "q"):
+        if (cmd == "q"):
             database.saveDatabase()
             return
-        elif(cmd == "u"):
+        elif (cmd == "u"):
             bookObject.edit()
-        return showBook(database,book_id)
+        return showBook(database, book_id)
 
     return
+
 
 def addBook():
     displaySep('-', 100)
@@ -62,9 +66,11 @@ def delete_book(database):
     book_id = input("Enter book id to delete: ")
     result = database.deleteBook(book_id)
     if result:
-        print(f"----------------------<<<  Deleted: {result} >>>----------------------")
+        print(
+            f"----------------------<<<  Deleted: {result} >>>----------------------")
     else:
-        print("Unable to delete the book with id: ",book_id)
+        print("Unable to delete the book with id: ", book_id)
+
 
 def showOptions():
 
@@ -75,10 +81,11 @@ def showOptions():
     print("4. view a book")
 
 
-def displayTitle(title,length):
+def displayTitle(title, length):
     if not isinstance(title, str):
         raise TypeError("title must be an string..")
     print(title.center(length))
+
 
 def selectOption(option, database):
     """

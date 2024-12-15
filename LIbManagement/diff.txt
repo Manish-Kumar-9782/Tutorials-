@@ -1,0 +1,273 @@
+diff --git a/LIbManagement/BookDB.py b/LIbManagement/BookDB.py
+index 8db5f97..3448265 100644
+--- a/LIbManagement/BookDB.py
++++ b/LIbManagement/BookDB.py
+@@ -1,10 +1,13 @@
+ from Database import BaseDatabase
+ from CSV import CSVReader, CSVWriter
+ from bk import Book
++from errors import BookFieldKeyError, EntryNotFound
+ 
+ 
+ class BookDatabase(BaseDatabase):
+-    headers = ["id", 'title', 'author', 'subject', 'pages', 'price']
++
++    id_key = "book_id"
++    headers = [id_key] + ['title', 'author', 'subject', 'pages', 'price']
+ 
+     def __init__(self, filename=None, delimiter=',', root=None, data_dir=None):
+         # first set the headers
+@@ -25,13 +28,57 @@ class BookDatabase(BaseDatabase):
+         except Exception as e:
+             print(f"Error loading book database: {e}")
+ 
++    def get(self, book_id):
++        for book in self._books:
++            if book.book_id == str(book_id):
++                return book
++
++    def update(self, book_id, **book_info):
++        book = self.get(book_id)
++        if book is None:
++            raise EntryNotFound("Book not found")
++
++        _book = vars(book)
++        _book.update(**book_info)
++        self.delete(book_id)
++        self.add(Book(**_book))
++
+     def getAll(self):
+         return self._books
+ 
+-    def add(self):
++    def delete(self, book_id):
++
++        for book in self._books:
++            if book.book_id == str(book_id):
++                self._books.remove(book)
++
++    def add(self, book):
++        if not isinstance(book, Book):
++            raise ValueError("Invalid book object")
++
++        self._books.append(book)
++
++    def insert(self, **book_info):
++
++        if set(book_info.keys()).issubset(set(self.headers)):
++
++            if not book_info.get(self.id_key, False):
++                book_info[self.id_key] = str(self.c_id)
++                self.c_id += 1
++
++            book = Book(**book_info)
++            self._books.append(book)
++        else:
++            diff_keys = set(book_info.keys()).difference(self.headers)
++            raise BookFieldKeyError(
++                f"Invalid key's: {diff_keys}, use : {self.headers} book headers keys only as field of entry")
+ 
+ 
+ if __name__ == "__main__":
+     db = BookDatabase()
+     db.load()
+-    print(db.getAll())
++
++    new_book = {'book_id': '3', 'title': '"Python Introduction"',
++                'author': '"Manish"', 'subject': '"Python"', 'pages': '300', 'price': 525}
++
++    db.insert(**new_book)
+diff --git a/LIbManagement/Lib Management.md b/LIbManagement/Lib Management.md
+index 1dd41d5..8b3893e 100644
+--- a/LIbManagement/Lib Management.md	
++++ b/LIbManagement/Lib Management.md	
+@@ -21,9 +21,22 @@ CSV Module Changes 13/12/2024
+    3. Maintained the Error handling and raising for futhur handling and clear message.
+ 8. Add `CSVBase` class as the parent of `CSVWriter` and `CSVReader` for common initial setup operation.
+ 9. Removed the `set_headers` and related attributes from `CSVReader` and `CSVWriter` and moved to `CSVBase` class.
+- 
++
+ Base  Database Module Changes 13/12/2024
+-1.  Improved the `BaseDatabase` initial process
+-    1. Added: more robust handling of initiaing `CSVReader` and `CSVWriter` instance.
+-    2. Added: a public access for generating the instance of `CSVReader` and `CSVWriter`.
+-    3. Added: Lazy Initiating the writer instance on the first load and `setup_inital`.
++
++1. Improved the `BaseDatabase` initial process
++   1. Added: more robust handling of initiaing `CSVReader` and `CSVWriter` instance.
++   2. Added: a public access for generating the instance of `CSVReader` and `CSVWriter`.
++   3. Added: Lazy Initiating the writer instance on the first load and `setup_inital`.
++
++
++
++Add new features to BookDatabase class in BookDB.py 14/12/2024
++
++- Added a consistent key for book_id in the headers.
++- Added a method to retrieve a book by its ID (get).
++- Added a method to update an existing book's information (update).
++- Added a method to delete a book from the database (delete).
++- Added validation in the insert method to ensure keys match defined headers.
++- Added error handling for invalid keys during book insertion.
++- Added a sample book insertion in the main execution block.
+diff --git a/LIbManagement/Utility.py b/LIbManagement/Utility.py
+index e103642..5133be8 100644
+--- a/LIbManagement/Utility.py
++++ b/LIbManagement/Utility.py
+@@ -1,7 +1,8 @@
+ # show all optons
+ import os
+ 
+-from Book import BookDatabase
++from BookDB import BookDatabase
++from bk import Book
+ 
+ 
+ def displaySep(sep="=", length=10):
+@@ -10,10 +11,11 @@ def displaySep(sep="=", length=10):
+     print(string)
+ 
+ 
+-def showBook(database,book_id):
++def showBook(database, book_id):
+     os.system("cls")
+     offset = 20
+-    flag = False  # if flat is set then only we will show the edit, delete, update options.
++    # if flat is set then only we will show the edit, delete, update options.
++    flag = False
+     bookObject = None
+     for book in database.books:
+         if book.book_id == book_id:
+@@ -22,19 +24,21 @@ def showBook(database,book_id):
+             flag = True
+             break
+     if flag:
+-        print("u:update".ljust(offset), "d:delete".ljust(offset), "q:quit".ljust(offset))
++        print("u:update".ljust(offset), "d:delete".ljust(
++            offset), "q:quit".ljust(offset))
+         displaySep("-", 100)
+         cmd = input("Select Option: ").lower()
+ 
+-        if(cmd == "q"):
++        if (cmd == "q"):
+             database.saveDatabase()
+             return
+-        elif(cmd == "u"):
++        elif (cmd == "u"):
+             bookObject.edit()
+-        return showBook(database,book_id)
++        return showBook(database, book_id)
+ 
+     return
+ 
++
+ def addBook():
+     displaySep('-', 100)
+     print("Enter Book Details: ")
+@@ -62,9 +66,11 @@ def delete_book(database):
+     book_id = input("Enter book id to delete: ")
+     result = database.deleteBook(book_id)
+     if result:
+-        print(f"----------------------<<<  Deleted: {result} >>>----------------------")
++        print(
++            f"----------------------<<<  Deleted: {result} >>>----------------------")
+     else:
+-        print("Unable to delete the book with id: ",book_id)
++        print("Unable to delete the book with id: ", book_id)
++
+ 
+ def showOptions():
+ 
+@@ -75,11 +81,12 @@ def showOptions():
+     print("4. view a book")
+ 
+ 
+-def displayTitle(title,length):
++def displayTitle(title, length):
+     if not isinstance(title, str):
+         raise TypeError("title must be an string..")
+     print(title.center(length))
+ 
++
+ def selectOption(option, database):
+     """
+     This function is used to select and run the given option.
+diff --git a/LIbManagement/__pycache__/Database.cpython-310.pyc b/LIbManagement/__pycache__/Database.cpython-310.pyc
+index b9b5859..8017e73 100644
+Binary files a/LIbManagement/__pycache__/Database.cpython-310.pyc and b/LIbManagement/__pycache__/Database.cpython-310.pyc differ
+diff --git a/LIbManagement/__pycache__/bk.cpython-310.pyc b/LIbManagement/__pycache__/bk.cpython-310.pyc
+index 62cf59b..d115942 100644
+Binary files a/LIbManagement/__pycache__/bk.cpython-310.pyc and b/LIbManagement/__pycache__/bk.cpython-310.pyc differ
+diff --git a/LIbManagement/__pycache__/errors.cpython-310.pyc b/LIbManagement/__pycache__/errors.cpython-310.pyc
+index 59be757..f245535 100644
+Binary files a/LIbManagement/__pycache__/errors.cpython-310.pyc and b/LIbManagement/__pycache__/errors.cpython-310.pyc differ
+diff --git a/LIbManagement/bk.py b/LIbManagement/bk.py
+index 08ca60d..0a0506c 100644
+--- a/LIbManagement/bk.py
++++ b/LIbManagement/bk.py
+@@ -1,7 +1,7 @@
+ class Book:
+ 
+     def __init__(self, book_id, title, author, subject, pages, price):
+-        self.book_id = book_id
++        self.book_id = str(book_id)
+         self.title = title
+         self.author = author
+         self.subject = subject
+@@ -13,3 +13,6 @@ class Book:
+ 
+     def __repr__(self):
+         return f"Book<{self.book_id}:{self.title}>"
++
++    def as_list(self):
++        return [self.book_id, self.title, self.author, self.subject, self.pages, self.price]
+diff --git a/LIbManagement/data/books_db.csv b/LIbManagement/data/books_db.csv
+index b15e1af..188af0f 100644
+--- a/LIbManagement/data/books_db.csv
++++ b/LIbManagement/data/books_db.csv
+@@ -1,4 +1,4 @@
+-id,title,author,subject,pages,price
++book_id,title,author,subject,pages,price
+ 3,"Python Introduction","Manish","Python",300,245
+ 2,Advance Python,Mansi Jangid,Master Python in best way,760,456
+ 4,Web Designing,Asif,How to design a website,34,25
+diff --git a/LIbManagement/errors.py b/LIbManagement/errors.py
+index 55dd003..49af89a 100644
+--- a/LIbManagement/errors.py
++++ b/LIbManagement/errors.py
+@@ -26,6 +26,14 @@ class DBIntegrityError(Exception):
+     ...
+ 
+ 
++class BookFieldKeyError(ValueError):
++    ...
++
++
++class EntryNotFound(Exception):
++    ...
++
++
+ class ValidationResult:
+     def __init__(self):
+         self.result = {
+diff --git a/LIbManagement/main.py b/LIbManagement/main.py
+index ab9c187..3e41f8f 100644
+--- a/LIbManagement/main.py
++++ b/LIbManagement/main.py
+@@ -7,9 +7,8 @@ from config import BLOCK_LENGTH
+ 
+ if __name__ == '__main__':
+ 
+-    header = ["id", 'title', 'author', 'subject', 'pages', 'price']
+-    bk_db = BookDatabase('books.csv', header)
+-    bk_db.readBooks()
++    bk_db = BookDatabase('books_db.csv')
++    bk_db.load()
+ 
+     while True:
+         displaySep("=", BLOCK_LENGTH)
+@@ -21,5 +20,3 @@ if __name__ == '__main__':
+         selectOption(command, bk_db)
+         input("Press Enter To continue..")
+         os.system("cls")
+-
+-
