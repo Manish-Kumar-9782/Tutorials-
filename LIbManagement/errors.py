@@ -18,5 +18,30 @@ class FileSaveError(Exception):
     ...
 
 
-class DB_IOError(Exception):
+class DbIOError(Exception):
     ...
+
+
+class DBIntegrityError(Exception):
+    ...
+
+
+class ValidationResult:
+    def __init__(self):
+        self.result = {
+            "file": {
+                "status": "error",
+                "message": "File not checked"
+            },
+            "data_dir": {
+                "status": "error",
+                "message": "Data directory not checked"
+            }
+        }
+
+    def add(self, key, status, message=None):
+        self.result[key]["status"] = status
+        self.result[key]["message"] = message
+
+    def get_result(self):
+        return self.result
